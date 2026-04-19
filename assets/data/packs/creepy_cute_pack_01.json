@@ -1,0 +1,83 @@
+{
+  "packId": "creepy_cute_pack_01",
+  "displayName": "Creepy-Cute Creatures",
+  "themeTag": "weird_cute",
+  "releaseType": "launch",
+  "unlockCost": 250,
+  "palette": {
+    "primary": "#B084F2",
+    "secondary": "#FF8FB8",
+    "accent": "#B6FF5C"
+  },
+  "arenaSuggestion": "weird_toy_room",
+  "featuredAudioSet": "creature_giggle_pack",
+  "objects": [
+    {
+      "id": "gobble_puff",
+      "name": "Gobble Puff",
+      "category": "creepy_cute",
+      "themeTag": "blind_box_vibe",
+      "sprite": "assets/images/objects/gobble_puff.png",
+      "thumbnail": "assets/images/thumbnails/gobble_puff_thumb.png",
+      "deformability": 0.78,
+      "elasticity": 0.66,
+      "burstThreshold": 0.74,
+      "gooLevel": 0.61,
+      "impactSounds": [
+        "audio/creature/snicker_01.wav",
+        "audio/creature/snicker_02.wav",
+        "audio/creature/snicker_03.wav"
+      ],
+      "burstSound": "audio/creature/gobble_burst_01.wav",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "purple_monster_splat",
+      "coinReward": 18,
+      "unlockTier": 1,
+      "searchTags": ["creepy cute", "monster", "blind box", "weird"]
+    },
+    {
+      "id": "wink_fang",
+      "name": "Wink Fang",
+      "category": "creepy_cute",
+      "themeTag": "snaggletooth",
+      "sprite": "assets/images/objects/wink_fang.png",
+      "thumbnail": "assets/images/thumbnails/wink_fang_thumb.png",
+      "deformability": 0.71,
+      "elasticity": 0.59,
+      "burstThreshold": 0.81,
+      "gooLevel": 0.48,
+      "impactSounds": [
+        "audio/creature/wink_squeak_01.wav",
+        "audio/creature/wink_squeak_02.wav"
+      ],
+      "burstSound": "audio/creature/wink_burst_01.wav",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "purple_monster_splat",
+      "coinReward": 20,
+      "unlockTier": 2,
+      "searchTags": ["fang", "creepy", "cute", "spooky"]
+    },
+    {
+      "id": "jelly_gremlin",
+      "name": "Jelly Gremlin",
+      "category": "creepy_cute",
+      "themeTag": "mischievous_blob",
+      "sprite": "assets/images/objects/jelly_gremlin.png",
+      "thumbnail": "assets/images/thumbnails/jelly_gremlin_thumb.png",
+      "deformability": 0.92,
+      "elasticity": 0.51,
+      "burstThreshold": 0.86,
+      "gooLevel": 0.88,
+      "impactSounds": [
+        "audio/creature/gremlin_giggle_01.wav",
+        "audio/creature/gremlin_giggle_02.wav"
+      ],
+      "burstSound": "audio/creature/gremlin_burst_01.wav",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "purple_monster_splat",
+      "coinReward": 24,
+      "unlockTier": 3,
+      "searchTags": ["gremlin", "weird", "blob", "cute monster"]
+    }
+  ]
+}

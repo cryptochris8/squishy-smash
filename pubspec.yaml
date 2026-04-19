@@ -1,0 +1,41 @@
+name: squishy_smash
+description: "Squishy Smash — satisfying, ASMR-flavored, meme-driven smash game."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  flame: ^1.22.0
+  flame_audio: ^2.10.0
+  shared_preferences: ^2.3.0
+  google_fonts: ^6.2.0
+  collection: ^1.18.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/data/liveops_schedule.json
+    - assets/data/packs/launch_squishy_foods.json
+    - assets/data/packs/goo_fidgets_drop_01.json
+    - assets/data/packs/creepy_cute_pack_01.json
+    - assets/images/objects/
+    - assets/images/thumbnails/
+    - assets/images/decals/
+    - assets/images/arenas/
+    - assets/images/ui/
+    - assets/audio/food/
+    - assets/audio/goo/
+    - assets/audio/creature/
+    - assets/audio/ui/

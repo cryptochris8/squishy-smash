@@ -1,0 +1,81 @@
+workflows:
+  ios-debug:
+    name: iOS — Pipeline Sanity (unsigned)
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Flutter packages
+        script: flutter pub get
+      - name: Static analysis
+        script: flutter analyze
+      - name: Unit tests
+        script: flutter test
+      - name: Pod install
+        script: |
+          cd ios
+          pod install
+      - name: Build unsigned iOS .app
+        script: flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/iphoneos/*.app
+      - flutter_drive.log
+
+  ios-release:
+    name: iOS — TestFlight Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: squishy_smash_asc_key
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.athletedomains.squishySmash
+      vars:
+        APP_STORE_APPLE_ID: ""
+        BUNDLE_ID: "com.athletedomains.squishySmash"
+        TEAM_ID: "Q3UH3Y4QUU"
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: "v*"
+          include: true
+    scripts:
+      - name: Flutter packages
+        script: flutter pub get
+      - name: Static analysis
+        script: flutter analyze
+      - name: Unit tests
+        script: flutter test
+      - name: Set build number
+        script: |
+          cd $CM_BUILD_DIR
+          BUILD_NUMBER=$(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID") + 1))
+          echo "Setting CFBundleVersion to $BUILD_NUMBER"
+          agvtool new-version -all "$BUILD_NUMBER"
+      - name: Pod install
+        script: |
+          cd ios
+          pod install
+      - name: Flutter build ipa (signed)
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - Internal Testers
+        submit_to_app_store: false
