@@ -36,7 +36,7 @@ class _GameplayScreenState extends State<GameplayScreen> {
       body: Stack(
         children: [
           GameWidget(game: _game),
-          HudOverlay(game: _game),
+          IgnorePointer(child: HudOverlay(game: _game)),
           Positioned(
             top: 12,
             right: 12,
