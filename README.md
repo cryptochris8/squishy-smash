@@ -34,8 +34,10 @@ Before `ios-release` will work, in the Codemagic dashboard:
 2. **Teams → Integrations → Developer Portal**: add an **App Store Connect API
    Key** (the `.p8` file + Key ID + Issuer ID from
    App Store Connect → Users and Access → Integrations).
-3. Name that integration **`squishy_smash_asc_key`** — that exact string is
-   referenced in `codemagic.yaml` under `integrations.app_store_connect`.
+3. Reuse the existing **`Pregame`** App Store Connect API key integration —
+   that exact name is referenced in `codemagic.yaml` under
+   `integrations.app_store_connect`. (One Team-level key serves all apps in
+   the Apple Developer account.)
 4. In the workflow's **Environment variables** section in the Codemagic
    dashboard (NOT in `codemagic.yaml` — Codemagic rejects empty-string
    placeholders), add **`APP_STORE_APPLE_ID`** with the numeric Apple ID of
