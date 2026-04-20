@@ -1,22 +1,14 @@
-# Food Pack Audio
+# Food Pack Audio — WIRED
 
-**Dumplio (the meme-hook object) is fully wired.** 4 ElevenLabs-generated
-MP3s ship in this folder:
+All food-pack SFX are generated and shipped:
 
-- `dumplio_squish_01.mp3` — soft fingertip press, ASMR
-- `dumplio_squish_02.mp3` — quick gentle squish with release pop
-- `dumplio_squish_03.mp3` — firm press with stretch + squelch
-- `dumplio_burst_01.mp3` — big juicy pop with goo splash tail
+- **Dumplio**: `dumplio_squish_01/02/03.mp3` + `dumplio_burst_01.mp3`
+- **JellyZap**: `jellyzap_hit_01/02.mp3` + `jellyzap_pop_01.mp3`
+- **Poppling**: `poppling_hit_01/02.mp3` + `poppling_burst_01.mp3`
 
-Still needed (drop in to wire automatically — JSON paths already point
-at these filenames):
+All MP3 @ 44.1kHz / 128kbps. Generated via
+`mcp__elevenlabs__text_to_sound_effects`. Filenames exactly match the
+`impactSounds` and `burstSound` fields in `launch_squishy_foods.json`.
 
-- `jellyzap_hit_01.mp3`, `jellyzap_hit_02.mp3`, `jellyzap_pop_01.mp3`
-- `poppling_hit_01.mp3`, `poppling_hit_02.mp3`, `poppling_burst_01.mp3`
-
-Format: MP3 @ 44.1 kHz / 128 kbps (the ElevenLabs default). Both .mp3
-and .wav play through `flame_audio` — file extension just needs to match
-what's referenced in `launch_squishy_foods.json`.
-
-**Plug-in target:** ElevenLabs `text_to_sound_effects` MCP. See the four
-prompts in commit `<latest>` for tone direction; mirror them per object.
+To regenerate any single sound, fire one new ElevenLabs call into this
+folder, then rename the result to overwrite the existing file.

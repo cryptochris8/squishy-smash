@@ -47,10 +47,10 @@
       "burstThreshold": 0.68,
       "gooLevel": 0.57,
       "impactSounds": [
-        "audio/food/jellyzap_hit_01.wav",
-        "audio/food/jellyzap_hit_02.wav"
+        "audio/food/jellyzap_hit_01.mp3",
+        "audio/food/jellyzap_hit_02.mp3"
       ],
-      "burstSound": "audio/food/jellyzap_pop_01.wav",
+      "burstSound": "audio/food/jellyzap_pop_01.mp3",
       "particlePreset": "blue_jelly_burst",
       "decalPreset": "cool_blue_smear",
       "coinReward": 10,
@@ -69,10 +69,10 @@
       "burstThreshold": 0.84,
       "gooLevel": 0.69,
       "impactSounds": [
-        "audio/food/poppling_hit_01.wav",
-        "audio/food/poppling_hit_02.wav"
+        "audio/food/poppling_hit_01.mp3",
+        "audio/food/poppling_hit_02.mp3"
       ],
-      "burstSound": "audio/food/poppling_burst_01.wav",
+      "burstSound": "audio/food/poppling_burst_01.mp3",
       "particlePreset": "cream_puff_burst",
       "decalPreset": "cream_smudge",
       "coinReward": 12,

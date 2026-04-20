@@ -24,11 +24,11 @@
       "burstThreshold": 0.92,
       "gooLevel": 0.42,
       "impactSounds": [
-        "audio/goo/slimeorb_squeeze_01.wav",
-        "audio/goo/slimeorb_squeeze_02.wav",
-        "audio/goo/slimeorb_squeeze_03.wav"
+        "audio/goo/slimeorb_squeeze_01.mp3",
+        "audio/goo/slimeorb_squeeze_02.mp3",
+        "audio/goo/slimeorb_squeeze_03.mp3"
       ],
-      "burstSound": "audio/goo/slimeorb_pop_01.wav",
+      "burstSound": "audio/goo/slimeorb_pop_01.mp3",
       "particlePreset": "green_goo_burst",
       "decalPreset": "green_goo_smear",
       "coinReward": 14,
@@ -47,10 +47,10 @@
       "burstThreshold": 0.71,
       "gooLevel": 0.94,
       "impactSounds": [
-        "audio/goo/goodrop_squish_01.wav",
-        "audio/goo/goodrop_squish_02.wav"
+        "audio/goo/goodrop_squish_01.mp3",
+        "audio/goo/goodrop_squish_02.mp3"
       ],
-      "burstSound": "audio/goo/goodrop_burst_01.wav",
+      "burstSound": "audio/goo/goodrop_burst_01.mp3",
       "particlePreset": "green_goo_burst",
       "decalPreset": "green_goo_smear",
       "coinReward": 16,
@@ -69,10 +69,10 @@
       "burstThreshold": 0.55,
       "gooLevel": 0.31,
       "impactSounds": [
-        "audio/goo/popzee_tick_01.wav",
-        "audio/goo/popzee_tick_02.wav"
+        "audio/goo/popzee_tick_01.mp3",
+        "audio/goo/popzee_tick_02.mp3"
       ],
-      "burstSound": "audio/goo/popzee_pop_01.wav",
+      "burstSound": "audio/goo/popzee_pop_01.mp3",
       "particlePreset": "blue_jelly_burst",
       "decalPreset": "cool_blue_smear",
       "coinReward": 9,

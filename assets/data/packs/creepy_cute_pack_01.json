@@ -24,11 +24,11 @@
       "burstThreshold": 0.74,
       "gooLevel": 0.61,
       "impactSounds": [
-        "audio/creature/squishkin_snicker_01.wav",
-        "audio/creature/squishkin_snicker_02.wav",
-        "audio/creature/squishkin_snicker_03.wav"
+        "audio/creature/squishkin_snicker_01.mp3",
+        "audio/creature/squishkin_snicker_02.mp3",
+        "audio/creature/squishkin_snicker_03.mp3"
       ],
-      "burstSound": "audio/creature/squishkin_burst_01.wav",
+      "burstSound": "audio/creature/squishkin_burst_01.mp3",
       "particlePreset": "purple_monster_burst",
       "decalPreset": "purple_monster_splat",
       "coinReward": 18,
@@ -47,10 +47,10 @@
       "burstThreshold": 0.81,
       "gooLevel": 0.48,
       "impactSounds": [
-        "audio/creature/snagglet_squeak_01.wav",
-        "audio/creature/snagglet_squeak_02.wav"
+        "audio/creature/snagglet_squeak_01.mp3",
+        "audio/creature/snagglet_squeak_02.mp3"
       ],
-      "burstSound": "audio/creature/snagglet_burst_01.wav",
+      "burstSound": "audio/creature/snagglet_burst_01.mp3",
       "particlePreset": "purple_monster_burst",
       "decalPreset": "purple_monster_splat",
       "coinReward": 20,
@@ -69,10 +69,10 @@
       "burstThreshold": 0.86,
       "gooLevel": 0.88,
       "impactSounds": [
-        "audio/creature/gloomp_giggle_01.wav",
-        "audio/creature/gloomp_giggle_02.wav"
+        "audio/creature/gloomp_giggle_01.mp3",
+        "audio/creature/gloomp_giggle_02.mp3"
       ],
-      "burstSound": "audio/creature/gloomp_burst_01.wav",
+      "burstSound": "audio/creature/gloomp_burst_01.mp3",
       "particlePreset": "purple_monster_burst",
       "decalPreset": "purple_monster_splat",
       "coinReward": 24,
