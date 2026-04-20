@@ -38,9 +38,11 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.athletedomains.squishySmash
       vars:
-        APP_STORE_APPLE_ID: ""
         BUNDLE_ID: "com.athletedomains.squishySmash"
         TEAM_ID: "Q3UH3Y4QUU"
+        # APP_STORE_APPLE_ID must be set in the Codemagic dashboard:
+        # Workflow → Environment variables → add APP_STORE_APPLE_ID with the
+        # numeric Apple ID from App Store Connect → App Info.
     triggering:
       events:
         - tag
