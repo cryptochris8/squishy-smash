@@ -14,10 +14,6 @@ workflows:
         script: flutter analyze
       - name: Unit tests
         script: flutter test
-      - name: Pod install
-        script: |
-          cd ios
-          pod install
       - name: Build unsigned iOS .app
         script: flutter build ios --release --no-codesign
     artifacts:
@@ -62,10 +58,6 @@ workflows:
           BUILD_NUMBER=$(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID") + 1))
           echo "Setting CFBundleVersion to $BUILD_NUMBER"
           agvtool new-version -all "$BUILD_NUMBER"
-      - name: Pod install
-        script: |
-          cd ios
-          pod install
       - name: Flutter build ipa (signed)
         script: |
           flutter build ipa --release \
