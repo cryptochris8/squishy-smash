@@ -35,7 +35,7 @@ class SmashableComponent extends PositionComponent
     anchor = Anchor.center;
     size = Vector2.all(_baseRadius * 2);
     _bodyPaint = Paint()..color = _paletteFromCategory(def.category);
-    _innerPaint = Paint()..color = _bodyPaint.color.withOpacity(0.55);
+    _innerPaint = Paint()..color = _bodyPaint.color.withValues(alpha: 0.55);
     scale = _baseScale;
   }
 

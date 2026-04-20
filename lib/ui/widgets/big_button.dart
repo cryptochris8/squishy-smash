@@ -27,7 +27,7 @@ class BigButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.5),
+              color: color.withValues(alpha: 0.5),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),

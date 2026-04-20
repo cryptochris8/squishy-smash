@@ -14,13 +14,13 @@ class _DecalSplat extends PositionComponent {
   final Color color;
   final double _radius;
   late Paint _paint;
-  double _opacity = 0.85;
+  final double _opacity = 0.85;
 
   @override
   Future<void> onLoad() async {
     anchor = Anchor.center;
     size = Vector2.all(_radius * 2);
-    _paint = Paint()..color = color.withOpacity(_opacity);
+    _paint = Paint()..color = color.withValues(alpha: _opacity);
     add(OpacityEffect.fadeOut(
       EffectController(duration: Tunables.decalFade.inMilliseconds / 1000),
       onComplete: removeFromParent,

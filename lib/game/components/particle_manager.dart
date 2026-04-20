@@ -22,7 +22,7 @@ class ParticleManager extends Component {
           speed: velocity,
           child: CircleParticle(
             radius: 3 + _rng.nextDouble() * 5,
-            paint: Paint()..color = color.withOpacity(0.9),
+            paint: Paint()..color = color.withValues(alpha: 0.9),
           ),
         );
       },

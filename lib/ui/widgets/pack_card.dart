@@ -27,7 +27,7 @@ class PackCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [primary.withOpacity(0.35), secondary.withOpacity(0.25)],
+          colors: [primary.withValues(alpha: 0.35), secondary.withValues(alpha: 0.25)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -71,7 +71,7 @@ class PackCard extends StatelessWidget {
                 .take(6)
                 .map((o) => Chip(
                       label: Text(o.name),
-                      backgroundColor: Colors.white.withOpacity(0.08),
+                      backgroundColor: Colors.white.withValues(alpha: 0.08),
                       labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
                     ))
                 .toList(),
