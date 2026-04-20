@@ -8,6 +8,7 @@ import 'package:flutter/painting.dart';
 
 import '../../core/constants.dart';
 import '../../data/models/smashable_def.dart';
+import '../render/object_painters.dart';
 
 class SmashableComponent extends PositionComponent
     with TapCallbacks, DragCallbacks {
@@ -25,8 +26,6 @@ class SmashableComponent extends PositionComponent
   double _pressure = 0;
   bool _bursting = false;
   final Vector2 _baseScale = Vector2.all(1);
-  late Paint _bodyPaint;
-  late Paint _innerPaint;
   Vector2 _holdAnchor = Vector2.zero();
   bool _holding = false;
 
@@ -34,26 +33,12 @@ class SmashableComponent extends PositionComponent
   Future<void> onLoad() async {
     anchor = Anchor.center;
     size = Vector2.all(_baseRadius * 2);
-    _bodyPaint = Paint()..color = _paletteFromCategory(def.category);
-    _innerPaint = Paint()..color = _bodyPaint.color.withValues(alpha: 0.55);
     scale = _baseScale;
   }
 
   @override
   void render(Canvas canvas) {
-    final radius = _baseRadius;
-    canvas.drawCircle(Offset(radius, radius), radius, _bodyPaint);
-    canvas.drawCircle(
-      Offset(radius * 0.65, radius * 0.55),
-      radius * 0.45,
-      _innerPaint,
-    );
-    final highlight = Paint()..color = const Color(0x66FFFFFF);
-    canvas.drawCircle(
-      Offset(radius * 0.55, radius * 0.45),
-      radius * 0.18,
-      highlight,
-    );
+    ObjectPainter.paint(canvas, _baseRadius, def);
   }
 
   @override
@@ -144,15 +129,4 @@ class SmashableComponent extends PositionComponent
     onBurst(this);
   }
 
-  Color _paletteFromCategory(String category) {
-    switch (category) {
-      case 'goo_fidget':
-        return const Color(0xFFB6FF5C);
-      case 'creepy_cute':
-        return const Color(0xFFB084F2);
-      case 'squishy_food':
-      default:
-        return const Color(0xFFFF8FB8);
-    }
-  }
 }

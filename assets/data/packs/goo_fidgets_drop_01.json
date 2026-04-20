@@ -13,22 +13,22 @@
   "featuredAudioSet": "wet_pop_goo_pack",
   "objects": [
     {
-      "id": "stress_orb",
-      "name": "Stress Orb",
+      "id": "slimeorb",
+      "name": "SlimeOrb",
       "category": "goo_fidget",
       "themeTag": "anti_stress",
-      "sprite": "assets/images/objects/stress_orb.png",
-      "thumbnail": "assets/images/thumbnails/stress_orb_thumb.png",
+      "sprite": "assets/images/objects/slimeorb.png",
+      "thumbnail": "assets/images/thumbnails/slimeorb_thumb.png",
       "deformability": 0.95,
       "elasticity": 0.78,
       "burstThreshold": 0.92,
       "gooLevel": 0.42,
       "impactSounds": [
-        "audio/goo/squeeze_01.wav",
-        "audio/goo/squeeze_02.wav",
-        "audio/goo/squeeze_03.wav"
+        "audio/goo/slimeorb_squeeze_01.wav",
+        "audio/goo/slimeorb_squeeze_02.wav",
+        "audio/goo/slimeorb_squeeze_03.wav"
       ],
-      "burstSound": "audio/goo/orb_pop_01.wav",
+      "burstSound": "audio/goo/slimeorb_pop_01.wav",
       "particlePreset": "green_goo_burst",
       "decalPreset": "green_goo_smear",
       "coinReward": 14,
@@ -36,21 +36,21 @@
       "searchTags": ["stress ball", "antistress", "fidget", "satisfying"]
     },
     {
-      "id": "slime_capsule",
-      "name": "Slime Capsule",
+      "id": "goodrop",
+      "name": "GooDrop",
       "category": "goo_fidget",
       "themeTag": "slime_pod",
-      "sprite": "assets/images/objects/slime_capsule.png",
-      "thumbnail": "assets/images/thumbnails/slime_capsule_thumb.png",
+      "sprite": "assets/images/objects/goodrop.png",
+      "thumbnail": "assets/images/thumbnails/goodrop_thumb.png",
       "deformability": 0.86,
       "elasticity": 0.58,
       "burstThreshold": 0.71,
       "gooLevel": 0.94,
       "impactSounds": [
-        "audio/goo/slime_squish_01.wav",
-        "audio/goo/slime_squish_02.wav"
+        "audio/goo/goodrop_squish_01.wav",
+        "audio/goo/goodrop_squish_02.wav"
       ],
-      "burstSound": "audio/goo/slime_burst_01.wav",
+      "burstSound": "audio/goo/goodrop_burst_01.wav",
       "particlePreset": "green_goo_burst",
       "decalPreset": "green_goo_smear",
       "coinReward": 16,
@@ -58,21 +58,21 @@
       "searchTags": ["slime", "asmr", "goo", "pop"]
     },
     {
-      "id": "bubble_pod",
-      "name": "Bubble Pod",
+      "id": "popzee",
+      "name": "Popzee",
       "category": "goo_fidget",
       "themeTag": "pop_pod",
-      "sprite": "assets/images/objects/bubble_pod.png",
-      "thumbnail": "assets/images/thumbnails/bubble_pod_thumb.png",
+      "sprite": "assets/images/objects/popzee.png",
+      "thumbnail": "assets/images/thumbnails/popzee_thumb.png",
       "deformability": 0.66,
       "elasticity": 0.83,
       "burstThreshold": 0.55,
       "gooLevel": 0.31,
       "impactSounds": [
-        "audio/goo/bubble_tick_01.wav",
-        "audio/goo/bubble_tick_02.wav"
+        "audio/goo/popzee_tick_01.wav",
+        "audio/goo/popzee_tick_02.wav"
       ],
-      "burstSound": "audio/goo/bubble_pop_01.wav",
+      "burstSound": "audio/goo/popzee_pop_01.wav",
       "particlePreset": "blue_jelly_burst",
       "decalPreset": "cool_blue_smear",
       "coinReward": 9,

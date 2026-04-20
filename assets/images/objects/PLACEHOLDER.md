@@ -1,19 +1,22 @@
 # Object Sprites — PLACEHOLDER
 
-Drop final 256x256 PNGs here. Filenames must match the `sprite` field in
-`assets/data/packs/*.json`. Currently expected:
+The MVP currently renders **procedural CustomPainter sprites** from
+`lib/game/render/object_painters.dart` — the game is fully playable and
+visually distinct without any PNG files.
 
-- gloop_dumpling.png
-- jelly_brick.png
-- puff_mochi.png
-- stress_orb.png
-- slime_capsule.png
-- bubble_pod.png
-- gobble_puff.png
-- wink_fang.png
-- jelly_gremlin.png
+When you have final art ready, drop 256x256 PNGs here and update
+`SmashableComponent` to use a `SpriteComponent` instead of the painter.
+Filenames must match the `sprite` field in `assets/data/packs/*.json`:
 
-Until real art is dropped in, the game renders procedural color blobs from
-`SmashableComponent.render()` — gameplay still works.
+- dumplio.png
+- jellyzap.png
+- poppling.png
+- slimeorb.png
+- goodrop.png
+- popzee.png
+- squishkin.png
+- snagglet.png
+- gloomp.png
 
-**Plug-in target:** Arts.io concepts → Figma cleanup → exported PNG.
+**Plug-in target:** Arts.io / Midjourney / DALL-E. Reference prompts in
+`squishy_smash_assets_pack/arts_io_prompts.txt` (project root, one level up).
