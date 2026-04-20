@@ -7,20 +7,18 @@ import 'package:flutter/painting.dart';
 
 import '../../core/constants.dart';
 
-class _DecalSplat extends PositionComponent {
-  _DecalSplat({required this.color, required double radius})
-      : _radius = radius;
+class _DecalSplat extends PositionComponent with HasPaint {
+  _DecalSplat({required Color color, required double radius})
+      : _radius = radius {
+    paint = Paint()..color = color.withValues(alpha: 0.85);
+  }
 
-  final Color color;
   final double _radius;
-  late Paint _paint;
-  final double _opacity = 0.85;
 
   @override
   Future<void> onLoad() async {
     anchor = Anchor.center;
     size = Vector2.all(_radius * 2);
-    _paint = Paint()..color = color.withValues(alpha: _opacity);
     add(OpacityEffect.fadeOut(
       EffectController(duration: Tunables.decalFade.inMilliseconds / 1000),
       onComplete: removeFromParent,
@@ -29,7 +27,7 @@ class _DecalSplat extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
-    canvas.drawCircle(Offset(_radius, _radius), _radius, _paint);
+    canvas.drawCircle(Offset(_radius, _radius), _radius, paint);
   }
 }
 

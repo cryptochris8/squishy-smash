@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../squishy_game.dart';
@@ -12,27 +14,39 @@ class HudOverlay extends StatefulWidget {
 }
 
 class _HudOverlayState extends State<HudOverlay> {
-  late final Ticker _ticker = Ticker(_onTick);
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _ticker.start();
+    _timer = Timer.periodic(const Duration(milliseconds: 80), (_) {
+      if (!mounted) return;
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    _ticker.dispose();
+    _timer?.cancel();
+    _timer = null;
     super.dispose();
   }
 
-  void _onTick(Duration elapsed) => setState(() {});
+  ({int score, int mult, double fill}) _readGame() {
+    try {
+      return (
+        score: widget.game.score.total,
+        mult: widget.game.combo.multiplier,
+        fill: widget.game.combo.fill,
+      );
+    } catch (_) {
+      return (score: 0, mult: 1, fill: 0.0);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final score = widget.game.score.total;
-    final mult = widget.game.combo.multiplier;
-    final fill = widget.game.combo.fill;
+    final data = _readGame();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -40,7 +54,7 @@ class _HudOverlayState extends State<HudOverlay> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '$score',
+              '${data.score}',
               style: const TextStyle(
                 fontSize: 44,
                 fontWeight: FontWeight.w800,
@@ -51,11 +65,11 @@ class _HudOverlayState extends State<HudOverlay> {
             Row(
               children: [
                 Text(
-                  'x$mult',
+                  'x${data.mult}',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    color: mult > 1 ? const Color(0xFFFFD36E) : Colors.white70,
+                    color: data.mult > 1 ? const Color(0xFFFFD36E) : Colors.white70,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -64,7 +78,7 @@ class _HudOverlayState extends State<HudOverlay> {
                     borderRadius: BorderRadius.circular(8),
                     child: LinearProgressIndicator(
                       minHeight: 8,
-                      value: fill,
+                      value: data.fill,
                       backgroundColor: Colors.white12,
                       color: const Color(0xFFFF8FB8),
                     ),
@@ -76,29 +90,5 @@ class _HudOverlayState extends State<HudOverlay> {
         ),
       ),
     );
-  }
-}
-
-class Ticker {
-  Ticker(this._cb);
-  final void Function(Duration) _cb;
-  Stopwatch? _sw;
-  bool _running = false;
-
-  void start() {
-    _running = true;
-    _sw = Stopwatch()..start();
-    _loop();
-  }
-
-  Future<void> _loop() async {
-    while (_running) {
-      await Future<void>.delayed(const Duration(milliseconds: 80));
-      _cb(_sw!.elapsed);
-    }
-  }
-
-  void dispose() {
-    _running = false;
   }
 }
