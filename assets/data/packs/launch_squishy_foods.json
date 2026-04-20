@@ -24,11 +24,11 @@
       "burstThreshold": 0.79,
       "gooLevel": 0.83,
       "impactSounds": [
-        "audio/food/dumplio_squish_01.wav",
-        "audio/food/dumplio_squish_02.wav",
-        "audio/food/dumplio_squish_03.wav"
+        "audio/food/dumplio_squish_01.mp3",
+        "audio/food/dumplio_squish_02.mp3",
+        "audio/food/dumplio_squish_03.mp3"
       ],
-      "burstSound": "audio/food/dumplio_burst_01.wav",
+      "burstSound": "audio/food/dumplio_burst_01.mp3",
       "particlePreset": "pink_soup_burst",
       "decalPreset": "soft_peach_splat",
       "coinReward": 8,
