@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'core/routes.dart';
-import 'ui/menu_screen.dart';
 
 class SquishySmashApp extends StatelessWidget {
   const SquishySmashApp({super.key});
@@ -27,7 +26,6 @@ class SquishySmashApp extends StatelessWidget {
       ),
       initialRoute: AppRoutes.menu,
       routes: AppRoutes.table,
-      home: const MenuScreen(),
     );
   }
 }
