@@ -72,5 +72,9 @@ coverage/
 *.p12
 *.mobileprovision
 *.keystore.json
+*.pem
+*.key
+cert_key
+cert_key.pub
 .env
 .env.local
