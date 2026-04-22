@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/service_locator.dart';
+
 class BigButton extends StatelessWidget {
   const BigButton({
     super.key,
@@ -18,6 +20,7 @@ class BigButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
+        ServiceLocator.ui.buttonTap();
         onTap();
       },
       child: Container(

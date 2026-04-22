@@ -16,6 +16,7 @@ class ContentLoader {
     'assets/data/packs/launch_squishy_foods.json',
     'assets/data/packs/goo_fidgets_drop_01.json',
     'assets/data/packs/creepy_cute_pack_01.json',
+    'assets/data/packs/dumpling_squishy_drop_01.json',
   ];
   static const String schedulePath = 'assets/data/liveops_schedule.json';
 

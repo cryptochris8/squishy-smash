@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 
+import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
 
 class SpawnManager extends Component {
@@ -26,7 +27,11 @@ class SpawnManager extends Component {
     if (_delay <= 0) {
       _pending = false;
       if (pool.isEmpty) return;
-      final def = pool[rng.nextInt(pool.length)];
+      final def = weightedPick<SmashableDef>(
+        items: pool,
+        weightOf: (d) => d.effectiveDropWeight,
+        rng: rng,
+      );
       onSpawn(def);
     }
   }

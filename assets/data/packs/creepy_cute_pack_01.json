@@ -9,7 +9,7 @@
     "secondary": "#FF8FB8",
     "accent": "#B6FF5C"
   },
-  "arenaSuggestion": "weird_toy_room",
+  "arenaSuggestion": "creepy_cute_crypt",
   "featuredAudioSet": "creature_giggle_pack",
   "objects": [
     {
@@ -33,6 +33,7 @@
       "decalPreset": "purple_monster_splat",
       "coinReward": 18,
       "unlockTier": 1,
+      "rarity": "common",
       "searchTags": ["creepy cute", "monster", "blind box", "weird"]
     },
     {
@@ -55,6 +56,7 @@
       "decalPreset": "purple_monster_splat",
       "coinReward": 20,
       "unlockTier": 2,
+      "rarity": "rare",
       "searchTags": ["fang", "creepy", "cute", "spooky"]
     },
     {
@@ -77,6 +79,7 @@
       "decalPreset": "purple_monster_splat",
       "coinReward": 24,
       "unlockTier": 3,
+      "rarity": "epic",
       "searchTags": ["gremlin", "weird", "blob", "cute monster"]
     }
   ]

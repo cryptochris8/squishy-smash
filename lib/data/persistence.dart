@@ -9,6 +9,7 @@ class Persistence {
   static const String _unlocksKey = 'profile.unlocks';
   static const String _bestScoreKey = 'profile.best_score';
   static const String _bestComboKey = 'profile.best_combo';
+  static const String _sessionCountKey = 'profile.session_count';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -26,6 +27,7 @@ class Persistence {
       unlockedPackIds: unlocks.toSet(),
       bestScore: _prefs.getInt(_bestScoreKey) ?? 0,
       bestCombo: _prefs.getInt(_bestComboKey) ?? 0,
+      sessionCount: _prefs.getInt(_sessionCountKey) ?? 0,
     );
   }
 
@@ -34,6 +36,7 @@ class Persistence {
     await _prefs.setStringList(_unlocksKey, p.unlockedPackIds.toList());
     await _prefs.setInt(_bestScoreKey, p.bestScore);
     await _prefs.setInt(_bestComboKey, p.bestCombo);
+    await _prefs.setInt(_sessionCountKey, p.sessionCount);
   }
 
   bool get hapticsEnabled => _prefs.getBool(_hapticsKey) ?? true;

@@ -40,6 +40,8 @@ class ParticleManager extends Component {
         return const Color(0xFFB6FF5C);
       case 'purple_monster_burst':
         return const Color(0xFFB084F2);
+      case 'gold_mythic_burst':
+        return const Color(0xFFFFD15C);
       case 'pink_soup_burst':
       default:
         return const Color(0xFFFF8FB8);

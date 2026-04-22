@@ -9,7 +9,7 @@
     "secondary": "#7FE7FF",
     "accent": "#FFD36E"
   },
-  "arenaSuggestion": "candy_lab",
+  "arenaSuggestion": "goo_laboratory",
   "featuredAudioSet": "wet_pop_goo_pack",
   "objects": [
     {
@@ -33,6 +33,7 @@
       "decalPreset": "green_goo_smear",
       "coinReward": 14,
       "unlockTier": 1,
+      "rarity": "common",
       "searchTags": ["stress ball", "antistress", "fidget", "satisfying"]
     },
     {
@@ -55,6 +56,7 @@
       "decalPreset": "green_goo_smear",
       "coinReward": 16,
       "unlockTier": 2,
+      "rarity": "rare",
       "searchTags": ["slime", "asmr", "goo", "pop"]
     },
     {
@@ -77,6 +79,7 @@
       "decalPreset": "cool_blue_smear",
       "coinReward": 9,
       "unlockTier": 1,
+      "rarity": "common",
       "searchTags": ["bubble", "pop", "fidget", "asmr"]
     }
   ]

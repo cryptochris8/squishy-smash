@@ -9,7 +9,7 @@
     "secondary": "#FFD36E",
     "accent": "#7FE7FF"
   },
-  "arenaSuggestion": "slime_kitchen",
+  "arenaSuggestion": "mochi_sunset_beach",
   "featuredAudioSet": "soft_pop_food_pack",
   "objects": [
     {
@@ -33,6 +33,7 @@
       "decalPreset": "soft_peach_splat",
       "coinReward": 8,
       "unlockTier": 1,
+      "rarity": "common",
       "searchTags": ["squishy", "dumpling", "asmr", "satisfying", "food"]
     },
     {
@@ -55,6 +56,7 @@
       "decalPreset": "cool_blue_smear",
       "coinReward": 10,
       "unlockTier": 1,
+      "rarity": "common",
       "searchTags": ["jelly", "pop", "asmr", "satisfying"]
     },
     {
@@ -77,6 +79,7 @@
       "decalPreset": "cream_smudge",
       "coinReward": 12,
       "unlockTier": 2,
+      "rarity": "rare",
       "searchTags": ["mochi", "squish", "relaxing", "food"]
     }
   ]

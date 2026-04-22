@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart';
 
 class ArenaWorld extends World {
   ArenaWorld({Vector2? arenaSize})
@@ -9,12 +8,7 @@ class ArenaWorld extends World {
 
   Vector2 get arenaCenter => arenaSize / 2;
 
-  @override
-  Future<void> onLoad() async {
-    final bg = RectangleComponent(
-      size: arenaSize.clone(),
-      paint: Paint()..color = const Color(0xFF24172C),
-    )..position = Vector2.zero();
-    await add(bg);
-  }
+  // Background is now supplied by [SkyboxComponent], which is added by
+  // SquishyGame.onLoad() as the first child of this world so it renders
+  // behind decals, particles, and smashables.
 }

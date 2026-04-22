@@ -11,11 +11,13 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
 
-  flame: ^1.22.0
-  flame_audio: ^2.10.0
+  flame: 1.35.1
+  flame_audio: ^2.11.0
   shared_preferences: ^2.3.0
   google_fonts: ^6.2.0
   collection: ^1.18.0
+  path_provider: ^2.1.0
+  share_plus: ^10.0.0
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +32,7 @@ flutter:
     - assets/data/packs/launch_squishy_foods.json
     - assets/data/packs/goo_fidgets_drop_01.json
     - assets/data/packs/creepy_cute_pack_01.json
+    - assets/data/packs/dumpling_squishy_drop_01.json
     - assets/images/objects/
     - assets/images/thumbnails/
     - assets/images/decals/
@@ -39,3 +42,4 @@ flutter:
     - assets/audio/goo/
     - assets/audio/creature/
     - assets/audio/ui/
+    - assets/audio/vo/

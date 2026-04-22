@@ -1,3 +1,5 @@
+import 'rarity.dart';
+
 class SmashableDef {
   const SmashableDef({
     required this.id,
@@ -19,6 +21,8 @@ class SmashableDef {
     required this.searchTags,
     this.hitsToBurst,
     this.massHint = 1.0,
+    this.rarity = Rarity.common,
+    this.dropWeight,
   });
 
   final String id;
@@ -40,6 +44,15 @@ class SmashableDef {
   final List<String> searchTags;
   final int? hitsToBurst;
   final double massHint;
+  final Rarity rarity;
+
+  /// Optional per-object spawn weight override. When null, callers should
+  /// use [Rarity.defaultWeight] so a pack without explicit weights still
+  /// respects tier frequencies.
+  final int? dropWeight;
+
+  /// Effective spawn weight used by weighted selection.
+  int get effectiveDropWeight => dropWeight ?? rarity.defaultWeight;
 
   factory SmashableDef.fromJson(Map<String, dynamic> json) => SmashableDef(
         id: json['id'] as String,
@@ -65,5 +78,9 @@ class SmashableDef {
         massHint: json['massHint'] == null
             ? 1.0
             : (json['massHint'] as num).toDouble(),
+        rarity: rarityFromToken(json['rarity'] as String?),
+        dropWeight: json['dropWeight'] == null
+            ? null
+            : (json['dropWeight'] as num).toInt(),
       );
 }

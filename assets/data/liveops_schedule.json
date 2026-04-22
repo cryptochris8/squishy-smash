@@ -4,16 +4,22 @@
       "weekOf": "2026-04-20",
       "featuredPack": "launch_squishy_foods",
       "eventModifier": "double_food_burst_coins",
-      "promoLabel": "Dumpling Squishy Week"
+      "promoLabel": "Launch Food Week"
     },
     {
       "weekOf": "2026-04-27",
+      "featuredPack": "dumpling_squishy_drop_01",
+      "eventModifier": "mythic_gold_dumplio_up",
+      "promoLabel": "Dumpling Squishy Drop"
+    },
+    {
+      "weekOf": "2026-05-04",
       "featuredPack": "goo_fidgets_drop_01",
       "eventModifier": "extra_goo_decals",
       "promoLabel": "Maximum Goo Weekend"
     },
     {
-      "weekOf": "2026-05-04",
+      "weekOf": "2026-05-11",
       "featuredPack": "creepy_cute_pack_01",
       "eventModifier": "monster_combo_bonus",
       "promoLabel": "Weird Cute Drop"

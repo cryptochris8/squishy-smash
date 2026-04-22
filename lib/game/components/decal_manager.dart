@@ -58,6 +58,8 @@ class DecalManager extends Component {
         return const Color(0xCCB6FF5C);
       case 'purple_monster_splat':
         return const Color(0xCCB084F2);
+      case 'gold_mythic_splat':
+        return const Color(0xCCFFD15C);
       case 'soft_peach_splat':
       default:
         return const Color(0xCCFF8FB8);

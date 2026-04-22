@@ -3,7 +3,10 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/painting.dart';
 
 import '../../core/constants.dart';
@@ -29,15 +32,45 @@ class SmashableComponent extends PositionComponent
   Vector2 _holdAnchor = Vector2.zero();
   bool _holding = false;
 
+  Sprite? _sprite;
+
   @override
   Future<void> onLoad() async {
     anchor = Anchor.center;
     size = Vector2.all(_baseRadius * 2);
     scale = _baseScale;
+    _sprite = await _tryLoadSprite(def.sprite);
+  }
+
+  /// Flame.images caches by path relative to `assets/images/`. Pack JSONs
+  /// reference `assets/images/objects/X.png`; strip the prefix so the
+  /// cache resolves correctly. Returns null on any load failure so the
+  /// procedural [ObjectPainter] fallback renders instead.
+  Future<Sprite?> _tryLoadSprite(String assetPath) async {
+    const prefix = 'assets/images/';
+    final normalized = assetPath.startsWith(prefix)
+        ? assetPath.substring(prefix.length)
+        : assetPath;
+    try {
+      final image = await Flame.images.load(normalized);
+      return Sprite(image);
+    } catch (e) {
+      debugPrint('SmashableComponent: sprite load FAILED for '
+          '$normalized — falling back to ObjectPainter ($e)');
+      return null;
+    }
   }
 
   @override
   void render(Canvas canvas) {
+    final sprite = _sprite;
+    if (sprite != null) {
+      sprite.render(
+        canvas,
+        size: Vector2.all(_baseRadius * 2),
+      );
+      return;
+    }
     ObjectPainter.paint(canvas, _baseRadius, def);
   }
 

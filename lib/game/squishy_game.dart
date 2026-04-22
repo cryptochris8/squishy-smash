@@ -3,24 +3,38 @@ import 'dart:math';
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart' show VoidCallback;
 import 'package:flutter/painting.dart';
 
+import '../analytics/events.dart';
 import '../core/service_locator.dart';
+import '../data/models/rarity.dart';
 import '../data/models/smashable_def.dart';
 import 'components/decal_manager.dart';
 import 'components/particle_manager.dart';
 import 'components/screen_shake.dart';
+import 'components/skybox_component.dart';
 import 'components/smashable_component.dart';
+import 'systems/arena_registry.dart';
 import 'systems/combo_controller.dart';
+import 'systems/feedback_dispatcher.dart';
+import 'systems/flame_feedback_sink.dart';
 import 'systems/haptics_manager.dart';
 import 'systems/score_controller.dart';
 import 'systems/spawn_manager.dart';
+import 'systems/voice_line_registry.dart';
 import 'world/arena_world.dart';
 
 class SquishyGame extends FlameGame {
-  SquishyGame({this.onRoundEnd});
+  SquishyGame({this.onRoundEnd, this.onMythicReveal});
 
   final void Function(int score, int combo, int coinsEarned)? onRoundEnd;
+
+  /// Fires immediately after a mythic burst resolves, so the surrounding
+  /// Flutter UI can show a "Save this clip?" prompt. Always called on
+  /// the Flame tick; callers must use `WidgetsBinding.addPostFrameCallback`
+  /// or similar if touching the widget tree.
+  final VoidCallback? onMythicReveal;
 
   late final ArenaWorld arena;
   late final ScoreController score;
@@ -30,10 +44,15 @@ class SquishyGame extends FlameGame {
   late final HapticsManager haptics;
   late final SpawnManager spawner;
   late final ScreenShake shaker;
+  late final SkyboxComponent skybox;
+  late final GameEvents events;
+  late final FeedbackDispatcher feedback;
 
   final Random _rng = Random();
   double _roundTimer = 60;
   int _coinsEarned = 0;
+  int _smashes = 0;
+  String? _activePackId;
   bool _ended = false;
 
   @override
@@ -49,6 +68,24 @@ class SquishyGame extends FlameGame {
       ..anchor = Anchor.topLeft
       ..position = Vector2.zero();
 
+    // Pick the arena theme from the currently featured (or first unlocked)
+    // pack. Unknown arenaSuggestion strings fall back to the launch
+    // theme so the game still renders even with incomplete content.
+    final featuredPackId = ServiceLocator.packs.schedule
+            .currentWeek(DateTime.now())
+            ?.featuredPack ??
+        (ServiceLocator.progression.profile.unlockedPackIds.isNotEmpty
+            ? ServiceLocator.progression.profile.unlockedPackIds.first
+            : 'launch_squishy_foods');
+    final featuredPack = ServiceLocator.packs.byId(featuredPackId);
+    final arenaTheme =
+        ArenaRegistry.themeFor(featuredPack?.arenaSuggestion);
+    skybox = SkyboxComponent(
+      size: arena.arenaSize.clone(),
+      theme: arenaTheme,
+    );
+    await arena.add(skybox);
+
     particles = ParticleManager();
     decals = DecalManager();
     await arena.add(decals);
@@ -59,6 +96,29 @@ class SquishyGame extends FlameGame {
     haptics = HapticsManager(enabled: ServiceLocator.persistence.hapticsEnabled);
     shaker = ScreenShake(camera: camera);
     await add(shaker);
+
+    feedback = FeedbackDispatcher(
+      sink: FlameFeedbackSink(
+        sounds: ServiceLocator.sounds,
+        haptics: haptics,
+        shaker: shaker,
+      ),
+    )..voiceLines.addAll(VoiceLineRegistry.dispatcherMap);
+
+    events = GameEvents(ServiceLocator.analytics);
+
+    final featured = ServiceLocator.packs.schedule.currentWeek(DateTime.now());
+    _activePackId = featured?.featuredPack ??
+        (ServiceLocator.progression.profile.unlockedPackIds.isNotEmpty
+            ? ServiceLocator.progression.profile.unlockedPackIds.first
+            : null);
+    await ServiceLocator.progression.noteSessionStart();
+    if (_activePackId != null) {
+      events.levelStart(
+        packId: _activePackId!,
+        sessionIndex: ServiceLocator.progression.profile.sessionCount,
+      );
+    }
 
     final pool = ServiceLocator.packs.objectsForPacks(
       ServiceLocator.progression.profile.unlockedPackIds,
@@ -92,21 +152,57 @@ class SquishyGame extends FlameGame {
     combo.bump();
     final base = (5 * force).round();
     score.addHit(base, multiplier: combo.multiplier);
-    ServiceLocator.sounds.playRandom(c.def.impactSounds);
-    haptics.light();
+    feedback.dispatch(FeedbackTier.hit, c.def);
   }
 
   void _handleBurst(SmashableComponent c) {
     final bonus = 25 + (c.def.gooLevel * 30).round();
     score.addBurst(bonus, multiplier: combo.multiplier);
     _coinsEarned += c.def.coinReward;
+    _smashes += 1;
     ServiceLocator.progression.awardCoins(c.def.coinReward);
 
-    ServiceLocator.sounds.play(c.def.burstSound);
-    haptics.heavy();
-    shaker.shake();
+    // Pick a feedback tier. Rarity wins over combo (a mythic at combo 1
+    // should still reveal); common-tier bursts upgrade to megaBurst once
+    // the combo multiplier hits 3+.
+    final rarity = c.def.rarity;
+    final FeedbackTier tier;
+    if (rarity.triggersReveal) {
+      tier = FeedbackTier.revealBurst;
+    } else if (combo.multiplier >= 3) {
+      tier = FeedbackTier.megaBurst;
+    } else {
+      tier = FeedbackTier.burst;
+    }
+    feedback.dispatch(tier, c.def);
+
+    // Mythic gets an extra-heavy shake override on top of the dispatcher
+    // default; rarity also swaps the skybox to its reveal variant.
+    if (rarity.triggersReveal) {
+      skybox.triggerReveal(hold: rarity == Rarity.mythic ? 1.6 : 1.0);
+      if (rarity == Rarity.mythic) {
+        shaker.shake(duration: 0.28, intensity: 14);
+        onMythicReveal?.call();
+      }
+    }
+
     particles.burst(c.position, preset: c.def.particlePreset, intensity: c.def.gooLevel);
     decals.spawn(c.position, preset: c.def.decalPreset);
+
+    if (_activePackId != null) {
+      events.objectSmashed(
+        objectId: c.def.id,
+        packId: _activePackId!,
+        comboCount: combo.multiplier,
+        rarity: rarity,
+      );
+      if (tier == FeedbackTier.megaBurst) {
+        events.megaBurstTriggered(
+          comboCount: combo.multiplier,
+          packId: _activePackId!,
+        );
+      }
+    }
 
     c.removeFromParent();
     spawner.requestSpawn(0.4);
@@ -118,6 +214,14 @@ class SquishyGame extends FlameGame {
       score: score.total,
       combo: combo.peak,
     );
+    if (_activePackId != null) {
+      events.levelEnd(
+        packId: _activePackId!,
+        smashes: _smashes,
+        durationMs: 60000,
+        success: _smashes > 0,
+      );
+    }
     onRoundEnd?.call(score.total, combo.peak, _coinsEarned);
   }
 }

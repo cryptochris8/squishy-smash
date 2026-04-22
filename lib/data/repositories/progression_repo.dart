@@ -39,4 +39,12 @@ class ProgressionRepository {
     }
     if (dirty) await _persistence.saveProfile(profile);
   }
+
+  /// Increment and persist [PlayerProfile.sessionCount]. Call at the
+  /// start of each gameplay round, before the level_start analytics
+  /// event fires, so `session_index` matches what the round logs.
+  Future<void> noteSessionStart() async {
+    profile.sessionCount += 1;
+    await _persistence.saveProfile(profile);
+  }
 }
