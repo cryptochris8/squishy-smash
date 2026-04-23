@@ -24,7 +24,10 @@ class SmashableComponent extends PositionComponent
   final void Function(SmashableComponent self, double force) onImpact;
   final void Function(SmashableComponent self) onBurst;
 
-  static const double _baseRadius = 64;
+  // Bumped from 64 (+12.5%) for closer, more touchable scale per the
+  // Juice Pass plan — squishies feel like physical objects rather than
+  // distant icons. Arena is 360×640 so 144×144 still leaves clearance.
+  static const double _baseRadius = 72;
   double _pressure = 0;
   bool _bursting = false;
   final Vector2 _baseScale = Vector2.all(1);
@@ -96,8 +99,11 @@ class SmashableComponent extends PositionComponent
     final crushFactor = (dragDist / 80).clamp(0.0, 1.0);
     _pressure = (_pressure + crushFactor * 0.04 * def.deformability)
         .clamp(0.0, 1.0);
-    final compression = 1.0 - (_pressure * 0.5);
-    final stretch = 1.0 + (_pressure * 0.4);
+    // Bumped from 0.5/0.4 for a more dramatic crush — at full pressure
+    // the squishy goes to 0.4×1.5 (was 0.5×1.4), so the "about to pop"
+    // shape reads stronger.
+    final compression = 1.0 - (_pressure * 0.6);
+    final stretch = 1.0 + (_pressure * 0.5);
     scale = Vector2(stretch, compression);
     if (_pressure >= def.burstThreshold) _burst();
   }
@@ -124,13 +130,25 @@ class SmashableComponent extends PositionComponent
 
   void _applyHit(double force) {
     _pressure = (_pressure + force * 0.5 * def.deformability).clamp(0.0, 1.0);
-    final squash = 1.0 - (force * 0.35);
-    final stretch = 1.0 + (force * 0.45);
+    // Punchier squash/stretch — tap (force ≈ 0.4) lands at (1.22, 0.83);
+    // full force lands at (1.55, 0.58). Was (1.18, 0.86) / (1.45, 0.65).
+    final squash = 1.0 - (force * 0.42);
+    final stretch = 1.0 + (force * 0.55);
+    // Tiny overshoot in the OPPOSITE axes for snap feel — the squishy
+    // briefly bulges the way it was just compressed before elasticOut
+    // settles it. Magnitude scales with hit force so light taps don't
+    // ping-pong.
+    final overshootSquash = 1.0 + (force * 0.10);
+    final overshootStretch = 1.0 - (force * 0.08);
     add(SequenceEffect(
       <Effect>[
         ScaleEffect.to(
           Vector2(stretch, squash),
-          EffectController(duration: 0.06, curve: Curves.easeOut),
+          EffectController(duration: 0.05, curve: Curves.easeOut),
+        ),
+        ScaleEffect.to(
+          Vector2(overshootStretch, overshootSquash),
+          EffectController(duration: 0.09, curve: Curves.easeInOut),
         ),
         ScaleEffect.to(
           _baseScale,
