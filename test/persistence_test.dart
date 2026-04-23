@@ -32,6 +32,13 @@ void main() {
       expect(profile.rarestSeen, Rarity.common);
     });
 
+    test('first-launch profile has empty per-pack burst maps', () async {
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.rareBurstsByPack, isEmpty);
+      expect(profile.epicBurstsByPack, isEmpty);
+    });
+
     test('first-launch profile unlocks only the launch arena', () async {
       final p = await Persistence.open();
       final profile = p.loadProfile();
@@ -93,6 +100,29 @@ void main() {
       expect(reloaded.discoveredSmashableIds,
           {'dumplio', 'jellyzap', 'slimeorb'});
       expect(reloaded.rarestSeen, Rarity.epic);
+    });
+
+    test('per-pack burst maps round-trip through JSON encoding', () async {
+      final p = await Persistence.open();
+      final profile = PlayerProfile(
+        coins: 0,
+        unlockedPackIds: const <String>{'launch'},
+        bestScore: 0,
+        bestCombo: 0,
+        rareBurstsByPack: <String, int>{
+          'launch_squishy_foods': 7,
+          'goo_fidgets_drop_01': 3,
+        },
+        epicBurstsByPack: <String, int>{'creepy_cute_pack_01': 2},
+      );
+      await p.saveProfile(profile);
+
+      final reloaded = p.loadProfile();
+      expect(reloaded.rareBurstsByPack, {
+        'launch_squishy_foods': 7,
+        'goo_fidgets_drop_01': 3,
+      });
+      expect(reloaded.epicBurstsByPack, {'creepy_cute_pack_01': 2});
     });
 
     test('settings toggles round-trip', () async {

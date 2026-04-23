@@ -19,6 +19,7 @@ import 'systems/combo_controller.dart';
 import 'systems/feedback_dispatcher.dart';
 import 'systems/flame_feedback_sink.dart';
 import 'systems/haptics_manager.dart';
+import 'systems/pack_progression_gate.dart';
 import 'systems/rarity_pity_selector.dart';
 import 'systems/score_controller.dart';
 import 'systems/spawn_manager.dart';
@@ -48,7 +49,9 @@ class SquishyGame extends FlameGame {
   late final GameEvents events;
   late final FeedbackDispatcher feedback;
   late final RarityPitySelector pitySelector;
-  late final List<SmashableDef> _pool;
+  late final PackProgressionGate packGate;
+  late final List<GatedObject> _pool;
+  final Map<String, String> _defIdToPackId = <String, String>{};
 
   final Random _rng = Random();
   double _roundTimer = 60;
@@ -122,10 +125,20 @@ class SquishyGame extends FlameGame {
       );
     }
 
-    _pool = ServiceLocator.packs.objectsForPacks(
+    final poolWithContext = ServiceLocator.packs.objectsForPacksWithContext(
       ServiceLocator.progression.profile.unlockedPackIds,
     );
+    _pool = [
+      for (final (pack, def) in poolWithContext)
+        GatedObject(def: def, pack: pack),
+    ];
+    for (final entry in _pool) {
+      // Duplicate IDs across packs resolve to first-wins — matches
+      // PackRepository.objectsForPacksWithContext ordering.
+      _defIdToPackId.putIfAbsent(entry.def.id, () => entry.packId);
+    }
     pitySelector = const RarityPitySelector();
+    packGate = const PackProgressionGate();
     spawner = SpawnManager(
       selectNext: _selectNextSmashable,
       onSpawn: _spawnNext,
@@ -146,8 +159,20 @@ class SquishyGame extends FlameGame {
   SmashableDef? _selectNextSmashable() {
     if (_pool.isEmpty) return null;
     final profile = ServiceLocator.progression.profile;
+    final gated = packGate.filterPool(
+      objectsByPack: _pool,
+      rareBurstsByPack: profile.rareBurstsByPack,
+      epicBurstsByPack: profile.epicBurstsByPack,
+    );
+    // If gating produced an empty pool (pathological — every pack is
+    // fully locked), fall back to the ungated pool so the game keeps
+    // spawning. Should only happen if a pack author mis-configures
+    // thresholds for a pack with no commons.
+    final effectivePool = (gated.isEmpty ? _pool : gated)
+        .map((e) => e.def)
+        .toList(growable: false);
     final def = pitySelector.pick(
-      pool: _pool,
+      pool: effectivePool,
       rollsSinceRare: profile.rollsSinceRare,
       rollsSinceEpic: profile.rollsSinceEpic,
       rollsSinceMythic: profile.rollsSinceMythic,
@@ -212,6 +237,22 @@ class SquishyGame extends FlameGame {
           packId: _activePackId!,
           rarity: c.def.rarity,
           discoveredCount: profile.discoveredSmashableIds.length + 1,
+        );
+      }
+    }
+
+    // Per-pack burst tracking for acquisition gating. Repeat bursts
+    // count so even a small pool of rares can still pace the gate.
+    // Look up the owning pack from the spawn-time context rather than
+    // _activePackId, which is featured-pack-scoped and not necessarily
+    // where this object lives.
+    if (c.def.rarity.index >= Rarity.rare.index) {
+      final owningPackId =
+          _defIdToPackId[c.def.id] ?? _activePackId;
+      if (owningPackId != null) {
+        ServiceLocator.progression.noteBurstForPack(
+          packId: owningPackId,
+          rarity: c.def.rarity,
         );
       }
     }

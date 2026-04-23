@@ -118,4 +118,29 @@ class ProgressionRepository {
     }
     return added;
   }
+
+  /// Record a burst for pack-level acquisition gating. Bumps the
+  /// rare-bursts counter when [rarity] is rare+ and the epic-bursts
+  /// counter when it's epic+. Callers should invoke this on every
+  /// rare+ burst regardless of whether the object was newly
+  /// discovered — repeat bursts count toward unlock thresholds.
+  Future<void> noteBurstForPack({
+    required String packId,
+    required Rarity rarity,
+  }) async {
+    if (rarity.index < Rarity.rare.index) return;
+    profile.rareBurstsByPack[packId] =
+        (profile.rareBurstsByPack[packId] ?? 0) + 1;
+    if (rarity.index >= Rarity.epic.index) {
+      profile.epicBurstsByPack[packId] =
+          (profile.epicBurstsByPack[packId] ?? 0) + 1;
+    }
+    await _persistence.saveProfile(profile);
+  }
+
+  int rareBurstsInPack(String packId) =>
+      profile.rareBurstsByPack[packId] ?? 0;
+
+  int epicBurstsInPack(String packId) =>
+      profile.epicBurstsByPack[packId] ?? 0;
 }

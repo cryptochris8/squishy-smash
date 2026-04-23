@@ -258,7 +258,7 @@ class _RarityBadge extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            rarity.token.toUpperCase(),
+            rarity.displayLabel.toUpperCase(),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w900,

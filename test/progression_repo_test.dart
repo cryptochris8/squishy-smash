@@ -303,6 +303,75 @@ void main() {
     });
   });
 
+  group('ProgressionRepository per-pack burst tracking', () {
+    test('noteBurstForPack is a no-op for commons', () async {
+      final repo = await _open();
+      await repo.noteBurstForPack(
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.common,
+      );
+      expect(repo.profile.rareBurstsByPack, isEmpty);
+      expect(repo.profile.epicBurstsByPack, isEmpty);
+    });
+
+    test('rare burst bumps only the rare counter for that pack', () async {
+      final repo = await _open();
+      await repo.noteBurstForPack(
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.rare,
+      );
+      await repo.noteBurstForPack(
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.rare,
+      );
+      expect(repo.rareBurstsInPack('launch_squishy_foods'), 2);
+      expect(repo.epicBurstsInPack('launch_squishy_foods'), 0);
+      // Other packs untouched.
+      expect(repo.rareBurstsInPack('goo_fidgets_drop_01'), 0);
+    });
+
+    test('epic burst bumps both rare and epic counters', () async {
+      final repo = await _open();
+      await repo.noteBurstForPack(
+        packId: 'creepy_cute_pack_01',
+        rarity: Rarity.epic,
+      );
+      expect(repo.rareBurstsInPack('creepy_cute_pack_01'), 1);
+      expect(repo.epicBurstsInPack('creepy_cute_pack_01'), 1);
+    });
+
+    test('mythic burst bumps both counters too', () async {
+      final repo = await _open();
+      await repo.noteBurstForPack(
+        packId: 'dumpling_squishy_drop_01',
+        rarity: Rarity.mythic,
+      );
+      expect(repo.rareBurstsInPack('dumpling_squishy_drop_01'), 1);
+      expect(repo.epicBurstsInPack('dumpling_squishy_drop_01'), 1);
+    });
+
+    test('per-pack counters persist across repo re-open', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final p1 = await Persistence.open();
+      final packs = PackRepository(<ContentPack>[], _emptySchedule());
+      final repo1 = ProgressionRepository(p1, packs);
+      await repo1.noteBurstForPack(
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.rare,
+      );
+      await repo1.noteBurstForPack(
+        packId: 'creepy_cute_pack_01',
+        rarity: Rarity.epic,
+      );
+
+      final p2 = await Persistence.open();
+      final repo2 = ProgressionRepository(p2, packs);
+      expect(repo2.rareBurstsInPack('launch_squishy_foods'), 1);
+      expect(repo2.rareBurstsInPack('creepy_cute_pack_01'), 1);
+      expect(repo2.epicBurstsInPack('creepy_cute_pack_01'), 1);
+    });
+  });
+
   group('ContentLoader bundledPackPaths', () {
     test('all paths are unique', () async {
       await _verifyBundledPackPathsUnique();

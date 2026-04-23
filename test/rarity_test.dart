@@ -68,6 +68,13 @@ void main() {
       expect(Rarity.epic.promptsShareCapture, isFalse);
       expect(Rarity.mythic.promptsShareCapture, isTrue);
     });
+
+    test('displayLabel surfaces top tier as "Legendary" (not mythic)', () {
+      expect(Rarity.common.displayLabel, 'Common');
+      expect(Rarity.rare.displayLabel, 'Rare');
+      expect(Rarity.epic.displayLabel, 'Epic');
+      expect(Rarity.mythic.displayLabel, 'Legendary');
+    });
   });
 
   group('weightedPick', () {

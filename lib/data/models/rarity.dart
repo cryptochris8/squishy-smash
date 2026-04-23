@@ -19,6 +19,23 @@ extension RarityX on Rarity {
     }
   }
 
+  /// Player-facing label. The top tier is surfaced as "LEGENDARY"
+  /// per the collectible rarity map, while the enum variant stays
+  /// `mythic` internally to match the persisted token and voice-line
+  /// registry keys. Callers that want a capitalized label use this.
+  String get displayLabel {
+    switch (this) {
+      case Rarity.common:
+        return 'Common';
+      case Rarity.rare:
+        return 'Rare';
+      case Rarity.epic:
+        return 'Epic';
+      case Rarity.mythic:
+        return 'Legendary';
+    }
+  }
+
   /// Default drop weight used when a pack does not override per-object weights.
   /// Higher = more likely. Tuned so mythic is < 1% and epic is ~4%.
   int get defaultWeight {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/player_profile.dart';
@@ -18,6 +20,8 @@ class Persistence {
   static const String _rollsSinceMythicKey = 'profile.rolls_since_mythic';
   static const String _discoveredIdsKey = 'profile.discovered_ids';
   static const String _rarestSeenKey = 'profile.rarest_seen';
+  static const String _rareBurstsByPackKey = 'profile.rare_bursts_by_pack';
+  static const String _epicBurstsByPackKey = 'profile.epic_bursts_by_pack';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -51,7 +55,30 @@ class Persistence {
       rollsSinceMythic: _prefs.getInt(_rollsSinceMythicKey) ?? 0,
       discoveredSmashableIds: discovered.toSet(),
       rarestSeen: rarityFromToken(_prefs.getString(_rarestSeenKey)),
+      rareBurstsByPack: _loadIntMap(_rareBurstsByPackKey),
+      epicBurstsByPack: _loadIntMap(_epicBurstsByPackKey),
     );
+  }
+
+  /// Deserialize a {pack_id -> int} map stored as a JSON string.
+  /// Silently returns {} for missing or malformed state so a corrupt
+  /// pref can't brick load.
+  Map<String, int> _loadIntMap(String key) {
+    final raw = _prefs.getString(key);
+    if (raw == null || raw.isEmpty) return <String, int>{};
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        final out = <String, int>{};
+        decoded.forEach((k, v) {
+          if (k is String && v is num) out[k] = v.toInt();
+        });
+        return out;
+      }
+    } catch (_) {
+      // fall through to empty map
+    }
+    return <String, int>{};
   }
 
   Future<void> saveProfile(PlayerProfile p) async {
@@ -73,6 +100,14 @@ class Persistence {
       p.discoveredSmashableIds.toList(),
     );
     await _prefs.setString(_rarestSeenKey, p.rarestSeen.token);
+    await _prefs.setString(
+      _rareBurstsByPackKey,
+      jsonEncode(p.rareBurstsByPack),
+    );
+    await _prefs.setString(
+      _epicBurstsByPackKey,
+      jsonEncode(p.epicBurstsByPack),
+    );
   }
 
   bool get hapticsEnabled => _prefs.getBool(_hapticsKey) ?? true;

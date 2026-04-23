@@ -24,6 +24,24 @@ class PackRepository {
     return out;
   }
 
+  /// Each object paired with its owning pack — lets the spawn pipeline
+  /// resolve per-pack gating + burst tracking without piping packIds
+  /// through every layer. Duplicate object IDs across packs resolve to
+  /// the first pack seen.
+  List<(ContentPack, SmashableDef)> objectsForPacksWithContext(
+    Iterable<String> packIds,
+  ) {
+    final out = <(ContentPack, SmashableDef)>[];
+    for (final id in packIds) {
+      final p = byId(id);
+      if (p == null) continue;
+      for (final obj in p.objects) {
+        out.add((p, obj));
+      }
+    }
+    return out;
+  }
+
   ContentPack get launchPack => byId('launch_squishy_foods')!;
 
   List<String> allObjectSoundPaths() {
