@@ -21,6 +21,13 @@ void main() {
       expect(profile.unlockedPackIds, <String>{'launch_squishy_foods'});
     });
 
+    test('first-launch profile unlocks only the launch arena', () async {
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.unlockedArenaKeys, <String>{'mochi_sunset_beach'});
+      expect(profile.activeArenaKey, 'mochi_sunset_beach');
+    });
+
     test('haptics defaults on, mute defaults off', () async {
       final p = await Persistence.open();
       expect(p.hapticsEnabled, isTrue);
@@ -40,6 +47,12 @@ void main() {
         bestScore: 9876,
         bestCombo: 42,
         sessionCount: 7,
+        unlockedArenaKeys: <String>{
+          'mochi_sunset_beach',
+          'candy_cloud_kitchen',
+          'neon_fidget_arcade',
+        },
+        activeArenaKey: 'neon_fidget_arcade',
       );
       await p.saveProfile(profile);
 
@@ -52,6 +65,12 @@ void main() {
       expect(reloaded.bestScore, 9876);
       expect(reloaded.bestCombo, 42);
       expect(reloaded.sessionCount, 7);
+      expect(reloaded.unlockedArenaKeys, {
+        'mochi_sunset_beach',
+        'candy_cloud_kitchen',
+        'neon_fidget_arcade',
+      });
+      expect(reloaded.activeArenaKey, 'neon_fidget_arcade');
     });
 
     test('settings toggles round-trip', () async {

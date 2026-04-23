@@ -123,6 +123,84 @@ void main() {
     });
   });
 
+  group('ProgressionRepository arena unlock flow', () {
+    test('fresh profile: only the launch arena unlocked + active', () async {
+      final repo = await _open();
+      expect(repo.profile.unlockedArenaKeys, <String>{'mochi_sunset_beach'});
+      expect(repo.profile.activeArenaKey, 'mochi_sunset_beach');
+      expect(repo.isArenaUnlocked('mochi_sunset_beach'), isTrue);
+      expect(repo.isArenaUnlocked('neon_fidget_arcade'), isFalse);
+    });
+
+    test('unlocking a pack auto-grants its bundled arena', () async {
+      final repo = await _open();
+      await repo.awardCoins(1000);
+      // dumpling_squishy_drop_01 bundles candy_cloud_kitchen.
+      expect(await repo.tryUnlock('dumpling_squishy_drop_01'), isTrue);
+      expect(repo.isArenaUnlocked('candy_cloud_kitchen'), isTrue);
+      // ...but not arenas bundled with other packs.
+      expect(repo.isArenaUnlocked('goo_laboratory'), isFalse);
+    });
+
+    test('tryUnlockArena succeeds for a standalone arena when affordable',
+        () async {
+      final repo = await _open();
+      await repo.awardCoins(200);
+      // forest_dew_garden is standalone at 100 coins.
+      expect(await repo.tryUnlockArena('forest_dew_garden'), isTrue);
+      expect(repo.profile.coins, 100);
+      expect(repo.isArenaUnlocked('forest_dew_garden'), isTrue);
+    });
+
+    test('tryUnlockArena fails when coins insufficient', () async {
+      final repo = await _open();
+      await repo.awardCoins(50);
+      expect(await repo.tryUnlockArena('forest_dew_garden'), isFalse);
+      expect(repo.profile.coins, 50);
+      expect(repo.isArenaUnlocked('forest_dew_garden'), isFalse);
+    });
+
+    test('tryUnlockArena rejects pack-bundled arenas', () async {
+      final repo = await _open();
+      await repo.awardCoins(10000);
+      // candy_cloud_kitchen has cost 0 + bundledWithPack — not buyable
+      // through the standalone path.
+      expect(await repo.tryUnlockArena('candy_cloud_kitchen'), isFalse);
+      expect(repo.profile.coins, 10000);
+    });
+
+    test('tryUnlockArena rejects unknown arena keys', () async {
+      final repo = await _open();
+      await repo.awardCoins(10000);
+      expect(await repo.tryUnlockArena('not_a_real_arena'), isFalse);
+      expect(repo.profile.coins, 10000);
+    });
+
+    test('tryUnlockArena is idempotent', () async {
+      final repo = await _open();
+      await repo.awardCoins(300);
+      expect(await repo.tryUnlockArena('forest_dew_garden'), isTrue);
+      expect(await repo.tryUnlockArena('forest_dew_garden'), isFalse);
+      // No second deduction.
+      expect(repo.profile.coins, 200);
+    });
+
+    test('setActiveArena requires ownership', () async {
+      final repo = await _open();
+      // Player owns mochi_sunset_beach by default but not gelatin_reef.
+      expect(await repo.setActiveArena('gelatin_reef'), isFalse);
+      expect(repo.profile.activeArenaKey, 'mochi_sunset_beach');
+    });
+
+    test('setActiveArena flips the active arena and persists', () async {
+      final repo = await _open();
+      await repo.awardCoins(200);
+      await repo.tryUnlockArena('forest_dew_garden');
+      expect(await repo.setActiveArena('forest_dew_garden'), isTrue);
+      expect(repo.profile.activeArenaKey, 'forest_dew_garden');
+    });
+  });
+
   group('ContentLoader bundledPackPaths', () {
     test('all paths are unique', () async {
       await _verifyBundledPackPathsUnique();

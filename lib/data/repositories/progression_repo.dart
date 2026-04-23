@@ -1,3 +1,4 @@
+import '../../game/systems/arena_registry.dart';
 import '../models/player_profile.dart';
 import '../persistence.dart';
 import 'pack_repository.dart';
@@ -12,12 +13,48 @@ class ProgressionRepository {
 
   bool isUnlocked(String packId) => profile.unlockedPackIds.contains(packId);
 
+  bool isArenaUnlocked(String arenaKey) =>
+      profile.unlockedArenaKeys.contains(arenaKey);
+
   Future<bool> tryUnlock(String packId) async {
     final pack = _packs.byId(packId);
     if (pack == null || isUnlocked(packId)) return false;
     if (profile.coins < pack.unlockCost) return false;
     profile.coins -= pack.unlockCost;
     profile.unlockedPackIds.add(packId);
+    // Auto-grant the arena bundled with this pack so the player walks
+    // straight into the new backdrop after purchase. No extra coin cost.
+    for (final theme in ArenaRegistry.all) {
+      if (theme.bundledWithPack == packId) {
+        profile.unlockedArenaKeys.add(theme.key);
+      }
+    }
+    await _persistence.saveProfile(profile);
+    return true;
+  }
+
+  /// Unlock a standalone arena SKU (one that isn't bundled with a
+  /// pack). Returns false if the arena doesn't exist, is already
+  /// unlocked, or the player can't afford it. Pack-bundled arenas are
+  /// not purchasable here — they come free with their pack.
+  Future<bool> tryUnlockArena(String arenaKey) async {
+    if (!ArenaRegistry.isKnown(arenaKey)) return false;
+    if (isArenaUnlocked(arenaKey)) return false;
+    final theme = ArenaRegistry.byKey(arenaKey);
+    if (!theme.isStandalone) return false;
+    if (profile.coins < theme.cost) return false;
+    profile.coins -= theme.cost;
+    profile.unlockedArenaKeys.add(arenaKey);
+    await _persistence.saveProfile(profile);
+    return true;
+  }
+
+  /// Set the arena rendered behind gameplay. Returns false (no-op) if
+  /// the player doesn't own the arena yet.
+  Future<bool> setActiveArena(String arenaKey) async {
+    if (!isArenaUnlocked(arenaKey)) return false;
+    if (profile.activeArenaKey == arenaKey) return true;
+    profile.activeArenaKey = arenaKey;
     await _persistence.saveProfile(profile);
     return true;
   }

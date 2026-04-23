@@ -10,6 +10,8 @@ class Persistence {
   static const String _bestScoreKey = 'profile.best_score';
   static const String _bestComboKey = 'profile.best_combo';
   static const String _sessionCountKey = 'profile.session_count';
+  static const String _arenaUnlocksKey = 'profile.arena_unlocks';
+  static const String _activeArenaKey = 'profile.active_arena';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -21,13 +23,21 @@ class Persistence {
   }
 
   PlayerProfile loadProfile() {
-    final unlocks = _prefs.getStringList(_unlocksKey) ?? <String>['launch_squishy_foods'];
+    final unlocks =
+        _prefs.getStringList(_unlocksKey) ?? <String>['launch_squishy_foods'];
+    // Pre-arena-unlocks saves: default to the free launch arena so
+    // existing players don't lose their backdrop on app upgrade.
+    final arenaUnlocks = _prefs.getStringList(_arenaUnlocksKey) ??
+        <String>['mochi_sunset_beach'];
     return PlayerProfile(
       coins: _prefs.getInt(_coinsKey) ?? 0,
       unlockedPackIds: unlocks.toSet(),
       bestScore: _prefs.getInt(_bestScoreKey) ?? 0,
       bestCombo: _prefs.getInt(_bestComboKey) ?? 0,
       sessionCount: _prefs.getInt(_sessionCountKey) ?? 0,
+      unlockedArenaKeys: arenaUnlocks.toSet(),
+      activeArenaKey:
+          _prefs.getString(_activeArenaKey) ?? 'mochi_sunset_beach',
     );
   }
 
@@ -37,6 +47,11 @@ class Persistence {
     await _prefs.setInt(_bestScoreKey, p.bestScore);
     await _prefs.setInt(_bestComboKey, p.bestCombo);
     await _prefs.setInt(_sessionCountKey, p.sessionCount);
+    await _prefs.setStringList(
+      _arenaUnlocksKey,
+      p.unlockedArenaKeys.toList(),
+    );
+    await _prefs.setString(_activeArenaKey, p.activeArenaKey);
   }
 
   bool get hapticsEnabled => _prefs.getBool(_hapticsKey) ?? true;

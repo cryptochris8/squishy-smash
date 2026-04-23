@@ -67,18 +67,14 @@ class SquishyGame extends FlameGame {
       ..anchor = Anchor.topLeft
       ..position = Vector2.zero();
 
-    // Pick the arena theme from the currently featured (or first unlocked)
-    // pack. Unknown arenaSuggestion strings fall back to the launch
-    // theme so the game still renders even with incomplete content.
-    final featuredPackId = ServiceLocator.packs.schedule
-            .currentWeek(DateTime.now())
-            ?.featuredPack ??
-        (ServiceLocator.progression.profile.unlockedPackIds.isNotEmpty
-            ? ServiceLocator.progression.profile.unlockedPackIds.first
-            : 'launch_squishy_foods');
-    final featuredPack = ServiceLocator.packs.byId(featuredPackId);
-    final arenaTheme =
-        ArenaRegistry.themeFor(featuredPack?.arenaSuggestion);
+    // Arena theme is player-controlled via the Settings screen — pulled
+    // from PlayerProfile.activeArenaKey rather than the featured pack.
+    // ArenaRegistry.byKey falls back to mochi_sunset_beach for unknown
+    // keys so the game keeps rendering even if a save references an
+    // arena that's been removed from the registry.
+    final arenaTheme = ArenaRegistry.byKey(
+      ServiceLocator.progression.profile.activeArenaKey,
+    );
 
     // Create events early so SkyboxComponent can report load failures to
     // analytics during its own onLoad. Reused for the rest of the round.
