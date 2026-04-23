@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/foundation.dart' show VoidCallback;
 import 'package:flutter/painting.dart';
 
 import '../analytics/events.dart';
