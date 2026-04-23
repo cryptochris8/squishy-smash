@@ -44,9 +44,49 @@ class _HudOverlayState extends State<HudOverlay> {
     }
   }
 
+  /// On-screen banner shown only when the skybox failed to load — gives a
+  /// TestFlight tester (no Mac, no device console) something concrete to
+  /// screenshot and report back. Returns null when everything loaded.
+  Widget? _skyboxDiagnostic() {
+    try {
+      final sky = widget.game.skybox;
+      if (!sky.hasLoadFailure) return null;
+      final lines = <String>[
+        'SKYBOX LOAD FAILED — theme=${sky.theme.key}',
+        if (sky.calmError != null) 'calm: ${sky.calmError}',
+        if (sky.revealError != null) 'reveal: ${sky.revealError}',
+      ];
+      return Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xCC8B0000),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: lines
+              .map((line) => Text(
+                    line,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontFamily: 'monospace',
+                      height: 1.3,
+                    ),
+                  ))
+              .toList(growable: false),
+        ),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = _readGame();
+    final diag = _skyboxDiagnostic();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -86,6 +126,10 @@ class _HudOverlayState extends State<HudOverlay> {
                 ),
               ],
             ),
+            if (diag != null) ...[
+              const SizedBox(height: 12),
+              diag,
+            ],
           ],
         ),
       ),

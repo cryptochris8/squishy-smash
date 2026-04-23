@@ -5,6 +5,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
+import '../../analytics/events.dart';
 import '../systems/arena_registry.dart';
 import '../systems/skybox_reveal_controller.dart';
 
@@ -26,19 +27,38 @@ class SkyboxComponent extends PositionComponent {
     required Vector2 size,
     required this.theme,
     SkyboxRevealController? controller,
+    this.events,
   })  : controller = controller ?? SkyboxRevealController(),
         super(size: size);
 
   final ArenaTheme theme;
   final SkyboxRevealController controller;
 
+  /// Optional analytics sink — when present, asset load failures are
+  /// reported via [GameEvents.assetLoadFailed] so a remote telemetry
+  /// backend (Sentry/Crashlytics/Firebase) can capture iOS-only decode
+  /// failures without device-log access.
+  final GameEvents? events;
+
   ui.Image? _calmImage;
   ui.Image? _revealImage;
 
+  /// Per-layer load error string, or null if the layer loaded fine. The
+  /// HUD overlay reads these to render an on-screen diagnostic banner so
+  /// a TestFlight tester can screenshot the failure mode without needing
+  /// a Mac to view the device console.
+  String? calmError;
+  String? revealError;
+  bool get hasLoadFailure => calmError != null || revealError != null;
+
   @override
   Future<void> onLoad() async {
-    _calmImage = await _tryLoad(theme.calmSpritePath);
-    _revealImage = await _tryLoad(theme.revealSpritePath);
+    final calmResult = await _tryLoad(theme.calmSpritePath);
+    _calmImage = calmResult.image;
+    calmError = calmResult.error;
+    final revealResult = await _tryLoad(theme.revealSpritePath);
+    _revealImage = revealResult.image;
+    revealError = revealResult.error;
     debugPrint(
       'SkyboxComponent[${theme.key}]: '
       'calm=${_calmImage != null ? "${_calmImage!.width}x${_calmImage!.height}" : "FALLBACK-GRADIENT"}, '
@@ -46,14 +66,22 @@ class SkyboxComponent extends PositionComponent {
     );
   }
 
-  Future<ui.Image?> _tryLoad(String imagesRelativePath) async {
+  Future<({ui.Image? image, String? error})> _tryLoad(
+    String imagesRelativePath,
+  ) async {
     try {
-      return await Flame.images.load(imagesRelativePath);
+      final image = await Flame.images.load(imagesRelativePath);
+      return (image: image, error: null);
     } catch (e) {
+      final errorString = e.toString();
       debugPrint(
-        'SkyboxComponent: image load FAILED for $imagesRelativePath — $e',
+        'SkyboxComponent: image load FAILED for $imagesRelativePath — $errorString',
       );
-      return null;
+      events?.assetLoadFailed(
+        assetPath: 'assets/images/$imagesRelativePath',
+        error: errorString,
+      );
+      return (image: null, error: errorString);
     }
   }
 

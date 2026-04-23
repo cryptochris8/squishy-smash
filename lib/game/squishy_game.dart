@@ -80,9 +80,15 @@ class SquishyGame extends FlameGame {
     final featuredPack = ServiceLocator.packs.byId(featuredPackId);
     final arenaTheme =
         ArenaRegistry.themeFor(featuredPack?.arenaSuggestion);
+
+    // Create events early so SkyboxComponent can report load failures to
+    // analytics during its own onLoad. Reused for the rest of the round.
+    events = GameEvents(ServiceLocator.analytics);
+
     skybox = SkyboxComponent(
       size: arena.arenaSize.clone(),
       theme: arenaTheme,
+      events: events,
     );
     await arena.add(skybox);
 
@@ -104,8 +110,6 @@ class SquishyGame extends FlameGame {
         shaker: shaker,
       ),
     )..voiceLines.addAll(VoiceLineRegistry.dispatcherMap);
-
-    events = GameEvents(ServiceLocator.analytics);
 
     final featured = ServiceLocator.packs.schedule.currentWeek(DateTime.now());
     _activePackId = featured?.featuredPack ??
