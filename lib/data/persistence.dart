@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/player_profile.dart';
+import 'models/rarity.dart';
 
 class Persistence {
   Persistence._(this._prefs);
@@ -12,6 +13,11 @@ class Persistence {
   static const String _sessionCountKey = 'profile.session_count';
   static const String _arenaUnlocksKey = 'profile.arena_unlocks';
   static const String _activeArenaKey = 'profile.active_arena';
+  static const String _rollsSinceRareKey = 'profile.rolls_since_rare';
+  static const String _rollsSinceEpicKey = 'profile.rolls_since_epic';
+  static const String _rollsSinceMythicKey = 'profile.rolls_since_mythic';
+  static const String _discoveredIdsKey = 'profile.discovered_ids';
+  static const String _rarestSeenKey = 'profile.rarest_seen';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -29,6 +35,8 @@ class Persistence {
     // existing players don't lose their backdrop on app upgrade.
     final arenaUnlocks = _prefs.getStringList(_arenaUnlocksKey) ??
         <String>['mochi_sunset_beach'];
+    final discovered =
+        _prefs.getStringList(_discoveredIdsKey) ?? const <String>[];
     return PlayerProfile(
       coins: _prefs.getInt(_coinsKey) ?? 0,
       unlockedPackIds: unlocks.toSet(),
@@ -38,6 +46,11 @@ class Persistence {
       unlockedArenaKeys: arenaUnlocks.toSet(),
       activeArenaKey:
           _prefs.getString(_activeArenaKey) ?? 'mochi_sunset_beach',
+      rollsSinceRare: _prefs.getInt(_rollsSinceRareKey) ?? 0,
+      rollsSinceEpic: _prefs.getInt(_rollsSinceEpicKey) ?? 0,
+      rollsSinceMythic: _prefs.getInt(_rollsSinceMythicKey) ?? 0,
+      discoveredSmashableIds: discovered.toSet(),
+      rarestSeen: rarityFromToken(_prefs.getString(_rarestSeenKey)),
     );
   }
 
@@ -52,6 +65,14 @@ class Persistence {
       p.unlockedArenaKeys.toList(),
     );
     await _prefs.setString(_activeArenaKey, p.activeArenaKey);
+    await _prefs.setInt(_rollsSinceRareKey, p.rollsSinceRare);
+    await _prefs.setInt(_rollsSinceEpicKey, p.rollsSinceEpic);
+    await _prefs.setInt(_rollsSinceMythicKey, p.rollsSinceMythic);
+    await _prefs.setStringList(
+      _discoveredIdsKey,
+      p.discoveredSmashableIds.toList(),
+    );
+    await _prefs.setString(_rarestSeenKey, p.rarestSeen.token);
   }
 
   bool get hapticsEnabled => _prefs.getBool(_hapticsKey) ?? true;

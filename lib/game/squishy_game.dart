@@ -19,6 +19,7 @@ import 'systems/combo_controller.dart';
 import 'systems/feedback_dispatcher.dart';
 import 'systems/flame_feedback_sink.dart';
 import 'systems/haptics_manager.dart';
+import 'systems/rarity_pity_selector.dart';
 import 'systems/score_controller.dart';
 import 'systems/spawn_manager.dart';
 import 'systems/voice_line_registry.dart';
@@ -46,6 +47,8 @@ class SquishyGame extends FlameGame {
   late final SkyboxComponent skybox;
   late final GameEvents events;
   late final FeedbackDispatcher feedback;
+  late final RarityPitySelector pitySelector;
+  late final List<SmashableDef> _pool;
 
   final Random _rng = Random();
   double _roundTimer = 60;
@@ -119,10 +122,14 @@ class SquishyGame extends FlameGame {
       );
     }
 
-    final pool = ServiceLocator.packs.objectsForPacks(
+    _pool = ServiceLocator.packs.objectsForPacks(
       ServiceLocator.progression.profile.unlockedPackIds,
     );
-    spawner = SpawnManager(pool: pool, rng: _rng, onSpawn: _spawnNext);
+    pitySelector = const RarityPitySelector();
+    spawner = SpawnManager(
+      selectNext: _selectNextSmashable,
+      onSpawn: _spawnNext,
+    );
     await add(spawner);
     spawner.requestSpawn(0);
   }
@@ -134,6 +141,34 @@ class SquishyGame extends FlameGame {
     combo.tick(dt);
     _roundTimer -= dt;
     if (_roundTimer <= 0) _endRound();
+  }
+
+  SmashableDef? _selectNextSmashable() {
+    if (_pool.isEmpty) return null;
+    final profile = ServiceLocator.progression.profile;
+    final def = pitySelector.pick(
+      pool: _pool,
+      rollsSinceRare: profile.rollsSinceRare,
+      rollsSinceEpic: profile.rollsSinceEpic,
+      rollsSinceMythic: profile.rollsSinceMythic,
+      comboMultiplier: combo.multiplier,
+      rng: _rng,
+    );
+    final (nextRare, nextEpic, nextMythic) = pitySelector.advanceCounters(
+      pickedRarity: def.rarity,
+      rollsSinceRare: profile.rollsSinceRare,
+      rollsSinceEpic: profile.rollsSinceEpic,
+      rollsSinceMythic: profile.rollsSinceMythic,
+    );
+    // Fire-and-forget persistence — pity counters don't need to block
+    // the Flame tick. Worst case on a crash: a handful of rolls get
+    // replayed next session, which is fine.
+    ServiceLocator.progression.noteSpawnRoll(
+      rollsSinceRare: nextRare,
+      rollsSinceEpic: nextEpic,
+      rollsSinceMythic: nextMythic,
+    );
+    return def;
   }
 
   void _spawnNext(SmashableDef def) {
@@ -160,6 +195,26 @@ class SquishyGame extends FlameGame {
     _coinsEarned += c.def.coinReward;
     _smashes += 1;
     ServiceLocator.progression.awardCoins(c.def.coinReward);
+
+    // Collection tracking: first-burst check is against the in-memory
+    // profile so we can fire the analytics event synchronously. The
+    // repo persists asynchronously.
+    final profile = ServiceLocator.progression.profile;
+    final isFirstBurst = !profile.discoveredSmashableIds.contains(c.def.id);
+    if (isFirstBurst) {
+      ServiceLocator.progression.markDiscovered(
+        smashableId: c.def.id,
+        rarity: c.def.rarity,
+      );
+      if (_activePackId != null) {
+        events.collectionDiscovery(
+          objectId: c.def.id,
+          packId: _activePackId!,
+          rarity: c.def.rarity,
+          discoveredCount: profile.discoveredSmashableIds.length + 1,
+        );
+      }
+    }
 
     // Pick a feedback tier. Rarity wins over combo (a mythic at combo 1
     // should still reveal); common-tier bursts upgrade to megaBurst once

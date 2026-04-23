@@ -1,15 +1,14 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 
-import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
 
 class SpawnManager extends Component {
-  SpawnManager({required this.pool, required this.rng, required this.onSpawn});
+  SpawnManager({required this.selectNext, required this.onSpawn});
 
-  final List<SmashableDef> pool;
-  final Random rng;
+  /// Chooses which smashable to spawn next. Caller owns pity counters
+  /// and combo state — see [RarityPitySelector] in
+  /// `rarity_pity_selector.dart` for the selection policy.
+  final SmashableDef? Function() selectNext;
   final void Function(SmashableDef def) onSpawn;
   double _delay = 0;
   bool _pending = false;
@@ -26,12 +25,8 @@ class SpawnManager extends Component {
     _delay -= dt;
     if (_delay <= 0) {
       _pending = false;
-      if (pool.isEmpty) return;
-      final def = weightedPick<SmashableDef>(
-        items: pool,
-        weightOf: (d) => d.effectiveDropWeight,
-        rng: rng,
-      );
+      final def = selectNext();
+      if (def == null) return;
       onSpawn(def);
     }
   }

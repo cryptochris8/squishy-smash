@@ -65,6 +65,23 @@ class GameEvents {
     });
   }
 
+  /// Fires the first time the player bursts a given smashable ID.
+  /// [discoveredCount] is the total collection size after this pick so
+  /// we can graph collection progress without a server-side join.
+  void collectionDiscovery({
+    required String objectId,
+    required String packId,
+    required Rarity rarity,
+    required int discoveredCount,
+  }) {
+    _sink.event('collection_discovery', <String, Object?>{
+      'object_id': objectId,
+      'pack_id': packId,
+      'rarity': rarity.token,
+      'discovered_count': discoveredCount,
+    });
+  }
+
   // -- live-ops -------------------------------------------------------
 
   void packViewed({required String packId, required String source}) {

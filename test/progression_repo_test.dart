@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squishy_smash/data/content_loader.dart';
 import 'package:squishy_smash/data/models/content_pack.dart';
 import 'package:squishy_smash/data/models/liveops_schedule.dart';
+import 'package:squishy_smash/data/models/rarity.dart';
 import 'package:squishy_smash/data/persistence.dart';
 import 'package:squishy_smash/data/repositories/pack_repository.dart';
 import 'package:squishy_smash/data/repositories/progression_repo.dart';
@@ -198,6 +199,107 @@ void main() {
       await repo.tryUnlockArena('forest_dew_garden');
       expect(await repo.setActiveArena('forest_dew_garden'), isTrue);
       expect(repo.profile.activeArenaKey, 'forest_dew_garden');
+    });
+  });
+
+  group('ProgressionRepository pity counters', () {
+    test('noteSpawnRoll writes counters through to the profile', () async {
+      final repo = await _open();
+      expect(repo.profile.rollsSinceRare, 0);
+      await repo.noteSpawnRoll(
+        rollsSinceRare: 5,
+        rollsSinceEpic: 12,
+        rollsSinceMythic: 88,
+      );
+      expect(repo.profile.rollsSinceRare, 5);
+      expect(repo.profile.rollsSinceEpic, 12);
+      expect(repo.profile.rollsSinceMythic, 88);
+    });
+
+    test('pity counters persist across repo re-open', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final p1 = await Persistence.open();
+      final packs = PackRepository(<ContentPack>[], _emptySchedule());
+      final repo1 = ProgressionRepository(p1, packs);
+      await repo1.noteSpawnRoll(
+        rollsSinceRare: 3,
+        rollsSinceEpic: 9,
+        rollsSinceMythic: 27,
+      );
+
+      final p2 = await Persistence.open();
+      final repo2 = ProgressionRepository(p2, packs);
+      expect(repo2.profile.rollsSinceRare, 3);
+      expect(repo2.profile.rollsSinceEpic, 9);
+      expect(repo2.profile.rollsSinceMythic, 27);
+    });
+  });
+
+  group('ProgressionRepository collection discovery', () {
+    test('markDiscovered returns true on first sighting only', () async {
+      final repo = await _open();
+      expect(
+        await repo.markDiscovered(
+          smashableId: 'dumplio',
+          rarity: Rarity.common,
+        ),
+        isTrue,
+      );
+      expect(repo.profile.discoveredSmashableIds, {'dumplio'});
+
+      expect(
+        await repo.markDiscovered(
+          smashableId: 'dumplio',
+          rarity: Rarity.common,
+        ),
+        isFalse,
+      );
+      expect(repo.profile.discoveredSmashableIds, {'dumplio'});
+    });
+
+    test('markDiscovered raises rarestSeen monotonically', () async {
+      final repo = await _open();
+      expect(repo.profile.rarestSeen, Rarity.common);
+
+      await repo.markDiscovered(
+        smashableId: 'dumplio',
+        rarity: Rarity.rare,
+      );
+      expect(repo.profile.rarestSeen, Rarity.rare);
+
+      await repo.markDiscovered(
+        smashableId: 'gold_dumplio',
+        rarity: Rarity.mythic,
+      );
+      expect(repo.profile.rarestSeen, Rarity.mythic);
+
+      // A later common burst must not downgrade the rarestSeen stat.
+      await repo.markDiscovered(
+        smashableId: 'poppling',
+        rarity: Rarity.common,
+      );
+      expect(repo.profile.rarestSeen, Rarity.mythic);
+    });
+
+    test('discovered set persists across repo re-open', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final p1 = await Persistence.open();
+      final packs = PackRepository(<ContentPack>[], _emptySchedule());
+      final repo1 = ProgressionRepository(p1, packs);
+      await repo1.markDiscovered(
+        smashableId: 'jellyzap',
+        rarity: Rarity.epic,
+      );
+      await repo1.markDiscovered(
+        smashableId: 'slimeorb',
+        rarity: Rarity.common,
+      );
+
+      final p2 = await Persistence.open();
+      final repo2 = ProgressionRepository(p2, packs);
+      expect(repo2.profile.discoveredSmashableIds,
+          {'jellyzap', 'slimeorb'});
+      expect(repo2.profile.rarestSeen, Rarity.epic);
     });
   });
 

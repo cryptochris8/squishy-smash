@@ -1,3 +1,5 @@
+import 'rarity.dart';
+
 class PlayerProfile {
   PlayerProfile({
     required this.coins,
@@ -7,8 +9,14 @@ class PlayerProfile {
     this.sessionCount = 0,
     Set<String>? unlockedArenaKeys,
     this.activeArenaKey = 'mochi_sunset_beach',
-  }) : unlockedArenaKeys =
-            unlockedArenaKeys ?? <String>{'mochi_sunset_beach'};
+    this.rollsSinceRare = 0,
+    this.rollsSinceEpic = 0,
+    this.rollsSinceMythic = 0,
+    Set<String>? discoveredSmashableIds,
+    this.rarestSeen = Rarity.common,
+  })  : unlockedArenaKeys =
+            unlockedArenaKeys ?? <String>{'mochi_sunset_beach'},
+        discoveredSmashableIds = discoveredSmashableIds ?? <String>{};
 
   int coins;
   Set<String> unlockedPackIds;
@@ -30,6 +38,24 @@ class PlayerProfile {
   /// `mochi_sunset_beach` for new players.
   String activeArenaKey;
 
+  /// Spawns since the player last rolled a rare-or-better smashable.
+  /// Drives pity logic so unlucky streaks eventually force a rare+.
+  int rollsSinceRare;
+
+  /// Spawns since the last epic-or-better smashable.
+  int rollsSinceEpic;
+
+  /// Spawns since the last mythic.
+  int rollsSinceMythic;
+
+  /// Smashable IDs the player has burst at least once. Source of truth
+  /// for the collection shelf / rarity book meta layer.
+  Set<String> discoveredSmashableIds;
+
+  /// Highest rarity tier the player has ever bursted. Shown on the
+  /// "rarest squishy found" stat — monotonically non-decreasing.
+  Rarity rarestSeen;
+
   factory PlayerProfile.empty() => PlayerProfile(
         coins: 0,
         unlockedPackIds: <String>{'launch_squishy_foods'},
@@ -38,5 +64,10 @@ class PlayerProfile {
         sessionCount: 0,
         unlockedArenaKeys: <String>{'mochi_sunset_beach'},
         activeArenaKey: 'mochi_sunset_beach',
+        rollsSinceRare: 0,
+        rollsSinceEpic: 0,
+        rollsSinceMythic: 0,
+        discoveredSmashableIds: <String>{},
+        rarestSeen: Rarity.common,
       );
 }

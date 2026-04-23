@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squishy_smash/data/models/player_profile.dart';
+import 'package:squishy_smash/data/models/rarity.dart';
 import 'package:squishy_smash/data/persistence.dart';
 
 void main() {
@@ -19,6 +20,16 @@ void main() {
       expect(profile.bestCombo, 0);
       expect(profile.sessionCount, 0);
       expect(profile.unlockedPackIds, <String>{'launch_squishy_foods'});
+    });
+
+    test('first-launch profile has zeroed pity + empty discovery', () async {
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.rollsSinceRare, 0);
+      expect(profile.rollsSinceEpic, 0);
+      expect(profile.rollsSinceMythic, 0);
+      expect(profile.discoveredSmashableIds, isEmpty);
+      expect(profile.rarestSeen, Rarity.common);
     });
 
     test('first-launch profile unlocks only the launch arena', () async {
@@ -53,6 +64,11 @@ void main() {
           'neon_fidget_arcade',
         },
         activeArenaKey: 'neon_fidget_arcade',
+        rollsSinceRare: 9,
+        rollsSinceEpic: 45,
+        rollsSinceMythic: 312,
+        discoveredSmashableIds: <String>{'dumplio', 'jellyzap', 'slimeorb'},
+        rarestSeen: Rarity.epic,
       );
       await p.saveProfile(profile);
 
@@ -71,6 +87,12 @@ void main() {
         'neon_fidget_arcade',
       });
       expect(reloaded.activeArenaKey, 'neon_fidget_arcade');
+      expect(reloaded.rollsSinceRare, 9);
+      expect(reloaded.rollsSinceEpic, 45);
+      expect(reloaded.rollsSinceMythic, 312);
+      expect(reloaded.discoveredSmashableIds,
+          {'dumplio', 'jellyzap', 'slimeorb'});
+      expect(reloaded.rarestSeen, Rarity.epic);
     });
 
     test('settings toggles round-trip', () async {

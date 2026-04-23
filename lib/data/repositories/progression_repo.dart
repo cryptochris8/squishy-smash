@@ -1,5 +1,6 @@
 import '../../game/systems/arena_registry.dart';
 import '../models/player_profile.dart';
+import '../models/rarity.dart';
 import '../persistence.dart';
 import 'pack_repository.dart';
 
@@ -83,5 +84,38 @@ class ProgressionRepository {
   Future<void> noteSessionStart() async {
     profile.sessionCount += 1;
     await _persistence.saveProfile(profile);
+  }
+
+  /// Persist the advanced pity counters after a spawn roll. The
+  /// selector is pure; this method just writes back the new values.
+  Future<void> noteSpawnRoll({
+    required int rollsSinceRare,
+    required int rollsSinceEpic,
+    required int rollsSinceMythic,
+  }) async {
+    profile.rollsSinceRare = rollsSinceRare;
+    profile.rollsSinceEpic = rollsSinceEpic;
+    profile.rollsSinceMythic = rollsSinceMythic;
+    await _persistence.saveProfile(profile);
+  }
+
+  /// Mark a smashable as discovered the first time the player bursts
+  /// it. Returns true if this was a new discovery (so callers can fire
+  /// a one-shot VFX/analytics event), false if it was already known.
+  /// Also advances [PlayerProfile.rarestSeen] monotonically.
+  Future<bool> markDiscovered({
+    required String smashableId,
+    required Rarity rarity,
+  }) async {
+    final added = profile.discoveredSmashableIds.add(smashableId);
+    var bumpedRarest = false;
+    if (rarity.index > profile.rarestSeen.index) {
+      profile.rarestSeen = rarity;
+      bumpedRarest = true;
+    }
+    if (added || bumpedRarest) {
+      await _persistence.saveProfile(profile);
+    }
+    return added;
   }
 }
