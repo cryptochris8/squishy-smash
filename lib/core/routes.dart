@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../ui/collection_screen.dart';
 import '../ui/gameplay_screen.dart';
 import '../ui/menu_screen.dart';
 import '../ui/results_screen.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String results = '/results';
   static const String shop = '/shop';
   static const String settings = '/settings';
+  static const String collection = '/collection';
 
   static final Map<String, WidgetBuilder> table = <String, WidgetBuilder>{
     menu: (_) => const MenuScreen(),
@@ -21,5 +23,6 @@ class AppRoutes {
     results: (_) => const ResultsScreen(),
     shop: (_) => const ShopScreen(),
     settings: (_) => const SettingsScreen(),
+    collection: (_) => const CollectionScreen(),
   };
 }

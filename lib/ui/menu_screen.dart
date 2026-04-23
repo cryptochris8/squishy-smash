@@ -73,6 +73,13 @@ class MenuScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               BigButton(
+                label: 'COLLECTION',
+                color: const Color(0xFFC98BFF),
+                onTap: () =>
+                    Navigator.pushNamed(context, AppRoutes.collection),
+              ),
+              const SizedBox(height: 12),
+              BigButton(
                 label: 'SETTINGS',
                 color: const Color(0xFF7FE7FF),
                 onTap: () => Navigator.pushNamed(context, AppRoutes.settings),
