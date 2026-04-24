@@ -145,7 +145,15 @@ SQUISHY_FOODS_NEW = [
               "a wobbling caramel pudding with a cherry on top",
               "wobble", "cream_puff_burst", "cream_smudge",
               "pudding", 10, search_tags=["pudding", "wobble"]),
-    # 3 rares to reach 4 (poppling already rare)
+    # 4 rares (poppling was removed in migration; strawberry_dumpling
+    # fills that slot with proper doc-accurate theme).
+    NewObject("strawberry_dumpling", "Strawberry Dumpling", R, "dumpling",
+              "a soft dumpling shaped from strawberry-pink dough with "
+              "visible strawberry seeds and faint red streaks, sweet and "
+              "cheerful face, tiny stem peeking out",
+              "squish", "pink_soup_burst", "soft_peach_splat",
+              "strawberry_dumpling", 16, unlock_tier=2,
+              search_tags=["strawberry", "dumpling", "rare"]),
     NewObject("rainbow_jelly_bun", "Rainbow Jelly Bun", R, "jelly_cube",
               "a translucent steamed bun filled with rainbow jelly, iridescent shimmer",
               "squish", "blue_jelly_burst", "cool_blue_smear",
@@ -187,7 +195,14 @@ SQUISHY_FOODS_NEW = [
 ]
 
 GOO_FIDGETS_NEW = [
-    # Existing: slimeorb (C), goodrop (R), popzee (C)
+    # squish_capsule fills what used to be popzee's common slot.
+    NewObject("squish_capsule", "Squish Capsule", C, "jelly_cube",
+              "a translucent pastel-pink squishy capsule shaped like a "
+              "soft pill with rounded ends, liquid swirls visible inside, "
+              "glossy surface",
+              "wobble", "blue_jelly_burst", "cool_blue_smear",
+              "squish_capsule", 10,
+              search_tags=["capsule", "pill", "fidget"]),
     NewObject("bubble_blob", "Bubble Blob", C, "goo_ball",
               "a translucent bubble-blob fidget with rainbow surface tension",
               "pop", "green_goo_burst", "green_goo_smear",
@@ -228,6 +243,13 @@ GOO_FIDGETS_NEW = [
               "squish", "blue_jelly_burst", "cool_blue_smear",
               "frost", 19, unlock_tier=2,
               search_tags=["frost", "ice", "rare"]),
+    # prism_stress_orb fills what used to be goodrop's rare slot.
+    NewObject("prism_stress_orb", "Prism Stress Orb", R, "stress_ball",
+              "a crystalline stress ball with faceted surface refracting "
+              "rainbow prisms, sphere shape, transparent core catching light",
+              "squish", "blue_jelly_burst", "cool_blue_smear",
+              "prism", 19, unlock_tier=2,
+              search_tags=["prism", "rainbow", "rare"]),
     # 3 epics
     NewObject("plasma_goo_ball", "Plasma Goo Ball", E, "goo_ball",
               "a goo ball glowing with swirling magenta plasma, electric energy inside",
@@ -313,6 +335,14 @@ CREEPY_CUTE_NEW = [
               "squish", "purple_monster_burst", "gold_mythic_splat",
               "arcane_kitty", 36, unlock_tier=3,
               search_tags=["arcane", "cat", "epic"]),
+    # phantom_jelly_beast fills what used to be gloomp's epic slot.
+    NewObject("phantom_jelly_beast", "Phantom Jelly Beast", E, "creature",
+              "an ethereal ghostly jelly creature with translucent pale "
+              "blue-white body, gentle inner glow, wisps trailing beneath, "
+              "friendly half-lidded eyes, spectral aura",
+              "wobble", "blue_jelly_burst", "cool_blue_smear",
+              "phantom_jelly", 36, unlock_tier=3,
+              search_tags=["phantom", "jelly", "epic"]),
     # 1 legendary
     NewObject("mythic_plush_familiar", "Mythic Plush Familiar", M, "creature",
               "a radiant plush familiar with gold-and-white fur, glowing runes, a tiny crown, "

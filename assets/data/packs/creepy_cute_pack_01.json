@@ -28,22 +28,22 @@
   "featuredAudioSet": "creature_giggle_pack",
   "objects": [
     {
-      "id": "squishkin",
-      "name": "Squishkin",
+      "id": "round_eared_creature",
+      "name": "Round Eared Creature",
       "category": "creepy_cute",
       "themeTag": "blind_box_vibe",
-      "sprite": "assets/images/objects/squishkin.png",
-      "thumbnail": "assets/images/thumbnails/squishkin_thumb.png",
+      "sprite": "assets/images/objects/round_eared_creature.png",
+      "thumbnail": "assets/images/thumbnails/round_eared_creature_thumb.png",
       "deformability": 0.78,
       "elasticity": 0.66,
       "burstThreshold": 0.74,
       "gooLevel": 0.61,
       "impactSounds": [
-        "audio/creature/squishkin_snicker_01.mp3",
-        "audio/creature/squishkin_snicker_02.mp3",
-        "audio/creature/squishkin_snicker_03.mp3"
+        "audio/creature/round_eared_creature_snicker_01.mp3",
+        "audio/creature/round_eared_creature_snicker_02.mp3",
+        "audio/creature/round_eared_creature_snicker_03.mp3"
       ],
-      "burstSound": "audio/creature/squishkin_burst_01.mp3",
+      "burstSound": "audio/creature/round_eared_creature_burst_01.mp3",
       "particlePreset": "purple_monster_burst",
       "decalPreset": "purple_monster_splat",
       "coinReward": 18,
@@ -57,21 +57,21 @@
       ]
     },
     {
-      "id": "snagglet",
-      "name": "Snagglet",
+      "id": "candy_fang_creature",
+      "name": "Candy Fang Creature",
       "category": "creepy_cute",
       "themeTag": "snaggletooth",
-      "sprite": "assets/images/objects/snagglet.png",
-      "thumbnail": "assets/images/thumbnails/snagglet_thumb.png",
+      "sprite": "assets/images/objects/candy_fang_creature.png",
+      "thumbnail": "assets/images/thumbnails/candy_fang_creature_thumb.png",
       "deformability": 0.71,
       "elasticity": 0.59,
       "burstThreshold": 0.81,
       "gooLevel": 0.48,
       "impactSounds": [
-        "audio/creature/snagglet_squeak_01.mp3",
-        "audio/creature/snagglet_squeak_02.mp3"
+        "audio/creature/candy_fang_creature_squeak_01.mp3",
+        "audio/creature/candy_fang_creature_squeak_02.mp3"
       ],
-      "burstSound": "audio/creature/snagglet_burst_01.mp3",
+      "burstSound": "audio/creature/candy_fang_creature_burst_01.mp3",
       "particlePreset": "purple_monster_burst",
       "decalPreset": "purple_monster_splat",
       "coinReward": 20,
@@ -82,34 +82,6 @@
         "creepy",
         "cute",
         "spooky"
-      ]
-    },
-    {
-      "id": "gloomp",
-      "name": "Gloomp",
-      "category": "creepy_cute",
-      "themeTag": "mischievous_blob",
-      "sprite": "assets/images/objects/gloomp.png",
-      "thumbnail": "assets/images/thumbnails/gloomp_thumb.png",
-      "deformability": 0.92,
-      "elasticity": 0.51,
-      "burstThreshold": 0.86,
-      "gooLevel": 0.88,
-      "impactSounds": [
-        "audio/creature/gloomp_giggle_01.mp3",
-        "audio/creature/gloomp_giggle_02.mp3"
-      ],
-      "burstSound": "audio/creature/gloomp_burst_01.mp3",
-      "particlePreset": "purple_monster_burst",
-      "decalPreset": "purple_monster_splat",
-      "coinReward": 24,
-      "unlockTier": 3,
-      "rarity": "epic",
-      "searchTags": [
-        "gremlin",
-        "weird",
-        "blob",
-        "cute monster"
       ]
     },
     {
@@ -427,6 +399,31 @@
         "legendary",
         "familiar",
         "mythic"
+      ]
+    },
+    {
+      "id": "phantom_jelly_beast",
+      "name": "Phantom Jelly Beast",
+      "category": "creepy_cute",
+      "themeTag": "phantom_jelly",
+      "sprite": "assets/images/objects/phantom_jelly_beast.png",
+      "thumbnail": "assets/images/thumbnails/phantom_jelly_beast_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/phantom_jelly_beast_squish_01.mp3",
+        "audio/creature/phantom_jelly_beast_squish_02.mp3",
+        "audio/creature/phantom_jelly_beast_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/phantom_jelly_beast_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 36,
+      "unlockTier": 3,
+      "rarity": "epic",
+      "searchTags": [
+        "phantom",
+        "jelly",
+        "epic"
       ]
     }
   ]

@@ -28,22 +28,22 @@
   "featuredAudioSet": "wet_pop_goo_pack",
   "objects": [
     {
-      "id": "slimeorb",
-      "name": "SlimeOrb",
+      "id": "goo_ball",
+      "name": "Goo Ball",
       "category": "goo_fidget",
       "themeTag": "anti_stress",
-      "sprite": "assets/images/objects/slimeorb.png",
-      "thumbnail": "assets/images/thumbnails/slimeorb_thumb.png",
+      "sprite": "assets/images/objects/goo_ball.png",
+      "thumbnail": "assets/images/thumbnails/goo_ball_thumb.png",
       "deformability": 0.95,
       "elasticity": 0.78,
       "burstThreshold": 0.92,
       "gooLevel": 0.42,
       "impactSounds": [
-        "audio/goo/slimeorb_squeeze_01.mp3",
-        "audio/goo/slimeorb_squeeze_02.mp3",
-        "audio/goo/slimeorb_squeeze_03.mp3"
+        "audio/goo/goo_ball_squeeze_01.mp3",
+        "audio/goo/goo_ball_squeeze_02.mp3",
+        "audio/goo/goo_ball_squeeze_03.mp3"
       ],
-      "burstSound": "audio/goo/slimeorb_pop_01.mp3",
+      "burstSound": "audio/goo/goo_ball_pop_01.mp3",
       "particlePreset": "green_goo_burst",
       "decalPreset": "green_goo_smear",
       "coinReward": 14,
@@ -54,62 +54,6 @@
         "antistress",
         "fidget",
         "satisfying"
-      ]
-    },
-    {
-      "id": "goodrop",
-      "name": "GooDrop",
-      "category": "goo_fidget",
-      "themeTag": "slime_pod",
-      "sprite": "assets/images/objects/goodrop.png",
-      "thumbnail": "assets/images/thumbnails/goodrop_thumb.png",
-      "deformability": 0.86,
-      "elasticity": 0.58,
-      "burstThreshold": 0.71,
-      "gooLevel": 0.94,
-      "impactSounds": [
-        "audio/goo/goodrop_squish_01.mp3",
-        "audio/goo/goodrop_squish_02.mp3"
-      ],
-      "burstSound": "audio/goo/goodrop_burst_01.mp3",
-      "particlePreset": "green_goo_burst",
-      "decalPreset": "green_goo_smear",
-      "coinReward": 16,
-      "unlockTier": 2,
-      "rarity": "rare",
-      "searchTags": [
-        "slime",
-        "asmr",
-        "goo",
-        "pop"
-      ]
-    },
-    {
-      "id": "popzee",
-      "name": "Popzee",
-      "category": "goo_fidget",
-      "themeTag": "pop_pod",
-      "sprite": "assets/images/objects/popzee.png",
-      "thumbnail": "assets/images/thumbnails/popzee_thumb.png",
-      "deformability": 0.66,
-      "elasticity": 0.83,
-      "burstThreshold": 0.55,
-      "gooLevel": 0.31,
-      "impactSounds": [
-        "audio/goo/popzee_tick_01.mp3",
-        "audio/goo/popzee_tick_02.mp3"
-      ],
-      "burstSound": "audio/goo/popzee_pop_01.mp3",
-      "particlePreset": "blue_jelly_burst",
-      "decalPreset": "cool_blue_smear",
-      "coinReward": 9,
-      "unlockTier": 1,
-      "rarity": "common",
-      "searchTags": [
-        "bubble",
-        "pop",
-        "fidget",
-        "asmr"
       ]
     },
     {
@@ -432,6 +376,56 @@
         "singularity",
         "legendary",
         "mythic"
+      ]
+    },
+    {
+      "id": "squish_capsule",
+      "name": "Squish Capsule",
+      "category": "goo_fidget",
+      "themeTag": "squish_capsule",
+      "sprite": "assets/images/objects/squish_capsule.png",
+      "thumbnail": "assets/images/thumbnails/squish_capsule_thumb.png",
+      "behaviorProfile": "jelly_cube",
+      "impactSounds": [
+        "audio/goo/squish_capsule_squish_01.mp3",
+        "audio/goo/squish_capsule_squish_02.mp3",
+        "audio/goo/squish_capsule_squish_03.mp3"
+      ],
+      "burstSound": "audio/goo/squish_capsule_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 10,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "capsule",
+        "pill",
+        "fidget"
+      ]
+    },
+    {
+      "id": "prism_stress_orb",
+      "name": "Prism Stress Orb",
+      "category": "goo_fidget",
+      "themeTag": "prism",
+      "sprite": "assets/images/objects/prism_stress_orb.png",
+      "thumbnail": "assets/images/thumbnails/prism_stress_orb_thumb.png",
+      "behaviorProfile": "stress_ball",
+      "impactSounds": [
+        "audio/goo/prism_stress_orb_squish_01.mp3",
+        "audio/goo/prism_stress_orb_squish_02.mp3",
+        "audio/goo/prism_stress_orb_squish_03.mp3"
+      ],
+      "burstSound": "audio/goo/prism_stress_orb_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 19,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "prism",
+        "rainbow",
+        "rare"
       ]
     }
   ]

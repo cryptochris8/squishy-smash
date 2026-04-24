@@ -32,14 +32,14 @@ export interface PackSummary {
 
 export const squishies: Squishy[] = [
   {
-    "id": "squishkin",
-    "name": "Squishkin",
+    "id": "round_eared_creature",
+    "name": "Round Eared Creature",
     "rarity": "common",
     "packId": "creepy_cute_pack_01",
     "packSlug": "creepy-cute-creatures",
     "packName": "Creepy-Cute Creatures",
-    "sprite": "/sprites/squishkin.png",
-    "thumbnail": "/thumbnails/squishkin_thumb.png",
+    "sprite": "/sprites/round_eared_creature.png",
+    "thumbnail": "/thumbnails/round_eared_creature_thumb.png",
     "themeTag": "blind_box_vibe",
     "behaviorProfile": null,
     "searchTags": [
@@ -50,14 +50,14 @@ export const squishies: Squishy[] = [
     ]
   },
   {
-    "id": "snagglet",
-    "name": "Snagglet",
+    "id": "candy_fang_creature",
+    "name": "Candy Fang Creature",
     "rarity": "rare",
     "packId": "creepy_cute_pack_01",
     "packSlug": "creepy-cute-creatures",
     "packName": "Creepy-Cute Creatures",
-    "sprite": "/sprites/snagglet.png",
-    "thumbnail": "/thumbnails/snagglet_thumb.png",
+    "sprite": "/sprites/candy_fang_creature.png",
+    "thumbnail": "/thumbnails/candy_fang_creature_thumb.png",
     "themeTag": "snaggletooth",
     "behaviorProfile": null,
     "searchTags": [
@@ -65,24 +65,6 @@ export const squishies: Squishy[] = [
       "creepy",
       "cute",
       "spooky"
-    ]
-  },
-  {
-    "id": "gloomp",
-    "name": "Gloomp",
-    "rarity": "epic",
-    "packId": "creepy_cute_pack_01",
-    "packSlug": "creepy-cute-creatures",
-    "packName": "Creepy-Cute Creatures",
-    "sprite": "/sprites/gloomp.png",
-    "thumbnail": "/thumbnails/gloomp_thumb.png",
-    "themeTag": "mischievous_blob",
-    "behaviorProfile": null,
-    "searchTags": [
-      "gremlin",
-      "weird",
-      "blob",
-      "cute monster"
     ]
   },
   {
@@ -299,14 +281,31 @@ export const squishies: Squishy[] = [
     ]
   },
   {
-    "id": "slimeorb",
-    "name": "SlimeOrb",
+    "id": "phantom_jelly_beast",
+    "name": "Phantom Jelly Beast",
+    "rarity": "epic",
+    "packId": "creepy_cute_pack_01",
+    "packSlug": "creepy-cute-creatures",
+    "packName": "Creepy-Cute Creatures",
+    "sprite": "/sprites/phantom_jelly_beast.png",
+    "thumbnail": "/thumbnails/phantom_jelly_beast_thumb.png",
+    "themeTag": "phantom_jelly",
+    "behaviorProfile": "creature",
+    "searchTags": [
+      "phantom",
+      "jelly",
+      "epic"
+    ]
+  },
+  {
+    "id": "goo_ball",
+    "name": "Goo Ball",
     "rarity": "common",
     "packId": "goo_fidgets_drop_01",
     "packSlug": "goo-and-fidgets",
     "packName": "Goo & Fidgets",
-    "sprite": "/sprites/slimeorb.png",
-    "thumbnail": "/thumbnails/slimeorb_thumb.png",
+    "sprite": "/sprites/goo_ball.png",
+    "thumbnail": "/thumbnails/goo_ball_thumb.png",
     "themeTag": "anti_stress",
     "behaviorProfile": null,
     "searchTags": [
@@ -314,42 +313,6 @@ export const squishies: Squishy[] = [
       "antistress",
       "fidget",
       "satisfying"
-    ]
-  },
-  {
-    "id": "goodrop",
-    "name": "GooDrop",
-    "rarity": "rare",
-    "packId": "goo_fidgets_drop_01",
-    "packSlug": "goo-and-fidgets",
-    "packName": "Goo & Fidgets",
-    "sprite": "/sprites/goodrop.png",
-    "thumbnail": "/thumbnails/goodrop_thumb.png",
-    "themeTag": "slime_pod",
-    "behaviorProfile": null,
-    "searchTags": [
-      "slime",
-      "asmr",
-      "goo",
-      "pop"
-    ]
-  },
-  {
-    "id": "popzee",
-    "name": "Popzee",
-    "rarity": "common",
-    "packId": "goo_fidgets_drop_01",
-    "packSlug": "goo-and-fidgets",
-    "packName": "Goo & Fidgets",
-    "sprite": "/sprites/popzee.png",
-    "thumbnail": "/thumbnails/popzee_thumb.png",
-    "themeTag": "pop_pod",
-    "behaviorProfile": null,
-    "searchTags": [
-      "bubble",
-      "pop",
-      "fidget",
-      "asmr"
     ]
   },
   {
@@ -571,14 +534,48 @@ export const squishies: Squishy[] = [
     ]
   },
   {
-    "id": "dumplio",
-    "name": "Dumplio",
+    "id": "squish_capsule",
+    "name": "Squish Capsule",
+    "rarity": "common",
+    "packId": "goo_fidgets_drop_01",
+    "packSlug": "goo-and-fidgets",
+    "packName": "Goo & Fidgets",
+    "sprite": "/sprites/squish_capsule.png",
+    "thumbnail": "/thumbnails/squish_capsule_thumb.png",
+    "themeTag": "squish_capsule",
+    "behaviorProfile": "jelly_cube",
+    "searchTags": [
+      "capsule",
+      "pill",
+      "fidget"
+    ]
+  },
+  {
+    "id": "prism_stress_orb",
+    "name": "Prism Stress Orb",
+    "rarity": "rare",
+    "packId": "goo_fidgets_drop_01",
+    "packSlug": "goo-and-fidgets",
+    "packName": "Goo & Fidgets",
+    "sprite": "/sprites/prism_stress_orb.png",
+    "thumbnail": "/thumbnails/prism_stress_orb_thumb.png",
+    "themeTag": "prism",
+    "behaviorProfile": "stress_ball",
+    "searchTags": [
+      "prism",
+      "rainbow",
+      "rare"
+    ]
+  },
+  {
+    "id": "soft_dumpling",
+    "name": "Soft Dumpling",
     "rarity": "common",
     "packId": "launch_squishy_foods",
     "packSlug": "squishy-foods",
     "packName": "Squishy Foods",
-    "sprite": "/sprites/dumplio.png",
-    "thumbnail": "/thumbnails/dumplio_thumb.png",
+    "sprite": "/sprites/soft_dumpling.png",
+    "thumbnail": "/thumbnails/soft_dumpling_thumb.png",
     "themeTag": "viral_food_energy",
     "behaviorProfile": null,
     "searchTags": [
@@ -590,14 +587,14 @@ export const squishies: Squishy[] = [
     ]
   },
   {
-    "id": "jellyzap",
-    "name": "JellyZap",
+    "id": "jelly_bun",
+    "name": "Jelly Bun",
     "rarity": "common",
     "packId": "launch_squishy_foods",
     "packSlug": "squishy-foods",
     "packName": "Squishy Foods",
-    "sprite": "/sprites/jellyzap.png",
-    "thumbnail": "/thumbnails/jellyzap_thumb.png",
+    "sprite": "/sprites/jelly_bun.png",
+    "thumbnail": "/thumbnails/jelly_bun_thumb.png",
     "themeTag": "jelly_cube",
     "behaviorProfile": null,
     "searchTags": [
@@ -605,24 +602,6 @@ export const squishies: Squishy[] = [
       "pop",
       "asmr",
       "satisfying"
-    ]
-  },
-  {
-    "id": "poppling",
-    "name": "Poppling",
-    "rarity": "rare",
-    "packId": "launch_squishy_foods",
-    "packSlug": "squishy-foods",
-    "packName": "Squishy Foods",
-    "sprite": "/sprites/poppling.png",
-    "thumbnail": "/thumbnails/poppling_thumb.png",
-    "themeTag": "soft_dessert",
-    "behaviorProfile": null,
-    "searchTags": [
-      "mochi",
-      "squish",
-      "relaxing",
-      "food"
     ]
   },
   {
@@ -842,6 +821,23 @@ export const squishies: Squishy[] = [
       "celestial",
       "legendary",
       "legendary"
+    ]
+  },
+  {
+    "id": "strawberry_dumpling",
+    "name": "Strawberry Dumpling",
+    "rarity": "rare",
+    "packId": "launch_squishy_foods",
+    "packSlug": "squishy-foods",
+    "packName": "Squishy Foods",
+    "sprite": "/sprites/strawberry_dumpling.png",
+    "thumbnail": "/thumbnails/strawberry_dumpling_thumb.png",
+    "themeTag": "strawberry_dumpling",
+    "behaviorProfile": "dumpling",
+    "searchTags": [
+      "strawberry",
+      "dumpling",
+      "rare"
     ]
   }
 ];

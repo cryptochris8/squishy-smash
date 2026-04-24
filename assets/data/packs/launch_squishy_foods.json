@@ -28,22 +28,22 @@
   "featuredAudioSet": "soft_pop_food_pack",
   "objects": [
     {
-      "id": "dumplio",
-      "name": "Dumplio",
+      "id": "soft_dumpling",
+      "name": "Soft Dumpling",
       "category": "squishy_food",
       "themeTag": "viral_food_energy",
-      "sprite": "assets/images/objects/dumplio.png",
-      "thumbnail": "assets/images/thumbnails/dumplio_thumb.png",
+      "sprite": "assets/images/objects/soft_dumpling.png",
+      "thumbnail": "assets/images/thumbnails/soft_dumpling_thumb.png",
       "deformability": 0.88,
       "elasticity": 0.62,
       "burstThreshold": 0.79,
       "gooLevel": 0.83,
       "impactSounds": [
-        "audio/food/dumplio_squish_01.mp3",
-        "audio/food/dumplio_squish_02.mp3",
-        "audio/food/dumplio_squish_03.mp3"
+        "audio/food/soft_dumpling_squish_01.mp3",
+        "audio/food/soft_dumpling_squish_02.mp3",
+        "audio/food/soft_dumpling_squish_03.mp3"
       ],
-      "burstSound": "audio/food/dumplio_burst_01.mp3",
+      "burstSound": "audio/food/soft_dumpling_burst_01.mp3",
       "particlePreset": "pink_soup_burst",
       "decalPreset": "soft_peach_splat",
       "coinReward": 8,
@@ -58,21 +58,21 @@
       ]
     },
     {
-      "id": "jellyzap",
-      "name": "JellyZap",
+      "id": "jelly_bun",
+      "name": "Jelly Bun",
       "category": "squishy_food",
       "themeTag": "jelly_cube",
-      "sprite": "assets/images/objects/jellyzap.png",
-      "thumbnail": "assets/images/thumbnails/jellyzap_thumb.png",
+      "sprite": "assets/images/objects/jelly_bun.png",
+      "thumbnail": "assets/images/thumbnails/jelly_bun_thumb.png",
       "deformability": 0.74,
       "elasticity": 0.71,
       "burstThreshold": 0.68,
       "gooLevel": 0.57,
       "impactSounds": [
-        "audio/food/jellyzap_hit_01.mp3",
-        "audio/food/jellyzap_hit_02.mp3"
+        "audio/food/jelly_bun_hit_01.mp3",
+        "audio/food/jelly_bun_hit_02.mp3"
       ],
-      "burstSound": "audio/food/jellyzap_pop_01.mp3",
+      "burstSound": "audio/food/jelly_bun_pop_01.mp3",
       "particlePreset": "blue_jelly_burst",
       "decalPreset": "cool_blue_smear",
       "coinReward": 10,
@@ -83,34 +83,6 @@
         "pop",
         "asmr",
         "satisfying"
-      ]
-    },
-    {
-      "id": "poppling",
-      "name": "Poppling",
-      "category": "squishy_food",
-      "themeTag": "soft_dessert",
-      "sprite": "assets/images/objects/poppling.png",
-      "thumbnail": "assets/images/thumbnails/poppling_thumb.png",
-      "deformability": 0.91,
-      "elasticity": 0.52,
-      "burstThreshold": 0.84,
-      "gooLevel": 0.69,
-      "impactSounds": [
-        "audio/food/poppling_hit_01.mp3",
-        "audio/food/poppling_hit_02.mp3"
-      ],
-      "burstSound": "audio/food/poppling_burst_01.mp3",
-      "particlePreset": "cream_puff_burst",
-      "decalPreset": "cream_smudge",
-      "coinReward": 12,
-      "unlockTier": 2,
-      "rarity": "rare",
-      "searchTags": [
-        "mochi",
-        "squish",
-        "relaxing",
-        "food"
       ]
     },
     {
@@ -434,6 +406,31 @@
         "celestial",
         "legendary",
         "mythic"
+      ]
+    },
+    {
+      "id": "strawberry_dumpling",
+      "name": "Strawberry Dumpling",
+      "category": "squishy_food",
+      "themeTag": "strawberry_dumpling",
+      "sprite": "assets/images/objects/strawberry_dumpling.png",
+      "thumbnail": "assets/images/thumbnails/strawberry_dumpling_thumb.png",
+      "behaviorProfile": "dumpling",
+      "impactSounds": [
+        "audio/food/strawberry_dumpling_squish_01.mp3",
+        "audio/food/strawberry_dumpling_squish_02.mp3",
+        "audio/food/strawberry_dumpling_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/strawberry_dumpling_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 16,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "strawberry",
+        "dumpling",
+        "rare"
       ]
     }
   ]
