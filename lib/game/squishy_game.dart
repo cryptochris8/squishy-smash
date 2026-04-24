@@ -222,10 +222,20 @@ class SquishyGame extends FlameGame {
   }
 
   void _handleImpact(SmashableComponent c, double force) {
-    combo.bump();
+    final milestone = combo.bump();
     final base = (5 * force).round();
     score.addHit(base, multiplier: combo.multiplier);
     feedback.dispatch(FeedbackTier.hit, c.def);
+    if (milestone != null && milestone != ComboTier.none) {
+      feedback.dispatch(FeedbackTier.comboMilestone, c.def);
+      // Tiny accent particle burst centered on the object so the
+      // milestone is visually obvious, not just haptic.
+      particles.burst(
+        c.position,
+        preset: c.def.particlePreset,
+        intensity: 0.35 + milestone.index * 0.15,
+      );
+    }
   }
 
   void _handleBurst(SmashableComponent c) {

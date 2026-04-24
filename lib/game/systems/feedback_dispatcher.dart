@@ -7,7 +7,14 @@ import 'sound_variant_picker.dart';
 /// Tiered feedback events that map to layered SFX + haptics + (optionally)
 /// a reveal-moment skybox swap. Keyed by severity so pack authors don't
 /// have to hand-tune each callsite.
-enum FeedbackTier { hit, squish, burst, revealBurst, megaBurst }
+enum FeedbackTier {
+  hit,
+  squish,
+  burst,
+  revealBurst,
+  megaBurst,
+  comboMilestone,
+}
 
 /// Abstract sink so the dispatcher is testable without Flame/Flutter.
 /// Production implementations call through to [SoundManager] and
@@ -69,6 +76,9 @@ class FeedbackDispatcher {
       case FeedbackTier.megaBurst:
         _fireMegaBurst(def);
         break;
+      case FeedbackTier.comboMilestone:
+        _fireComboMilestone(def);
+        break;
     }
   }
 
@@ -106,6 +116,15 @@ class FeedbackDispatcher {
         if (pick != null) sink.voiceCallout(pick);
       }
     }
+  }
+
+  /// A mid-combo milestone (streak 3/6/10/15). Not tied to a burst —
+  /// fires off a punchier haptic + a small screen shake so the player
+  /// physically feels the step-up. No voice line (those stay reserved
+  /// for reveal moments).
+  void _fireComboMilestone(SmashableDef def) {
+    sink.hapticMedium();
+    sink.screenShake(duration: 0.10, intensity: 4);
   }
 
   void _fireMegaBurst(SmashableDef def) {
