@@ -11,6 +11,7 @@ import '../data/models/rarity.dart';
 import '../data/models/smashable_def.dart';
 import 'components/decal_manager.dart';
 import 'components/particle_manager.dart';
+import 'components/reveal_bloom.dart';
 import 'components/screen_shake.dart';
 import 'components/skybox_component.dart';
 import 'components/smashable_component.dart';
@@ -331,6 +332,21 @@ class SquishyGame extends FlameGame {
     // default; rarity also swaps the skybox to its reveal variant.
     if (rarity.triggersReveal) {
       skybox.triggerReveal(hold: rarity == Rarity.mythic ? 1.6 : 1.0);
+      // Bloom flash — intensity + duration scale with rarity so the
+      // emotional beat matches the tier. Mythic gets a longer held
+      // flash so the "whoa, something special" read lands.
+      final bloomPeak = switch (rarity) {
+        Rarity.rare => 0.35,
+        Rarity.epic => 0.50,
+        Rarity.mythic => 0.65,
+        _ => 0.0,
+      };
+      final bloomMs = rarity == Rarity.mythic ? 700 : 450;
+      arena.add(RevealBloom(
+        arenaSize: arena.arenaSize.clone(),
+        peakOpacity: bloomPeak,
+        duration: Duration(milliseconds: bloomMs),
+      ));
       if (rarity == Rarity.mythic) {
         shaker.shake(duration: 0.28, intensity: 14);
         onMythicReveal?.call();
