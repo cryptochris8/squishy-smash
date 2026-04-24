@@ -63,6 +63,22 @@ extension RarityX on Rarity {
 
   /// Is this tier rare enough to force a "Save this clip?" prompt?
   bool get promptsShareCapture => index >= Rarity.mythic.index;
+
+  /// Coin bonus awarded when the player bursts a smashable they have
+  /// already discovered. Scales with tier so dupe legendaries still
+  /// feel rewarding but dupe commons don't trivialize the economy.
+  int get duplicateCoinBonus {
+    switch (this) {
+      case Rarity.common:
+        return 2;
+      case Rarity.rare:
+        return 10;
+      case Rarity.epic:
+        return 25;
+      case Rarity.mythic:
+        return 50;
+    }
+  }
 }
 
 /// Parse a rarity token to the enum. Unknown or null values fall back

@@ -82,6 +82,85 @@ class GameEvents {
     });
   }
 
+  /// Fires on every burst of an already-discovered object. Lets the
+  /// dashboard measure duplicate frustration vs. reward feel.
+  void duplicateAwarded({
+    required String objectId,
+    required String packId,
+    required Rarity rarity,
+    required int coinsAwarded,
+  }) {
+    _sink.event('duplicate_awarded', <String, Object?>{
+      'object_id': objectId,
+      'pack_id': packId,
+      'rarity': rarity.token,
+      'coins_awarded': coinsAwarded,
+    });
+  }
+
+  /// Fires when the hard-pity floor forces a tier for the next pick
+  /// (before that pick is resolved). Helps tune how often pity rescues
+  /// fire vs. natural drops.
+  void pityTriggered({
+    required String packId,
+    required Rarity forcedTier,
+    required int bursts,
+  }) {
+    _sink.event('pity_triggered', <String, Object?>{
+      'pack_id': packId,
+      'forced_tier': forcedTier.token,
+      'bursts_in_pack': bursts,
+    });
+  }
+
+  /// Fires the very first time the player bursts an epic in a pack.
+  /// Marks a major retention milestone.
+  void firstEpicFound({required String packId, required String objectId}) {
+    _sink.event('first_epic_found', <String, Object?>{
+      'pack_id': packId,
+      'object_id': objectId,
+    });
+  }
+
+  /// Fires the very first time the player bursts a legendary in a pack.
+  void firstLegendaryFound(
+      {required String packId, required String objectId}) {
+    _sink.event('first_legendary_found', <String, Object?>{
+      'pack_id': packId,
+      'object_id': objectId,
+    });
+  }
+
+  /// Fires after each successful burst to report current collection
+  /// progress in a pack — [discovered]/[total] counts of the pack's
+  /// objects the player has bursted at least once.
+  void packProgressUpdated({
+    required String packId,
+    required int discovered,
+    required int total,
+  }) {
+    _sink.event('pack_progress_updated', <String, Object?>{
+      'pack_id': packId,
+      'discovered': discovered,
+      'total': total,
+    });
+  }
+
+  /// Fires when a one-shot boost token is granted (session streak,
+  /// rewarded ad, or duplicate legendary).
+  void boostGranted(
+      {required String source, required int tokensAfter}) {
+    _sink.event('boost_granted', <String, Object?>{
+      'source': source,
+      'tokens_after': tokensAfter,
+    });
+  }
+
+  /// Fires when a boost token is consumed on the next pick.
+  void boostUsed({required String packId}) {
+    _sink.event('boost_used', <String, Object?>{'pack_id': packId});
+  }
+
   // -- live-ops -------------------------------------------------------
 
   void packViewed({required String packId, required String source}) {

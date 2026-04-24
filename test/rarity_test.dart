@@ -79,6 +79,23 @@ void main() {
       expect(Rarity.epic.displayLabel, 'Epic');
       expect(Rarity.mythic.displayLabel, 'Legendary');
     });
+
+    test('duplicateCoinBonus scales monotonically with rarity', () {
+      // Values should create meaningful reward differentiation —
+      // dupe common barely registers, dupe legendary feels notable.
+      expect(Rarity.common.duplicateCoinBonus, 2);
+      expect(Rarity.rare.duplicateCoinBonus, 10);
+      expect(Rarity.epic.duplicateCoinBonus, 25);
+      expect(Rarity.mythic.duplicateCoinBonus, 50);
+      // Each tier is at least 2x the prior — never feels like a lateral
+      // reward.
+      expect(Rarity.rare.duplicateCoinBonus,
+          greaterThan(Rarity.common.duplicateCoinBonus * 2));
+      expect(Rarity.epic.duplicateCoinBonus,
+          greaterThan(Rarity.rare.duplicateCoinBonus * 2));
+      expect(Rarity.mythic.duplicateCoinBonus,
+          greaterThan(Rarity.epic.duplicateCoinBonus));
+    });
   });
 
   group('weightedPick', () {

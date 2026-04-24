@@ -134,6 +134,65 @@ void main() {
     });
   });
 
+  group('GameEvents retention / collection meta', () {
+    test('duplicateAwarded carries rarity + coin payload', () {
+      final sink = RecordingAnalytics();
+      GameEvents(sink).duplicateAwarded(
+        objectId: 'dumplio',
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.rare,
+        coinsAwarded: 10,
+      );
+      expect(sink.lastName, 'duplicate_awarded');
+      expect(sink.lastParams['rarity'], 'rare');
+      expect(sink.lastParams['coins_awarded'], 10);
+    });
+
+    test('pityTriggered serializes forced tier as token', () {
+      final sink = RecordingAnalytics();
+      GameEvents(sink).pityTriggered(
+        packId: 'launch_squishy_foods',
+        forcedTier: Rarity.mythic,
+        bursts: 50,
+      );
+      expect(sink.lastName, 'pity_triggered');
+      expect(sink.lastParams['forced_tier'], 'mythic');
+      expect(sink.lastParams['bursts_in_pack'], 50);
+    });
+
+    test('firstEpicFound + firstLegendaryFound are distinct events', () {
+      final sink = RecordingAnalytics();
+      GameEvents(sink)
+          .firstEpicFound(packId: 'goo', objectId: 'plasma_goo_ball');
+      GameEvents(sink).firstLegendaryFound(
+          packId: 'goo', objectId: 'singularity_goo_core');
+      expect(sink.calls.map((c) => c.$1).toList(),
+          ['first_epic_found', 'first_legendary_found']);
+    });
+
+    test('packProgressUpdated reports discovered/total', () {
+      final sink = RecordingAnalytics();
+      GameEvents(sink).packProgressUpdated(
+        packId: 'launch_squishy_foods',
+        discovered: 7,
+        total: 16,
+      );
+      expect(sink.lastName, 'pack_progress_updated');
+      expect(sink.lastParams['discovered'], 7);
+      expect(sink.lastParams['total'], 16);
+    });
+
+    test('boostGranted + boostUsed serialize source + pack', () {
+      final sink = RecordingAnalytics();
+      GameEvents(sink).boostGranted(source: 'session_streak_7', tokensAfter: 1);
+      expect(sink.lastName, 'boost_granted');
+      expect(sink.lastParams['source'], 'session_streak_7');
+      GameEvents(sink).boostUsed(packId: 'goo_fidgets_drop_01');
+      expect(sink.lastName, 'boost_used');
+      expect(sink.lastParams['pack_id'], 'goo_fidgets_drop_01');
+    });
+  });
+
   group('GameEvents error', () {
     test('assetLoadFailed carries path + error', () {
       final sink = RecordingAnalytics();

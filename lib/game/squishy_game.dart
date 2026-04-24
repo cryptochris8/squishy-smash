@@ -207,18 +207,56 @@ class SquishyGame extends FlameGame {
     // profile so we can fire the analytics event synchronously. The
     // repo persists asynchronously.
     final profile = ServiceLocator.progression.profile;
+    final owningPackId = _defIdToPackId[c.def.id] ?? _activePackId;
     final isFirstBurst = !profile.discoveredSmashableIds.contains(c.def.id);
     if (isFirstBurst) {
       ServiceLocator.progression.markDiscovered(
         smashableId: c.def.id,
         rarity: c.def.rarity,
       );
-      if (_activePackId != null) {
+      if (owningPackId != null) {
         events.collectionDiscovery(
           objectId: c.def.id,
-          packId: _activePackId!,
+          packId: owningPackId,
           rarity: c.def.rarity,
-          discoveredCount: profile.discoveredSmashableIds.length + 1,
+          discoveredCount: profile.discoveredSmashableIds.length,
+        );
+        if (c.def.rarity == Rarity.epic) {
+          events.firstEpicFound(
+              packId: owningPackId, objectId: c.def.id);
+        } else if (c.def.rarity == Rarity.mythic) {
+          events.firstLegendaryFound(
+              packId: owningPackId, objectId: c.def.id);
+        }
+      }
+    } else {
+      // Duplicate — award scaled coin bonus and fire analytics so we
+      // can dashboard duplicate frustration vs. reward feel.
+      final bonus = c.def.rarity.duplicateCoinBonus;
+      _coinsEarned += bonus;
+      ServiceLocator.progression.awardCoins(bonus);
+      if (owningPackId != null) {
+        events.duplicateAwarded(
+          objectId: c.def.id,
+          packId: owningPackId,
+          rarity: c.def.rarity,
+          coinsAwarded: bonus,
+        );
+      }
+    }
+
+    // Pack-progress update — fires on every burst so dashboards can
+    // plot collection completion over time per pack.
+    if (owningPackId != null) {
+      final owningPack = ServiceLocator.packs.byId(owningPackId);
+      if (owningPack != null) {
+        final discoveredInPack = owningPack.objects
+            .where((o) => profile.discoveredSmashableIds.contains(o.id))
+            .length;
+        events.packProgressUpdated(
+          packId: owningPackId,
+          discovered: discoveredInPack,
+          total: owningPack.objects.length,
         );
       }
     }
@@ -226,10 +264,6 @@ class SquishyGame extends FlameGame {
     // Per-pack burst tracking drives unlock gates + pity dry streaks.
     // Every burst — even commons — counts toward totalBurstsByPack
     // (unlock gates) and advances / resets the tier dry counters.
-    // Look up the owning pack from the spawn-time context rather than
-    // _activePackId, which is the featured pack and not necessarily
-    // where this object lives.
-    final owningPackId = _defIdToPackId[c.def.id] ?? _activePackId;
     if (owningPackId != null) {
       ServiceLocator.progression.noteBurstForPack(
         packId: owningPackId,
