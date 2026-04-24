@@ -7,10 +7,13 @@ import '../data/repositories/progression_repo.dart';
 import '../game/systems/sound_manager.dart';
 import '../game/systems/ui_sound_registry.dart';
 import '../game/systems/voice_line_registry.dart';
+import '../monetization/ad_offer_controller.dart';
 import '../monetization/iap_service.dart';
 import '../monetization/iap_service_real.dart';
 import '../monetization/iap_service_stub.dart';
 import '../monetization/product_catalog.dart';
+import '../monetization/rewarded_ad_service.dart';
+import '../analytics/events.dart';
 import 'analytics_stub.dart';
 
 class ServiceLocator {
@@ -24,6 +27,8 @@ class ServiceLocator {
   static late final Analytics analytics;
   static late final IapService iap;
   static late final PurchaseGrantController purchaseGrants;
+  static late final RewardedAdService rewardedAds;
+  static late final AdOfferController adOffers;
 
   static Future<void> bootstrap() async {
     persistence = await Persistence.open();
@@ -50,6 +55,16 @@ class ServiceLocator {
     // first time it's opened. Offline or store-unavailable just
     // returns an empty list; UI falls back to ProductCatalog prices.
     unawaited(iap.loadProducts(ProductIds.launchLoaded));
+
+    // Rewarded ads are stubbed until a concrete SDK is picked
+    // (AdMob / AppLovin / Unity LevelPlay). Offer flow is identical
+    // regardless — swap the implementation here when ready.
+    rewardedAds = StubRewardedAdService();
+    adOffers = AdOfferController(
+      ads: rewardedAds,
+      progression: progression,
+      events: GameEvents(analytics),
+    );
   }
 
   static bool get _isMobile {
