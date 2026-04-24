@@ -1,4 +1,3 @@
-import '../data/models/rarity.dart';
 import '../data/repositories/progression_repo.dart';
 import '../game/systems/arena_registry.dart';
 import 'product_catalog.dart';
