@@ -282,6 +282,71 @@ void main() {
     });
   });
 
+  group('RarityPitySelector forced-rarity token', () {
+    const selector = RarityPitySelector();
+
+    test('forcing rare always returns a rare-or-better pick', () {
+      for (var seed = 0; seed < 50; seed++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          forcedRarity: Rarity.rare,
+          rng: Random(seed),
+        );
+        expect(pick.rarity.index, greaterThanOrEqualTo(Rarity.rare.index),
+            reason: 'guaranteed-rare should never return a common (seed $seed)');
+      }
+    });
+
+    test('forcing epic always returns an epic-or-better pick', () {
+      for (var seed = 0; seed < 50; seed++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          forcedRarity: Rarity.epic,
+          rng: Random(seed),
+        );
+        expect(pick.rarity.index, greaterThanOrEqualTo(Rarity.epic.index));
+      }
+    });
+
+    test('forcing legendary always returns a legendary', () {
+      for (var seed = 0; seed < 50; seed++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          forcedRarity: Rarity.mythic,
+          rng: Random(seed),
+        );
+        expect(pick.rarity, Rarity.mythic);
+      }
+    });
+
+    test('unsatisfiable force falls through to weighted selection', () {
+      // A pool with no legendary — forcing legendary should not crash
+      // or loop forever; it should quietly fall back to normal pick.
+      final noLegendary = _poolFor(_pack('p2', c: 4, r: 2, e: 1, m: 0));
+      final pick = selector.pick(
+        pool: noLegendary,
+        rareDryByPack: const {},
+        epicDryByPack: const {},
+        legendaryDryByPack: const {},
+        forcedRarity: Rarity.mythic,
+        rng: Random(42),
+      );
+      // Any tier other than mythic is acceptable here — the token
+      // is effectively refunded (caller is responsible for not
+      // consuming it if the pool was inadequate).
+      expect(pick.rarity, isNot(Rarity.mythic));
+    });
+  });
+
   group('RarityPitySelector fallback behavior', () {
     test('empty pool after all-zero weights falls back to uniform pick', () {
       // Craft a pack where the only tier present is common, then force

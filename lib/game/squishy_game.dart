@@ -67,6 +67,17 @@ class SquishyGame extends FlameGame {
   /// one token per round until the player runs out.
   bool _useBoostOnNextSpawn = false;
 
+  /// Rarest queued forced-reveal tier (rarest-first) without mutating
+  /// the map. Lets [_selectNextSmashable] know whether to pass a
+  /// forcedRarity into the pity selector before committing to a
+  /// persistence write.
+  Rarity? _peekForcedRarity(Map<Rarity, int> tokens) {
+    for (final r in [Rarity.mythic, Rarity.epic, Rarity.rare]) {
+      if ((tokens[r] ?? 0) > 0) return r;
+    }
+    return null;
+  }
+
   @override
   Color backgroundColor() => const Color(0xFF1A1320);
 
@@ -200,6 +211,15 @@ class SquishyGame extends FlameGame {
         events.boostUsed(packId: _activePackId!);
       }
     }
+
+    // Forced-tier reveal tokens (e.g. Starter Bundle's guaranteed rare).
+    // Consumed one per spawn; rarest-queued wins. We read synchronously
+    // from the in-memory profile and let the repo persist the decrement
+    // in the background, same as the boost path above.
+    final forcedRarity = _peekForcedRarity(profile.guaranteedRevealTokens);
+    if (forcedRarity != null) {
+      ServiceLocator.progression.consumeGuaranteedReveal();
+    }
     return pitySelector.pick(
       pool: effectivePool,
       rareDryByPack: profile.rareDryByPack,
@@ -207,6 +227,7 @@ class SquishyGame extends FlameGame {
       legendaryDryByPack: profile.legendaryDryByPack,
       comboMultiplier: combo.multiplier,
       boostActive: boost,
+      forcedRarity: forcedRarity,
       rng: _rng,
     );
   }

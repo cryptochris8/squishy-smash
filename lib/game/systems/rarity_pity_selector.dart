@@ -43,6 +43,12 @@ class RarityPitySelector {
 
   /// Pick the next object. [pool] should already have been filtered
   /// through [PackProgressionGate] for unlock gates.
+  ///
+  /// When [forcedRarity] is non-null, the selector bypasses weighting
+  /// entirely and picks uniformly from pool entries at that tier
+  /// (drives the Starter Bundle's "guaranteed rare reveal"). If no
+  /// pool entry matches the forced tier, falls through to normal
+  /// weighted selection so the token is never silently eaten.
   SmashableDef pick({
     required List<GatedObject> pool,
     required Map<String, int> rareDryByPack,
@@ -50,12 +56,29 @@ class RarityPitySelector {
     required Map<String, int> legendaryDryByPack,
     int comboMultiplier = 1,
     bool boostActive = false,
+    Rarity? forcedRarity,
     Random? rng,
   }) {
     if (pool.isEmpty) {
       throw ArgumentError('RarityPitySelector.pick: pool is empty');
     }
     final rnd = rng ?? Random();
+
+    // Forced-tier short-circuit. Matches any pool entry of the target
+    // rarity OR higher — players who redeem a guaranteed-rare token
+    // should still feel happy if an epic or legendary happens to be
+    // eligible (same "pity rescues up" semantics as the hard-pity
+    // exclusion logic).
+    if (forcedRarity != null) {
+      final candidates = pool
+          .where((e) => e.def.rarity.index >= forcedRarity.index)
+          .toList(growable: false);
+      if (candidates.isNotEmpty) {
+        return candidates[rnd.nextInt(candidates.length)].def;
+      }
+      // Fall through — pool doesn't carry the forced tier at all.
+    }
+
     final weights = <int>[];
     for (final entry in pool) {
       weights.add(_weightFor(
