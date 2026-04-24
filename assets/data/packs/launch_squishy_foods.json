@@ -4,6 +4,10 @@
   "themeTag": "food_squish",
   "releaseType": "launch",
   "unlockCost": 0,
+  "packProgression": {
+    "epicUnlockRareBursts": 3,
+    "legendaryUnlockEpicBursts": 2
+  },
   "palette": {
     "primary": "#FF8FB8",
     "secondary": "#FFD36E",
@@ -34,7 +38,13 @@
       "coinReward": 8,
       "unlockTier": 1,
       "rarity": "common",
-      "searchTags": ["squishy", "dumpling", "asmr", "satisfying", "food"]
+      "searchTags": [
+        "squishy",
+        "dumpling",
+        "asmr",
+        "satisfying",
+        "food"
+      ]
     },
     {
       "id": "jellyzap",
@@ -57,7 +67,12 @@
       "coinReward": 10,
       "unlockTier": 1,
       "rarity": "common",
-      "searchTags": ["jelly", "pop", "asmr", "satisfying"]
+      "searchTags": [
+        "jelly",
+        "pop",
+        "asmr",
+        "satisfying"
+      ]
     },
     {
       "id": "poppling",
@@ -80,7 +95,335 @@
       "coinReward": 12,
       "unlockTier": 2,
       "rarity": "rare",
-      "searchTags": ["mochi", "squish", "relaxing", "food"]
+      "searchTags": [
+        "mochi",
+        "squish",
+        "relaxing",
+        "food"
+      ]
+    },
+    {
+      "id": "peach_mochi",
+      "name": "Peach Mochi",
+      "category": "squishy_food",
+      "themeTag": "mochi",
+      "sprite": "assets/images/objects/peach_mochi.png",
+      "thumbnail": "assets/images/thumbnails/peach_mochi_thumb.png",
+      "behaviorProfile": "mochi",
+      "impactSounds": [
+        "audio/food/peach_mochi_squish_01.mp3",
+        "audio/food/peach_mochi_squish_02.mp3",
+        "audio/food/peach_mochi_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/peach_mochi_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 8,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "mochi",
+        "peach",
+        "dessert"
+      ]
+    },
+    {
+      "id": "syrup_cube",
+      "name": "Syrup Cube",
+      "category": "squishy_food",
+      "themeTag": "jelly",
+      "sprite": "assets/images/objects/syrup_cube.png",
+      "thumbnail": "assets/images/thumbnails/syrup_cube_thumb.png",
+      "behaviorProfile": "jelly_cube",
+      "impactSounds": [
+        "audio/food/syrup_cube_squish_01.mp3",
+        "audio/food/syrup_cube_squish_02.mp3",
+        "audio/food/syrup_cube_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/syrup_cube_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 9,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "syrup",
+        "jelly",
+        "cube"
+      ]
+    },
+    {
+      "id": "cream_puff",
+      "name": "Cream Puff",
+      "category": "squishy_food",
+      "themeTag": "pastry",
+      "sprite": "assets/images/objects/cream_puff.png",
+      "thumbnail": "assets/images/thumbnails/cream_puff_thumb.png",
+      "behaviorProfile": "dumpling",
+      "impactSounds": [
+        "audio/food/cream_puff_squish_01.mp3",
+        "audio/food/cream_puff_squish_02.mp3",
+        "audio/food/cream_puff_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/cream_puff_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 9,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "cream",
+        "puff",
+        "pastry"
+      ]
+    },
+    {
+      "id": "rice_ball_squish",
+      "name": "Rice Ball Squish",
+      "category": "squishy_food",
+      "themeTag": "onigiri",
+      "sprite": "assets/images/objects/rice_ball_squish.png",
+      "thumbnail": "assets/images/thumbnails/rice_ball_squish_thumb.png",
+      "behaviorProfile": "dumpling",
+      "impactSounds": [
+        "audio/food/rice_ball_squish_squish_01.mp3",
+        "audio/food/rice_ball_squish_squish_02.mp3",
+        "audio/food/rice_ball_squish_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/rice_ball_squish_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 8,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "rice",
+        "onigiri",
+        "food"
+      ]
+    },
+    {
+      "id": "marshmallow_puff",
+      "name": "Marshmallow Puff",
+      "category": "squishy_food",
+      "themeTag": "marshmallow",
+      "sprite": "assets/images/objects/marshmallow_puff.png",
+      "thumbnail": "assets/images/thumbnails/marshmallow_puff_thumb.png",
+      "behaviorProfile": "dumpling",
+      "impactSounds": [
+        "audio/food/marshmallow_puff_squish_01.mp3",
+        "audio/food/marshmallow_puff_squish_02.mp3",
+        "audio/food/marshmallow_puff_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/marshmallow_puff_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 10,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "marshmallow",
+        "soft"
+      ]
+    },
+    {
+      "id": "pudding_pop",
+      "name": "Pudding Pop",
+      "category": "squishy_food",
+      "themeTag": "pudding",
+      "sprite": "assets/images/objects/pudding_pop.png",
+      "thumbnail": "assets/images/thumbnails/pudding_pop_thumb.png",
+      "behaviorProfile": "jelly_cube",
+      "impactSounds": [
+        "audio/food/pudding_pop_squish_01.mp3",
+        "audio/food/pudding_pop_squish_02.mp3",
+        "audio/food/pudding_pop_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/pudding_pop_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 10,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "pudding",
+        "wobble"
+      ]
+    },
+    {
+      "id": "rainbow_jelly_bun",
+      "name": "Rainbow Jelly Bun",
+      "category": "squishy_food",
+      "themeTag": "jelly_bun",
+      "sprite": "assets/images/objects/rainbow_jelly_bun.png",
+      "thumbnail": "assets/images/thumbnails/rainbow_jelly_bun_thumb.png",
+      "behaviorProfile": "jelly_cube",
+      "impactSounds": [
+        "audio/food/rainbow_jelly_bun_squish_01.mp3",
+        "audio/food/rainbow_jelly_bun_squish_02.mp3",
+        "audio/food/rainbow_jelly_bun_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/rainbow_jelly_bun_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 16,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "rainbow",
+        "jelly",
+        "rare"
+      ]
+    },
+    {
+      "id": "sparkle_mochi",
+      "name": "Sparkle Mochi",
+      "category": "squishy_food",
+      "themeTag": "sparkle_mochi",
+      "sprite": "assets/images/objects/sparkle_mochi.png",
+      "thumbnail": "assets/images/thumbnails/sparkle_mochi_thumb.png",
+      "behaviorProfile": "mochi",
+      "impactSounds": [
+        "audio/food/sparkle_mochi_squish_01.mp3",
+        "audio/food/sparkle_mochi_squish_02.mp3",
+        "audio/food/sparkle_mochi_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/sparkle_mochi_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 16,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "sparkle",
+        "mochi",
+        "rare"
+      ]
+    },
+    {
+      "id": "golden_syrup_cube",
+      "name": "Golden Syrup Cube",
+      "category": "squishy_food",
+      "themeTag": "gold_syrup",
+      "sprite": "assets/images/objects/golden_syrup_cube.png",
+      "thumbnail": "assets/images/thumbnails/golden_syrup_cube_thumb.png",
+      "behaviorProfile": "jelly_cube",
+      "impactSounds": [
+        "audio/food/golden_syrup_cube_squish_01.mp3",
+        "audio/food/golden_syrup_cube_squish_02.mp3",
+        "audio/food/golden_syrup_cube_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/golden_syrup_cube_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 18,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "gold",
+        "syrup",
+        "rare"
+      ]
+    },
+    {
+      "id": "galaxy_dumpling",
+      "name": "Galaxy Dumpling",
+      "category": "squishy_food",
+      "themeTag": "galaxy",
+      "sprite": "assets/images/objects/galaxy_dumpling.png",
+      "thumbnail": "assets/images/thumbnails/galaxy_dumpling_thumb.png",
+      "behaviorProfile": "dumpling",
+      "impactSounds": [
+        "audio/food/galaxy_dumpling_squish_01.mp3",
+        "audio/food/galaxy_dumpling_squish_02.mp3",
+        "audio/food/galaxy_dumpling_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/galaxy_dumpling_burst_01.mp3",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "purple_monster_splat",
+      "coinReward": 28,
+      "unlockTier": 3,
+      "rarity": "epic",
+      "searchTags": [
+        "galaxy",
+        "dumpling",
+        "epic"
+      ]
+    },
+    {
+      "id": "crystal_mochi",
+      "name": "Crystal Mochi",
+      "category": "squishy_food",
+      "themeTag": "crystal",
+      "sprite": "assets/images/objects/crystal_mochi.png",
+      "thumbnail": "assets/images/thumbnails/crystal_mochi_thumb.png",
+      "behaviorProfile": "mochi",
+      "impactSounds": [
+        "audio/food/crystal_mochi_squish_01.mp3",
+        "audio/food/crystal_mochi_squish_02.mp3",
+        "audio/food/crystal_mochi_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/crystal_mochi_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 28,
+      "unlockTier": 3,
+      "rarity": "epic",
+      "searchTags": [
+        "crystal",
+        "mochi",
+        "epic"
+      ]
+    },
+    {
+      "id": "neon_dessert_blob",
+      "name": "Neon Dessert Blob",
+      "category": "squishy_food",
+      "themeTag": "neon",
+      "sprite": "assets/images/objects/neon_dessert_blob.png",
+      "thumbnail": "assets/images/thumbnails/neon_dessert_blob_thumb.png",
+      "behaviorProfile": "jelly_cube",
+      "impactSounds": [
+        "audio/food/neon_dessert_blob_squish_01.mp3",
+        "audio/food/neon_dessert_blob_squish_02.mp3",
+        "audio/food/neon_dessert_blob_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/neon_dessert_blob_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 30,
+      "unlockTier": 3,
+      "rarity": "epic",
+      "searchTags": [
+        "neon",
+        "jelly",
+        "epic"
+      ]
+    },
+    {
+      "id": "celestial_dumpling_core",
+      "name": "Celestial Dumpling Core",
+      "category": "squishy_food",
+      "themeTag": "celestial_legendary",
+      "sprite": "assets/images/objects/celestial_dumpling_core.png",
+      "thumbnail": "assets/images/thumbnails/celestial_dumpling_core_thumb.png",
+      "behaviorProfile": "dumpling",
+      "impactSounds": [
+        "audio/food/celestial_dumpling_core_squish_01.mp3",
+        "audio/food/celestial_dumpling_core_squish_02.mp3",
+        "audio/food/celestial_dumpling_core_squish_03.mp3"
+      ],
+      "burstSound": "audio/food/celestial_dumpling_core_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "gold_mythic_splat",
+      "coinReward": 120,
+      "unlockTier": 5,
+      "rarity": "mythic",
+      "searchTags": [
+        "celestial",
+        "legendary",
+        "mythic"
+      ]
     }
   ]
 }

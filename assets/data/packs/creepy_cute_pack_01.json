@@ -4,6 +4,10 @@
   "themeTag": "weird_cute",
   "releaseType": "launch",
   "unlockCost": 250,
+  "packProgression": {
+    "epicUnlockRareBursts": 3,
+    "legendaryUnlockEpicBursts": 2
+  },
   "palette": {
     "primary": "#B084F2",
     "secondary": "#FF8FB8",
@@ -34,7 +38,12 @@
       "coinReward": 18,
       "unlockTier": 1,
       "rarity": "common",
-      "searchTags": ["creepy cute", "monster", "blind box", "weird"]
+      "searchTags": [
+        "creepy cute",
+        "monster",
+        "blind box",
+        "weird"
+      ]
     },
     {
       "id": "snagglet",
@@ -57,7 +66,12 @@
       "coinReward": 20,
       "unlockTier": 2,
       "rarity": "rare",
-      "searchTags": ["fang", "creepy", "cute", "spooky"]
+      "searchTags": [
+        "fang",
+        "creepy",
+        "cute",
+        "spooky"
+      ]
     },
     {
       "id": "gloomp",
@@ -80,7 +94,329 @@
       "coinReward": 24,
       "unlockTier": 3,
       "rarity": "epic",
-      "searchTags": ["gremlin", "weird", "blob", "cute monster"]
+      "searchTags": [
+        "gremlin",
+        "weird",
+        "blob",
+        "cute monster"
+      ]
+    },
+    {
+      "id": "blushy_bun_bunny",
+      "name": "Blushy Bun Bunny",
+      "category": "creepy_cute",
+      "themeTag": "bunny",
+      "sprite": "assets/images/objects/blushy_bun_bunny.png",
+      "thumbnail": "assets/images/thumbnails/blushy_bun_bunny_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/blushy_bun_bunny_squish_01.mp3",
+        "audio/creature/blushy_bun_bunny_squish_02.mp3",
+        "audio/creature/blushy_bun_bunny_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/blushy_bun_bunny_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 12,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "bunny",
+        "creature"
+      ]
+    },
+    {
+      "id": "squish_bat",
+      "name": "Squish Bat",
+      "category": "creepy_cute",
+      "themeTag": "bat",
+      "sprite": "assets/images/objects/squish_bat.png",
+      "thumbnail": "assets/images/thumbnails/squish_bat_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/squish_bat_squish_01.mp3",
+        "audio/creature/squish_bat_squish_02.mp3",
+        "audio/creature/squish_bat_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/squish_bat_burst_01.mp3",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "purple_monster_splat",
+      "coinReward": 12,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "bat",
+        "creepy_cute"
+      ]
+    },
+    {
+      "id": "puff_ghost",
+      "name": "Puff Ghost",
+      "category": "creepy_cute",
+      "themeTag": "ghost",
+      "sprite": "assets/images/objects/puff_ghost.png",
+      "thumbnail": "assets/images/thumbnails/puff_ghost_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/puff_ghost_squish_01.mp3",
+        "audio/creature/puff_ghost_squish_02.mp3",
+        "audio/creature/puff_ghost_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/puff_ghost_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 12,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "ghost",
+        "spooky"
+      ]
+    },
+    {
+      "id": "wobble_kitty",
+      "name": "Wobble Kitty",
+      "category": "creepy_cute",
+      "themeTag": "cat",
+      "sprite": "assets/images/objects/wobble_kitty.png",
+      "thumbnail": "assets/images/thumbnails/wobble_kitty_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/wobble_kitty_squish_01.mp3",
+        "audio/creature/wobble_kitty_squish_02.mp3",
+        "audio/creature/wobble_kitty_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/wobble_kitty_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 13,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "cat",
+        "kitty"
+      ]
+    },
+    {
+      "id": "tiny_blob_monster",
+      "name": "Tiny Blob Monster",
+      "category": "creepy_cute",
+      "themeTag": "blob_monster",
+      "sprite": "assets/images/objects/tiny_blob_monster.png",
+      "thumbnail": "assets/images/thumbnails/tiny_blob_monster_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/tiny_blob_monster_squish_01.mp3",
+        "audio/creature/tiny_blob_monster_squish_02.mp3",
+        "audio/creature/tiny_blob_monster_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/tiny_blob_monster_burst_01.mp3",
+      "particlePreset": "green_goo_burst",
+      "decalPreset": "green_goo_smear",
+      "coinReward": 12,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "monster",
+        "blob"
+      ]
+    },
+    {
+      "id": "soft_fang_critter",
+      "name": "Soft Fang Critter",
+      "category": "creepy_cute",
+      "themeTag": "fang",
+      "sprite": "assets/images/objects/soft_fang_critter.png",
+      "thumbnail": "assets/images/thumbnails/soft_fang_critter_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/soft_fang_critter_squish_01.mp3",
+        "audio/creature/soft_fang_critter_squish_02.mp3",
+        "audio/creature/soft_fang_critter_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/soft_fang_critter_burst_01.mp3",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 13,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "fang",
+        "critter"
+      ]
+    },
+    {
+      "id": "sleepy_slime_pet",
+      "name": "Sleepy Slime Pet",
+      "category": "creepy_cute",
+      "themeTag": "slime_pet",
+      "sprite": "assets/images/objects/sleepy_slime_pet.png",
+      "thumbnail": "assets/images/thumbnails/sleepy_slime_pet_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/sleepy_slime_pet_squish_01.mp3",
+        "audio/creature/sleepy_slime_pet_squish_02.mp3",
+        "audio/creature/sleepy_slime_pet_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/sleepy_slime_pet_burst_01.mp3",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 12,
+      "unlockTier": 1,
+      "rarity": "common",
+      "searchTags": [
+        "slime",
+        "sleepy"
+      ]
+    },
+    {
+      "id": "star_eyed_bunny",
+      "name": "Star-Eyed Bunny",
+      "category": "creepy_cute",
+      "themeTag": "star_bunny",
+      "sprite": "assets/images/objects/star_eyed_bunny.png",
+      "thumbnail": "assets/images/thumbnails/star_eyed_bunny_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/star_eyed_bunny_squish_01.mp3",
+        "audio/creature/star_eyed_bunny_squish_02.mp3",
+        "audio/creature/star_eyed_bunny_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/star_eyed_bunny_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 22,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "bunny",
+        "star",
+        "rare"
+      ]
+    },
+    {
+      "id": "moon_bat_blob",
+      "name": "Moon Bat Blob",
+      "category": "creepy_cute",
+      "themeTag": "moon_bat",
+      "sprite": "assets/images/objects/moon_bat_blob.png",
+      "thumbnail": "assets/images/thumbnails/moon_bat_blob_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/moon_bat_blob_squish_01.mp3",
+        "audio/creature/moon_bat_blob_squish_02.mp3",
+        "audio/creature/moon_bat_blob_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/moon_bat_blob_burst_01.mp3",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 22,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "moon",
+        "bat",
+        "rare"
+      ]
+    },
+    {
+      "id": "glow_ghost_puff",
+      "name": "Glow Ghost Puff",
+      "category": "creepy_cute",
+      "themeTag": "glow_ghost",
+      "sprite": "assets/images/objects/glow_ghost_puff.png",
+      "thumbnail": "assets/images/thumbnails/glow_ghost_puff_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/glow_ghost_puff_squish_01.mp3",
+        "audio/creature/glow_ghost_puff_squish_02.mp3",
+        "audio/creature/glow_ghost_puff_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/glow_ghost_puff_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 24,
+      "unlockTier": 2,
+      "rarity": "rare",
+      "searchTags": [
+        "ghost",
+        "glow",
+        "rare"
+      ]
+    },
+    {
+      "id": "dream_eater_squish",
+      "name": "Dream Eater Squish",
+      "category": "creepy_cute",
+      "themeTag": "dream_eater",
+      "sprite": "assets/images/objects/dream_eater_squish.png",
+      "thumbnail": "assets/images/thumbnails/dream_eater_squish_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/dream_eater_squish_squish_01.mp3",
+        "audio/creature/dream_eater_squish_squish_02.mp3",
+        "audio/creature/dream_eater_squish_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/dream_eater_squish_burst_01.mp3",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "purple_monster_splat",
+      "coinReward": 36,
+      "unlockTier": 3,
+      "rarity": "epic",
+      "searchTags": [
+        "dream_eater",
+        "epic"
+      ]
+    },
+    {
+      "id": "arcane_wobble_kitty",
+      "name": "Arcane Wobble Kitty",
+      "category": "creepy_cute",
+      "themeTag": "arcane_kitty",
+      "sprite": "assets/images/objects/arcane_wobble_kitty.png",
+      "thumbnail": "assets/images/thumbnails/arcane_wobble_kitty_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/arcane_wobble_kitty_squish_01.mp3",
+        "audio/creature/arcane_wobble_kitty_squish_02.mp3",
+        "audio/creature/arcane_wobble_kitty_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/arcane_wobble_kitty_burst_01.mp3",
+      "particlePreset": "purple_monster_burst",
+      "decalPreset": "gold_mythic_splat",
+      "coinReward": 36,
+      "unlockTier": 3,
+      "rarity": "epic",
+      "searchTags": [
+        "arcane",
+        "cat",
+        "epic"
+      ]
+    },
+    {
+      "id": "mythic_plush_familiar",
+      "name": "Mythic Plush Familiar",
+      "category": "creepy_cute",
+      "themeTag": "legendary_familiar",
+      "sprite": "assets/images/objects/mythic_plush_familiar.png",
+      "thumbnail": "assets/images/thumbnails/mythic_plush_familiar_thumb.png",
+      "behaviorProfile": "creature",
+      "impactSounds": [
+        "audio/creature/mythic_plush_familiar_squish_01.mp3",
+        "audio/creature/mythic_plush_familiar_squish_02.mp3",
+        "audio/creature/mythic_plush_familiar_squish_03.mp3"
+      ],
+      "burstSound": "audio/creature/mythic_plush_familiar_burst_01.mp3",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "gold_mythic_splat",
+      "coinReward": 140,
+      "unlockTier": 5,
+      "rarity": "mythic",
+      "searchTags": [
+        "legendary",
+        "familiar",
+        "mythic"
+      ]
     }
   ]
 }
