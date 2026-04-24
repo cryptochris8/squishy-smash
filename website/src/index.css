@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  min-height: 100vh;
+  /* Deep pastel gradient background, slow-shifting. */
+  background:
+    linear-gradient(135deg,
+      #2A1838 0%,
+      #4A2560 22%,
+      #8040D8 48%,
+      #FF8FB8 74%,
+      #7FE7FF 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 22s ease infinite;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* -------- Utility component classes -------- */
+
+.rainbow-text {
+  background: linear-gradient(90deg, #FFD36E, #FF8FB8, #C98BFF, #7FE7FF, #B6FF5C, #FFD36E);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+}
+
+.glass-dark {
+  background: rgba(42, 24, 56, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+}
+
+.nav-glass {
+  background: rgba(42, 24, 56, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #FF8FB8, #C98BFF);
+  color: #1E0E2A;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  padding: 0.9rem 1.75rem;
+  border-radius: 999px;
+  box-shadow: 0 0 20px rgba(255, 143, 184, 0.55);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.glow-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 36px rgba(255, 143, 184, 0.9);
+}
+
+.glow-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.glow-btn.ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glow-btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.35);
+}
+
+/* Bubble particle used by the background layer */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7), rgba(255, 143, 184, 0.3) 55%, transparent 70%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Rarity border colors — applied to sprite cards in the collection grid */
+.rarity-common { border-color: rgba(176, 182, 195, 0.6); }
+.rarity-rare   { border-color: rgba(127, 231, 255, 0.8); box-shadow: 0 0 16px rgba(127, 231, 255, 0.35); }
+.rarity-epic   { border-color: rgba(201, 139, 255, 0.8); box-shadow: 0 0 18px rgba(201, 139, 255, 0.45); }
+.rarity-legendary {
+  border-color: rgba(255, 211, 110, 0.9);
+  box-shadow: 0 0 28px rgba(255, 211, 110, 0.6);
+  background-image: linear-gradient(135deg, rgba(255, 211, 110, 0.2), rgba(255, 143, 184, 0.18));
+}
+
+/* The little pill showing rarity label inside a card */
+.rarity-pill {
+  display: inline-block;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+/* Section reveal on scroll — opacity + subtle rise. Classes are
+   applied by an IntersectionObserver hook; the default is invisible so
+   content doesn't flash before JS kicks in. */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
