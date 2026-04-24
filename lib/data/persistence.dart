@@ -22,6 +22,10 @@ class Persistence {
   static const String _epicDryByPackKey = 'profile.epic_dry_by_pack';
   static const String _legendaryDryByPackKey =
       'profile.legendary_dry_by_pack';
+  static const String _lastPlayDateKey = 'profile.last_play_date';
+  static const String _currentStreakKey = 'profile.current_streak';
+  static const String _longestStreakKey = 'profile.longest_streak';
+  static const String _boostTokensKey = 'profile.boost_tokens';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -56,6 +60,10 @@ class Persistence {
       rareDryByPack: _loadIntMap(_rareDryByPackKey),
       epicDryByPack: _loadIntMap(_epicDryByPackKey),
       legendaryDryByPack: _loadIntMap(_legendaryDryByPackKey),
+      lastPlayDate: _prefs.getString(_lastPlayDateKey),
+      currentStreak: _prefs.getInt(_currentStreakKey) ?? 0,
+      longestStreak: _prefs.getInt(_longestStreakKey) ?? 0,
+      boostTokens: _prefs.getInt(_boostTokensKey) ?? 0,
     );
   }
 
@@ -106,6 +114,14 @@ class Persistence {
       _legendaryDryByPackKey,
       jsonEncode(p.legendaryDryByPack),
     );
+    if (p.lastPlayDate != null) {
+      await _prefs.setString(_lastPlayDateKey, p.lastPlayDate!);
+    } else {
+      await _prefs.remove(_lastPlayDateKey);
+    }
+    await _prefs.setInt(_currentStreakKey, p.currentStreak);
+    await _prefs.setInt(_longestStreakKey, p.longestStreak);
+    await _prefs.setInt(_boostTokensKey, p.boostTokens);
   }
 
   bool get hapticsEnabled => _prefs.getBool(_hapticsKey) ?? true;

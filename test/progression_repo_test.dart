@@ -84,6 +84,62 @@ void main() {
     });
   });
 
+  group('ProgressionRepository streak tracking', () {
+    test('first launch starts streak at 1, no milestone', () async {
+      final repo = await _open();
+      final result =
+          await repo.noteSessionStart(now: DateTime(2026, 4, 23));
+      expect(result.streak, 1);
+      expect(result.milestone, 0);
+      expect(result.boostTokenAwarded, isFalse);
+      expect(repo.profile.currentStreak, 1);
+      expect(repo.profile.longestStreak, 1);
+    });
+
+    test('reaching day 3 grants a boost token + fires milestone',
+        () async {
+      final repo = await _open();
+      await repo.noteSessionStart(now: DateTime(2026, 4, 23));
+      await repo.noteSessionStart(now: DateTime(2026, 4, 24));
+      final day3 = await repo.noteSessionStart(now: DateTime(2026, 4, 25));
+      expect(day3.streak, 3);
+      expect(day3.milestone, 3);
+      expect(day3.boostTokenAwarded, isTrue);
+      expect(repo.profile.boostTokens, 1);
+    });
+
+    test('same-day re-launch is a no-op for streak + tokens', () async {
+      final repo = await _open();
+      await repo.noteSessionStart(now: DateTime(2026, 4, 23));
+      final replay =
+          await repo.noteSessionStart(now: DateTime(2026, 4, 23, 18));
+      expect(replay.streak, 1);
+      expect(replay.boostTokenAwarded, isFalse);
+      expect(repo.profile.boostTokens, 0);
+    });
+
+    test('skipping a day resets streak to 1', () async {
+      final repo = await _open();
+      await repo.noteSessionStart(now: DateTime(2026, 4, 23));
+      await repo.noteSessionStart(now: DateTime(2026, 4, 24));
+      final afterSkip =
+          await repo.noteSessionStart(now: DateTime(2026, 4, 26));
+      expect(afterSkip.streak, 1);
+      // longest stays at the prior peak.
+      expect(repo.profile.longestStreak, 2);
+    });
+
+    test('boost token consume/grant round-trip', () async {
+      final repo = await _open();
+      expect(await repo.consumeBoostToken(), isFalse,
+          reason: 'nothing to consume');
+      await repo.grantBoostToken();
+      expect(repo.profile.boostTokens, 1);
+      expect(await repo.consumeBoostToken(), isTrue);
+      expect(repo.profile.boostTokens, 0);
+    });
+  });
+
   group('ProgressionRepository unlock flow', () {
     test('tryUnlock succeeds when coins suffice', () async {
       final repo = await _open();

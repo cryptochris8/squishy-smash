@@ -117,7 +117,14 @@ class SquishyGame extends FlameGame {
         (ServiceLocator.progression.profile.unlockedPackIds.isNotEmpty
             ? ServiceLocator.progression.profile.unlockedPackIds.first
             : null);
-    await ServiceLocator.progression.noteSessionStart();
+    final sessionResult =
+        await ServiceLocator.progression.noteSessionStart();
+    if (sessionResult.boostTokenAwarded) {
+      events.boostGranted(
+        source: 'session_streak_${sessionResult.milestone}',
+        tokensAfter: ServiceLocator.progression.profile.boostTokens,
+      );
+    }
     if (_activePackId != null) {
       events.levelStart(
         packId: _activePackId!,

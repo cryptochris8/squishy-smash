@@ -15,6 +15,10 @@ class PlayerProfile {
     Map<String, int>? rareDryByPack,
     Map<String, int>? epicDryByPack,
     Map<String, int>? legendaryDryByPack,
+    this.lastPlayDate,
+    this.currentStreak = 0,
+    this.longestStreak = 0,
+    this.boostTokens = 0,
   })  : unlockedArenaKeys =
             unlockedArenaKeys ?? <String>{'mochi_sunset_beach'},
         discoveredSmashableIds = discoveredSmashableIds ?? <String>{},
@@ -65,6 +69,23 @@ class PlayerProfile {
   /// Reveals since the last legendary in this pack.
   Map<String, int> legendaryDryByPack;
 
+  /// Date string (yyyy-MM-dd in local time) of the last gameplay
+  /// round the player completed. Null for fresh installs. Used to
+  /// advance or reset [currentStreak] on app launch.
+  String? lastPlayDate;
+
+  /// Consecutive-day play streak. Increments when the player returns
+  /// the day after [lastPlayDate], resets to 1 on any longer gap.
+  int currentStreak;
+
+  /// Longest streak ever achieved — read-only trophy stat.
+  int longestStreak;
+
+  /// Unused boost tokens. Each token adds a +50% multiplier to rare+
+  /// weights for a single spawn pick when consumed. Tokens are granted
+  /// on streak milestones or (later) from rewarded-ad views.
+  int boostTokens;
+
   factory PlayerProfile.empty() => PlayerProfile(
         coins: 0,
         unlockedPackIds: <String>{'launch_squishy_foods'},
@@ -79,5 +100,9 @@ class PlayerProfile {
         rareDryByPack: <String, int>{},
         epicDryByPack: <String, int>{},
         legendaryDryByPack: <String, int>{},
+        lastPlayDate: null,
+        currentStreak: 0,
+        longestStreak: 0,
+        boostTokens: 0,
       );
 }

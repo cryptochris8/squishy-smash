@@ -2,6 +2,7 @@ import '../../game/systems/arena_registry.dart';
 import '../models/player_profile.dart';
 import '../models/rarity.dart';
 import '../persistence.dart';
+import '../streak_calculator.dart';
 import 'pack_repository.dart';
 
 class ProgressionRepository {
@@ -78,12 +79,35 @@ class ProgressionRepository {
     if (dirty) await _persistence.saveProfile(profile);
   }
 
-  /// Increment and persist [PlayerProfile.sessionCount]. Call at the
-  /// start of each gameplay round, before the level_start analytics
-  /// event fires, so `session_index` matches what the round logs.
-  Future<void> noteSessionStart() async {
+  /// Increment session counter + advance the multi-day streak. Call at
+  /// the start of each gameplay round, before the level_start analytics
+  /// event fires. Returns a [SessionStartResult] describing any streak
+  /// milestone the player just crossed (so the caller can fire a
+  /// boost_granted event + show a toast).
+  Future<SessionStartResult> noteSessionStart({DateTime? now}) async {
     profile.sessionCount += 1;
+    final today = todayLocalIso(now ?? DateTime.now());
+    final update = const StreakCalculator().compute(
+      today: today,
+      lastPlayDate: profile.lastPlayDate,
+      currentStreak: profile.currentStreak,
+    );
+    profile.currentStreak = update.newStreak;
+    if (update.newStreak > profile.longestStreak) {
+      profile.longestStreak = update.newStreak;
+    }
+    profile.lastPlayDate = today;
+    var boostGranted = false;
+    if (update.milestoneReached) {
+      profile.boostTokens += 1;
+      boostGranted = true;
+    }
     await _persistence.saveProfile(profile);
+    return SessionStartResult(
+      streak: update.newStreak,
+      milestone: update.milestoneReached ? update.milestone : 0,
+      boostTokenAwarded: boostGranted,
+    );
   }
 
   /// Mark a smashable as discovered the first time the player bursts
@@ -144,4 +168,34 @@ class ProgressionRepository {
 
   int legendaryDryInPack(String packId) =>
       profile.legendaryDryByPack[packId] ?? 0;
+
+  /// Consume one boost token. Returns true if a token was available
+  /// (and the caller should apply the boost), false otherwise.
+  Future<bool> consumeBoostToken() async {
+    if (profile.boostTokens <= 0) return false;
+    profile.boostTokens -= 1;
+    await _persistence.saveProfile(profile);
+    return true;
+  }
+
+  /// Grant a boost token from a named source — session-streak
+  /// milestone, duplicate legendary, rewarded ad (later), etc.
+  Future<void> grantBoostToken() async {
+    profile.boostTokens += 1;
+    await _persistence.saveProfile(profile);
+  }
+}
+
+/// Reported back from [ProgressionRepository.noteSessionStart] so the
+/// Flutter caller can show streak UX without re-reading the profile.
+class SessionStartResult {
+  const SessionStartResult({
+    required this.streak,
+    required this.milestone,
+    required this.boostTokenAwarded,
+  });
+
+  final int streak;
+  final int milestone; // 3, 7, 14, 30, or 0 if no milestone
+  final bool boostTokenAwarded;
 }
