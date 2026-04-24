@@ -1,50 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-import '../systems/combo_controller.dart';
 import '../squishy_game.dart';
+import '../systems/combo_controller.dart';
 
-class HudOverlay extends StatefulWidget {
+/// Thin Flutter overlay for the score/multiplier/fill bar. Listens to
+/// `SquishyGame.hudNotifier` so it only rebuilds on real state changes
+/// (score bumps, combo tier crossings, or 1% fill-bar deltas) — not on
+/// a fixed polling interval.
+class HudOverlay extends StatelessWidget {
   const HudOverlay({super.key, required this.game});
 
   final SquishyGame game;
-
-  @override
-  State<HudOverlay> createState() => _HudOverlayState();
-}
-
-class _HudOverlayState extends State<HudOverlay> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 80), (_) {
-      if (!mounted) return;
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _timer = null;
-    super.dispose();
-  }
-
-  ({int score, int mult, double fill, ComboTier tier}) _readGame() {
-    try {
-      return (
-        score: widget.game.score.total,
-        mult: widget.game.combo.multiplier,
-        fill: widget.game.combo.fill,
-        tier: widget.game.combo.currentTier,
-      );
-    } catch (_) {
-      return (score: 0, mult: 1, fill: 0.0, tier: ComboTier.none);
-    }
-  }
 
   /// Color + size styling for the multiplier text driven by the
   /// current combo milestone tier. Matches the tuning-doc intent:
@@ -100,7 +66,7 @@ class _HudOverlayState extends State<HudOverlay> {
   /// screenshot and report back. Returns null when everything loaded.
   Widget? _skyboxDiagnostic() {
     try {
-      final sky = widget.game.skybox;
+      final sky = game.skybox;
       if (!sky.hasLoadFailure) return null;
       final lines = <String>[
         'SKYBOX LOAD FAILED — theme=${sky.theme.key}',
@@ -136,62 +102,66 @@ class _HudOverlayState extends State<HudOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    final data = _readGame();
-    final diag = _skyboxDiagnostic();
-    final multStyle = _multStyleFor(data.tier);
-    final barColor = _barColorFor(data.tier);
-    final barHeight = data.tier == ComboTier.mega ? 12.0 : 8.0;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${data.score}',
-              style: const TextStyle(
-                fontSize: 44,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
+    return ValueListenableBuilder<HudSnapshot>(
+      valueListenable: game.hudNotifier,
+      builder: (context, data, _) {
+        final diag = _skyboxDiagnostic();
+        final multStyle = _multStyleFor(data.tier);
+        final barColor = _barColorFor(data.tier);
+        final barHeight = data.tier == ComboTier.mega ? 12.0 : 8.0;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 140),
-                  style: TextStyle(
-                    fontSize: multStyle.fontSize,
-                    fontWeight: multStyle.weight,
-                    color: multStyle.color,
+                Text(
+                  '${data.score}',
+                  style: const TextStyle(
+                    fontSize: 44,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
                   ),
-                  child: Text('x${data.mult}'),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      height: barHeight,
-                      child: LinearProgressIndicator(
-                        minHeight: barHeight,
-                        value: data.fill,
-                        backgroundColor: Colors.white12,
-                        color: barColor,
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 140),
+                      style: TextStyle(
+                        fontSize: multStyle.fontSize,
+                        fontWeight: multStyle.weight,
+                        color: multStyle.color,
+                      ),
+                      child: Text('x${data.mult}'),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          height: barHeight,
+                          child: LinearProgressIndicator(
+                            minHeight: barHeight,
+                            value: data.fill,
+                            backgroundColor: Colors.white12,
+                            color: barColor,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
+                if (diag != null) ...[
+                  const SizedBox(height: 12),
+                  diag,
+                ],
               ],
             ),
-            if (diag != null) ...[
-              const SizedBox(height: 12),
-              diag,
-            ],
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

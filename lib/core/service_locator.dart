@@ -8,6 +8,8 @@ import '../game/systems/sound_manager.dart';
 import '../game/systems/ui_sound_registry.dart';
 import '../game/systems/voice_line_registry.dart';
 import '../monetization/ad_offer_controller.dart';
+import '../monetization/admob_rewarded_ad_service.dart';
+import '../monetization/consent_controller.dart';
 import '../monetization/iap_service.dart';
 import '../monetization/iap_service_real.dart';
 import '../monetization/iap_service_stub.dart';
@@ -29,6 +31,7 @@ class ServiceLocator {
   static late final PurchaseGrantController purchaseGrants;
   static late final RewardedAdService rewardedAds;
   static late final AdOfferController adOffers;
+  static late final ConsentController consent;
 
   static Future<void> bootstrap() async {
     persistence = await Persistence.open();
@@ -56,15 +59,23 @@ class ServiceLocator {
     // returns an empty list; UI falls back to ProductCatalog prices.
     unawaited(iap.loadProducts(ProductIds.launchLoaded));
 
-    // Rewarded ads are stubbed until a concrete SDK is picked
-    // (AdMob / AppLovin / Unity LevelPlay). Offer flow is identical
-    // regardless — swap the implementation here when ready.
-    rewardedAds = StubRewardedAdService();
+    // Rewarded ads go through AdMob on mobile. On web/desktop/tests
+    // the stub auto-completes so offer flows can be exercised
+    // without the SDK. ConsentController + MobileAds.initialize run
+    // in the background once bootstrap finishes — ads are served only
+    // after that path returns successfully.
+    consent = ConsentController();
+    rewardedAds = _isMobile
+        ? AdMobRewardedAdService()
+        : StubRewardedAdService();
     adOffers = AdOfferController(
       ads: rewardedAds,
       progression: progression,
       events: GameEvents(analytics),
     );
+    if (_isMobile) {
+      unawaited(consent.ensureConsentAndInit());
+    }
   }
 
   static bool get _isMobile {

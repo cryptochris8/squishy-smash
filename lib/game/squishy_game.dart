@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:flutter/painting.dart';
 
 import '../analytics/events.dart';
@@ -26,6 +27,20 @@ import 'systems/score_controller.dart';
 import 'systems/spawn_manager.dart';
 import 'systems/voice_line_registry.dart';
 import 'world/arena_world.dart';
+
+/// Reactive snapshot consumed by `HudOverlay`. Record equality means a
+/// `ValueNotifier<HudSnapshot>` only fires listeners when a field
+/// actually changes, so the HUD rebuilds on real state changes rather
+/// than on a fixed polling interval. `fill` is quantized to 1% before
+/// publishing so the decay animation doesn't trigger 60-fps rebuilds.
+typedef HudSnapshot = ({int score, int mult, double fill, ComboTier tier});
+
+const HudSnapshot _initialHudSnapshot = (
+  score: 0,
+  mult: 1,
+  fill: 0.0,
+  tier: ComboTier.none,
+);
 
 class SquishyGame extends FlameGame {
   SquishyGame({
@@ -65,6 +80,12 @@ class SquishyGame extends FlameGame {
   late final PackProgressionGate packGate;
   late final List<GatedObject> _pool;
   final Map<String, String> _defIdToPackId = <String, String>{};
+
+  /// Reactive HUD state. Initialized at construction so the HUD widget
+  /// can listen to it before `onLoad` has run. Updated each `update(dt)`
+  /// tick; record equality short-circuits redundant notifications.
+  final ValueNotifier<HudSnapshot> hudNotifier =
+      ValueNotifier<HudSnapshot>(_initialHudSnapshot);
 
   final Random _rng = Random();
   double _roundTimer = 60;
@@ -197,7 +218,25 @@ class SquishyGame extends FlameGame {
     if (_ended) return;
     combo.tick(dt);
     _roundTimer -= dt;
+    _publishHud();
     if (_roundTimer <= 0) _endRound();
+  }
+
+  /// Compose the current HUD snapshot and publish it. The notifier
+  /// only fires listeners when record equality sees a change, so
+  /// writing every tick is cheap — the HUD rebuilds only on real
+  /// score/multiplier/tier changes or when the quantized fill moves.
+  void _publishHud() {
+    final next = (
+      score: score.total,
+      mult: combo.multiplier,
+      // Quantize to 1% so a decaying fill bar doesn't force 60-fps
+      // widget rebuilds. Smooth enough for the visual; ~100× cheaper
+      // than raw double updates.
+      fill: (combo.fill * 100).round() / 100,
+      tier: combo.currentTier,
+    );
+    hudNotifier.value = next;
   }
 
   SmashableDef? _selectNextSmashable() {
@@ -420,6 +459,10 @@ class SquishyGame extends FlameGame {
 
   Future<void> _endRound() async {
     _ended = true;
+    // Flush any buffered hot-path writes (per-burst coin/discovery/
+    // pity updates) before the results screen pulls the profile, so
+    // the displayed totals and the on-disk totals match.
+    await ServiceLocator.progression.flushPending();
     await ServiceLocator.progression.recordRound(
       score: score.total,
       combo: combo.peak,

@@ -61,9 +61,15 @@ class ProgressionRepository {
     return true;
   }
 
+  /// Flush any buffered profile writes from the debounced hot path
+  /// (awardCoins, noteBurstForPack, markDiscovered). Call at
+  /// round-end or on app backgrounding to guarantee in-memory state
+  /// is on disk before the caller proceeds.
+  Future<void> flushPending() => _persistence.flushPending();
+
   Future<void> awardCoins(int n) async {
     profile.coins += n;
-    await _persistence.saveProfile(profile);
+    _persistence.scheduleSave(profile);
   }
 
   Future<void> recordRound({required int score, required int combo}) async {
@@ -125,7 +131,7 @@ class ProgressionRepository {
       bumpedRarest = true;
     }
     if (added || bumpedRarest) {
-      await _persistence.saveProfile(profile);
+      _persistence.scheduleSave(profile);
     }
     return added;
   }
@@ -139,11 +145,13 @@ class ProgressionRepository {
   /// times clears the rare-pity streak three times over, and still
   /// adds three toward the epic unlock gate.
   ///
-  /// Contract: profile map mutations below are SYNCHRONOUS and happen
-  /// before the awaited persistence write. `SquishyGame` relies on this
-  /// so the very next `_selectNextSmashable` call sees the updated
-  /// dry-streak counters (pity ramp works within a session without
-  /// waiting for disk I/O). Do not reorder these lines after the await.
+  /// Contract: the in-memory `profile` map mutations below are the
+  /// source of truth the pity selector reads from — they happen
+  /// synchronously and the persist step is a debounced schedule, not
+  /// an awaited write. `SquishyGame` relies on this so the very next
+  /// `_selectNextSmashable` call sees the updated dry-streak counters
+  /// without waiting for disk I/O. Call `flushPending` at round end
+  /// to guarantee the batched write has landed.
   Future<void> noteBurstForPack({
     required String packId,
     required Rarity rarity,
@@ -162,7 +170,7 @@ class ProgressionRepository {
     profile.legendaryDryByPack[packId] =
         rarity == Rarity.mythic ? 0 : legendaryDry + 1;
 
-    await _persistence.saveProfile(profile);
+    _persistence.scheduleSave(profile);
   }
 
   int totalBurstsInPack(String packId) =>

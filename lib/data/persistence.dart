@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,24 @@ import 'models/rarity.dart';
 class Persistence {
   Persistence._(this._prefs);
 
+  /// Debounce window for [scheduleSave]. Rapid-fire hot-path mutations
+  /// (combo bursts, coin awards, discovery marks) coalesce into a
+  /// single disk write after this quiet period, instead of producing
+  /// one full-profile write per event.
+  static const Duration saveDebounce = Duration(milliseconds: 400);
+
+  Timer? _saveTimer;
+  PlayerProfile? _pendingSave;
+
+  /// Current on-disk schema version for the PlayerProfile blob.
+  /// Bump this when any stored field is renamed, removed, or changes
+  /// type. Add a branch in `_migrateIfNeeded` for each old version so
+  /// existing installs upgrade cleanly. v0 = pre-versioning (no
+  /// migration needed to reach v1; v1 simply records the version
+  /// going forward).
+  static const int currentProfileVersion = 1;
+
+  static const String _profileVersionKey = 'profile.schema_version';
   static const String _coinsKey = 'profile.coins';
   static const String _unlocksKey = 'profile.unlocks';
   static const String _bestScoreKey = 'profile.best_score';
@@ -43,6 +62,7 @@ class Persistence {
   }
 
   PlayerProfile loadProfile() {
+    _migrateIfNeeded();
     final unlocks =
         _prefs.getStringList(_unlocksKey) ?? <String>['launch_squishy_foods'];
     // Pre-arena-unlocks saves: default to the free launch arena so
@@ -124,7 +144,72 @@ class Persistence {
     return <String, int>{};
   }
 
+  /// Read the stored profile version. 0 means "no version key yet"
+  /// (either first launch or pre-versioning save). Saves always write
+  /// [currentProfileVersion], so a 0 read only happens once per install.
+  int get profileVersion => _prefs.getInt(_profileVersionKey) ?? 0;
+
+  /// Apply any version→version migrations needed to bring an on-disk
+  /// profile up to [currentProfileVersion]. Today there is only one
+  /// step (0→1, which is a no-op — v1 just adds the version key).
+  /// Future schema changes add branches here.
+  void _migrateIfNeeded() {
+    final loaded = profileVersion;
+    if (loaded == currentProfileVersion) return;
+    if (loaded > currentProfileVersion) {
+      // Newer profile on an older app build. Don't rewrite the key;
+      // attempt to load what we can and let the app run.
+      return;
+    }
+    // loaded < currentProfileVersion. No data transformations needed
+    // for 0→1; the current save path writes the v1 key on the next
+    // save, which upgrades the install silently.
+  }
+
+  /// Schedule a debounced profile save. Callers on the hot path (per-
+  /// burst mutations) use this instead of [saveProfile] so multiple
+  /// rapid updates collapse into one disk write. A pending scheduled
+  /// save is flushed automatically by any direct [saveProfile] call
+  /// (so discrete user actions like purchases still write immediately)
+  /// or by [flushPending] at explicit checkpoints (round end, app
+  /// background).
+  void scheduleSave(PlayerProfile p) {
+    _pendingSave = p;
+    _saveTimer?.cancel();
+    _saveTimer = Timer(saveDebounce, () {
+      // Fire-and-forget — we're on a timer callback, no async context
+      // to propagate errors to. Any write failure surfaces via the
+      // underlying SharedPreferences logging.
+      final pending = _pendingSave;
+      if (pending == null) return;
+      _saveTimer = null;
+      _pendingSave = null;
+      saveProfile(pending);
+    });
+  }
+
+  /// Flush any pending scheduled save immediately. Safe to call when
+  /// nothing is pending — it's a no-op in that case. Await the returned
+  /// future before reading from disk (e.g., opening a second
+  /// [Persistence] instance in tests) to be sure the write has landed.
+  Future<void> flushPending() async {
+    _saveTimer?.cancel();
+    _saveTimer = null;
+    final pending = _pendingSave;
+    _pendingSave = null;
+    if (pending != null) {
+      await saveProfile(pending);
+    }
+  }
+
   Future<void> saveProfile(PlayerProfile p) async {
+    // Immediate write — cancel any pending debounce since we're about
+    // to write the latest profile state anyway. Keeps the disk in
+    // sync without a trailing redundant write from the timer.
+    _saveTimer?.cancel();
+    _saveTimer = null;
+    _pendingSave = null;
+    await _prefs.setInt(_profileVersionKey, currentProfileVersion);
     await _prefs.setInt(_coinsKey, p.coins);
     await _prefs.setStringList(_unlocksKey, p.unlockedPackIds.toList());
     await _prefs.setInt(_bestScoreKey, p.bestScore);

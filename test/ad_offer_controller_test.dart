@@ -99,7 +99,7 @@ void main() {
     });
 
     test('coin reward path grants coins', () async {
-      final (repo, _, __, controller) = await _setup();
+      final (repo, _, _, controller) = await _setup();
       final ok = await controller.watchForReward(
         AdPlacement.shopOffer,
         reward: const AdReward(type: AdRewardType.coins, amount: 50),
@@ -142,7 +142,7 @@ void main() {
   group('AdOfferController.offerShown / offerDeclined', () {
     test('shown fires the right analytics event with session number',
         () async {
-      final (_, __, sink, controller) = await _setup();
+      final (_, _, sink, controller) = await _setup();
       controller.offerShown(AdPlacement.roundEndBoost, sessionNumber: 7);
       expect(sink.eventNames, ['ad_reward_offer_shown']);
       expect(sink.calls.single.$2['session_number'], 7);
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('declined fires the right analytics event', () async {
-      final (_, __, sink, controller) = await _setup();
+      final (_, _, sink, controller) = await _setup();
       controller.offerDeclined(AdPlacement.shopOffer, sessionNumber: 2);
       expect(sink.eventNames, ['ad_reward_offer_declined']);
       expect(sink.calls.single.$2['placement'], 'shop_offer');

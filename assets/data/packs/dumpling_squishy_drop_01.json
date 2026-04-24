@@ -6,6 +6,27 @@
   "releaseType": "weekly",
   "releaseWindow": "2026-04-27",
   "unlockCost": 500,
+  "packProgression": {
+    "baseOdds": {
+      "common": 0.70,
+      "rare": 0.25,
+      "epic": 0.00,
+      "legendary": 0.05
+    },
+    "unlockGates": {
+      "rare": 3,
+      "epic": 999,
+      "legendary": 8
+    },
+    "pity": {
+      "rareSoft": 4,
+      "rareHard": 6,
+      "epicSoft": 999,
+      "epicHard": 999,
+      "legendarySoft": 15,
+      "legendaryHard": 25
+    }
+  },
   "palette": {
     "primary": "#FFD1DC",
     "secondary": "#FFB5A7",
