@@ -2,13 +2,15 @@
 Resize a single master icon image into every slot iOS + Android need.
 
 Usage:
-    python tools/generate_app_icons.py <source.png>
+    python tools/generate_app_icons.py branding/icon/squishy_smash_icon_bunny_v1.png
 
 The source should be a square RGB image at least 1024x1024, with NO
 alpha channel (iOS App Store rejects transparent icons).
 
 Re-run any time to swap icons — existing files at every target path
-are overwritten.
+are overwritten. A/B icon candidates live in branding/icon/:
+  * squishy_smash_icon_bunny_v1.png   — current primary
+  * squishy_smash_icon_pink_v1.png    — secondary A/B
 """
 
 import argparse
