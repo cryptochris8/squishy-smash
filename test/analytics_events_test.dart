@@ -193,6 +193,95 @@ void main() {
     });
   });
 
+  group('GameEvents monetization spec events', () {
+    test('rewarded ad funnel: shown → accepted → completed', () {
+      final sink = RecordingAnalytics();
+      final e = GameEvents(sink);
+      e.adRewardOfferShown(placement: 'round_end_boost', sessionNumber: 4);
+      e.adRewardOfferAccepted(placement: 'round_end_boost', sessionNumber: 4);
+      e.rewardedAdCompleted(
+        placement: 'round_end_boost',
+        rewardType: 'boost_token',
+        amount: 1,
+      );
+      expect(sink.calls.map((c) => c.$1).toList(), [
+        'ad_reward_offer_shown',
+        'ad_reward_offer_accepted',
+        'rewarded_ad_completed',
+      ]);
+    });
+
+    test('decline event fires without a completion', () {
+      final sink = RecordingAnalytics();
+      GameEvents(sink).adRewardOfferDeclined(
+        placement: 'revive',
+        sessionNumber: 2,
+      );
+      expect(sink.lastName, 'ad_reward_offer_declined');
+      expect(sink.lastParams['placement'], 'revive');
+    });
+
+    test('shop funnel: opened → item viewed → purchased → closed', () {
+      final sink = RecordingAnalytics();
+      final e = GameEvents(sink);
+      e.shopOpened(source: 'menu_cta');
+      e.shopItemViewed(sku: 'remove_ads');
+      e.shopItemPurchased(
+        sku: 'remove_ads',
+        price: '\$2.99',
+        currency: 'USD',
+        wasFirstPurchase: true,
+      );
+      e.paywallClosed(sku: 'remove_ads', reason: 'purchased');
+      expect(sink.calls.map((c) => c.$1).toList(), [
+        'shop_opened',
+        'shop_item_viewed',
+        'shop_item_purchased',
+        'paywall_closed',
+      ]);
+      expect(sink.calls[2].$2['was_first_purchase'], isTrue);
+    });
+
+    test('remove-ads surface + purchase events carry price', () {
+      final sink = RecordingAnalytics();
+      final e = GameEvents(sink);
+      e.removeAdsViewed(source: 'settings_toggle');
+      e.removeAdsPurchased(price: '\$2.99', currency: 'USD');
+      expect(sink.calls.first.$1, 'remove_ads_viewed');
+      expect(sink.calls.last.$1, 'remove_ads_purchased');
+      expect(sink.calls.last.$2['price'], '\$2.99');
+    });
+
+    test('starter bundle surface + purchase events carry progress', () {
+      final sink = RecordingAnalytics();
+      final e = GameEvents(sink);
+      e.starterBundleViewed(
+        source: 'first_rare_reveal',
+        collectionProgressPercent: 12,
+      );
+      e.starterBundlePurchased(price: '\$1.99', currency: 'USD');
+      expect(sink.calls.first.$2['collection_progress_percent'], 12);
+      expect(sink.calls.last.$1, 'starter_bundle_purchased');
+    });
+
+    test('duplicate reward + reveal boost aliases fire with canonical names',
+        () {
+      final sink = RecordingAnalytics();
+      final e = GameEvents(sink);
+      e.duplicateRewardGranted(
+        objectId: 'soft_dumpling',
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.common,
+        coinsAwarded: 2,
+      );
+      e.revealBoostUsed(packId: 'goo_fidgets_drop_01');
+      expect(sink.calls.map((c) => c.$1).toList(), [
+        'duplicate_reward_granted',
+        'reveal_boost_used',
+      ]);
+    });
+  });
+
   group('GameEvents error', () {
     test('assetLoadFailed carries path + error', () {
       final sink = RecordingAnalytics();

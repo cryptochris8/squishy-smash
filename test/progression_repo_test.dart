@@ -419,6 +419,66 @@ void main() {
     });
   });
 
+  group('ProgressionRepository entitlements', () {
+    test('remove-ads flag is idempotent', () async {
+      final repo = await _open();
+      expect(repo.profile.hasRemoveAds, isFalse);
+      await repo.setRemoveAds(true);
+      expect(repo.profile.hasRemoveAds, isTrue);
+      await repo.setRemoveAds(true); // no-op
+      expect(repo.profile.hasRemoveAds, isTrue);
+      await repo.setRemoveAds(false);
+      expect(repo.profile.hasRemoveAds, isFalse);
+    });
+
+    test('markSkuPurchased accumulates receipts', () async {
+      final repo = await _open();
+      expect(repo.hasAnyPurchase, isFalse);
+      await repo.markSkuPurchased('remove_ads');
+      await repo.markSkuPurchased('starter_bundle_v1');
+      await repo.markSkuPurchased('remove_ads'); // dedupe
+      expect(repo.profile.purchasedSkus,
+          {'remove_ads', 'starter_bundle_v1'});
+      expect(repo.hasAnyPurchase, isTrue);
+    });
+
+    test('guaranteed reveal grant + consume follows rarest-first order',
+        () async {
+      final repo = await _open();
+      expect(await repo.consumeGuaranteedReveal(), isNull,
+          reason: 'nothing queued');
+      await repo.grantGuaranteedReveal(Rarity.rare, count: 2);
+      await repo.grantGuaranteedReveal(Rarity.epic);
+      // Mythic is the rarest token available → consumed first.
+      await repo.grantGuaranteedReveal(Rarity.mythic);
+      expect(await repo.consumeGuaranteedReveal(), Rarity.mythic);
+      expect(repo.guaranteedRevealsOf(Rarity.mythic), 0);
+      expect(await repo.consumeGuaranteedReveal(), Rarity.epic);
+      expect(await repo.consumeGuaranteedReveal(), Rarity.rare);
+      expect(await repo.consumeGuaranteedReveal(), Rarity.rare);
+      expect(await repo.consumeGuaranteedReveal(), isNull,
+          reason: 'queue drained');
+    });
+
+    test('consuming a single-count token removes the map key', () async {
+      final repo = await _open();
+      await repo.grantGuaranteedReveal(Rarity.epic);
+      expect(repo.profile.guaranteedRevealTokens.containsKey(Rarity.epic),
+          isTrue);
+      await repo.consumeGuaranteedReveal();
+      expect(repo.profile.guaranteedRevealTokens.containsKey(Rarity.epic),
+          isFalse,
+          reason: 'empty entries should be dropped so persistence stays clean');
+    });
+
+    test('starter bundle claim flag persists', () async {
+      final repo = await _open();
+      expect(repo.profile.starterBundleClaimed, isFalse);
+      await repo.markStarterBundleClaimed();
+      expect(repo.profile.starterBundleClaimed, isTrue);
+    });
+  });
+
   group('ContentLoader bundledPackPaths', () {
     test('all paths are unique', () async {
       await _verifyBundledPackPathsUnique();

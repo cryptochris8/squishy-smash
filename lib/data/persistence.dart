@@ -26,6 +26,12 @@ class Persistence {
   static const String _currentStreakKey = 'profile.current_streak';
   static const String _longestStreakKey = 'profile.longest_streak';
   static const String _boostTokensKey = 'profile.boost_tokens';
+  static const String _hasRemoveAdsKey = 'profile.has_remove_ads';
+  static const String _starterBundleClaimedKey =
+      'profile.starter_bundle_claimed';
+  static const String _guaranteedRevealTokensKey =
+      'profile.guaranteed_reveal_tokens';
+  static const String _purchasedSkusKey = 'profile.purchased_skus';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -64,7 +70,37 @@ class Persistence {
       currentStreak: _prefs.getInt(_currentStreakKey) ?? 0,
       longestStreak: _prefs.getInt(_longestStreakKey) ?? 0,
       boostTokens: _prefs.getInt(_boostTokensKey) ?? 0,
+      hasRemoveAds: _prefs.getBool(_hasRemoveAdsKey) ?? false,
+      starterBundleClaimed:
+          _prefs.getBool(_starterBundleClaimedKey) ?? false,
+      guaranteedRevealTokens:
+          _loadGuaranteedRevealTokens(_guaranteedRevealTokensKey),
+      purchasedSkus:
+          (_prefs.getStringList(_purchasedSkusKey) ?? const <String>[])
+              .toSet(),
     );
+  }
+
+  /// Decode the guaranteedRevealTokens map. Stored as JSON with rarity
+  /// tokens as keys ({"rare":1,"epic":0}). Unknown tokens are ignored
+  /// so a bad save can't crash load.
+  Map<Rarity, int> _loadGuaranteedRevealTokens(String key) {
+    final raw = _prefs.getString(key);
+    if (raw == null || raw.isEmpty) return <Rarity, int>{};
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        final out = <Rarity, int>{};
+        decoded.forEach((k, v) {
+          final r = rarityFromToken(k as String?);
+          if (v is num && v.toInt() > 0) out[r] = v.toInt();
+        });
+        return out;
+      }
+    } catch (_) {
+      // fall through
+    }
+    return <Rarity, int>{};
   }
 
   /// Deserialize a {pack_id -> int} map stored as a JSON string.
@@ -122,6 +158,17 @@ class Persistence {
     await _prefs.setInt(_currentStreakKey, p.currentStreak);
     await _prefs.setInt(_longestStreakKey, p.longestStreak);
     await _prefs.setInt(_boostTokensKey, p.boostTokens);
+    await _prefs.setBool(_hasRemoveAdsKey, p.hasRemoveAds);
+    await _prefs.setBool(_starterBundleClaimedKey, p.starterBundleClaimed);
+    final tokenMap = <String, int>{
+      for (final e in p.guaranteedRevealTokens.entries)
+        if (e.value > 0) e.key.token: e.value,
+    };
+    await _prefs.setString(
+      _guaranteedRevealTokensKey,
+      jsonEncode(tokenMap),
+    );
+    await _prefs.setStringList(_purchasedSkusKey, p.purchasedSkus.toList());
   }
 
   bool get hapticsEnabled => _prefs.getBool(_hapticsKey) ?? true;

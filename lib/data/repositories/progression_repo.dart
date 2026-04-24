@@ -180,8 +180,63 @@ class ProgressionRepository {
 
   /// Grant a boost token from a named source — session-streak
   /// milestone, duplicate legendary, rewarded ad (later), etc.
-  Future<void> grantBoostToken() async {
-    profile.boostTokens += 1;
+  Future<void> grantBoostToken({int count = 1}) async {
+    profile.boostTokens += count;
+    await _persistence.saveProfile(profile);
+  }
+
+  // -- Monetization entitlements -------------------------------------
+
+  /// Set the remove-ads flag. Idempotent — calling twice doesn't
+  /// double-charge or double-grant anything.
+  Future<void> setRemoveAds(bool value) async {
+    if (profile.hasRemoveAds == value) return;
+    profile.hasRemoveAds = value;
+    await _persistence.saveProfile(profile);
+  }
+
+  Future<void> markSkuPurchased(String sku) async {
+    profile.purchasedSkus.add(sku);
+    await _persistence.saveProfile(profile);
+  }
+
+  bool get hasAnyPurchase => profile.purchasedSkus.isNotEmpty;
+
+  /// Queue N forced-tier reveal tokens. The pity selector consumes one
+  /// from the map on next spawn, forcing an object of that tier
+  /// regardless of normal weighting.
+  Future<void> grantGuaranteedReveal(Rarity rarity, {int count = 1}) async {
+    profile.guaranteedRevealTokens[rarity] =
+        (profile.guaranteedRevealTokens[rarity] ?? 0) + count;
+    await _persistence.saveProfile(profile);
+  }
+
+  /// Pop one token from the guaranteedRevealTokens queue. Returns the
+  /// rarity that should be forced on the next spawn, or null if the
+  /// queue is empty. Prefers rarer tiers when multiple are queued so
+  /// the player feels the "save this for something special" effect.
+  Future<Rarity?> consumeGuaranteedReveal() async {
+    for (final r in [Rarity.mythic, Rarity.epic, Rarity.rare]) {
+      final count = profile.guaranteedRevealTokens[r] ?? 0;
+      if (count > 0) {
+        profile.guaranteedRevealTokens[r] = count - 1;
+        if (profile.guaranteedRevealTokens[r] == 0) {
+          profile.guaranteedRevealTokens.remove(r);
+        }
+        await _persistence.saveProfile(profile);
+        return r;
+      }
+    }
+    return null;
+  }
+
+  int guaranteedRevealsOf(Rarity rarity) =>
+      profile.guaranteedRevealTokens[rarity] ?? 0;
+
+  /// Mark the Starter Bundle as claimed. Prevents the paywall from
+  /// re-triggering on future sessions.
+  Future<void> markStarterBundleClaimed() async {
+    profile.starterBundleClaimed = true;
     await _persistence.saveProfile(profile);
   }
 }

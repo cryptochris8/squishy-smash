@@ -161,6 +161,139 @@ class GameEvents {
     _sink.event('boost_used', <String, Object?>{'pack_id': packId});
   }
 
+  // -- rewarded ad funnel --------------------------------------------
+  // Paired with placement: which offer spot (round_end_boost,
+  // revive, double_coins, etc.), session_number, days_since_install.
+
+  void adRewardOfferShown({
+    required String placement,
+    required int sessionNumber,
+  }) {
+    _sink.event('ad_reward_offer_shown', <String, Object?>{
+      'placement': placement,
+      'session_number': sessionNumber,
+    });
+  }
+
+  void adRewardOfferAccepted({
+    required String placement,
+    required int sessionNumber,
+  }) {
+    _sink.event('ad_reward_offer_accepted', <String, Object?>{
+      'placement': placement,
+      'session_number': sessionNumber,
+    });
+  }
+
+  void adRewardOfferDeclined({
+    required String placement,
+    required int sessionNumber,
+  }) {
+    _sink.event('ad_reward_offer_declined', <String, Object?>{
+      'placement': placement,
+      'session_number': sessionNumber,
+    });
+  }
+
+  void rewardedAdCompleted({
+    required String placement,
+    required String rewardType,
+    required int amount,
+  }) {
+    _sink.event('rewarded_ad_completed', <String, Object?>{
+      'placement': placement,
+      'reward_type': rewardType,
+      'amount': amount,
+    });
+  }
+
+  // -- shop + paywall funnel -----------------------------------------
+
+  void shopOpened({required String source}) {
+    _sink.event('shop_opened', <String, Object?>{'source': source});
+  }
+
+  void shopItemViewed({required String sku}) {
+    _sink.event('shop_item_viewed', <String, Object?>{'sku': sku});
+  }
+
+  void shopItemPurchased({
+    required String sku,
+    required String price,
+    required String currency,
+    required bool wasFirstPurchase,
+  }) {
+    _sink.event('shop_item_purchased', <String, Object?>{
+      'sku': sku,
+      'price': price,
+      'currency': currency,
+      'was_first_purchase': wasFirstPurchase,
+    });
+  }
+
+  void paywallClosed({required String sku, required String reason}) {
+    _sink.event('paywall_closed', <String, Object?>{
+      'sku': sku,
+      'reason': reason, // 'dismissed' | 'purchased' | 'error'
+    });
+  }
+
+  // -- per-offer surfaces --------------------------------------------
+
+  void removeAdsViewed({required String source}) {
+    _sink.event('remove_ads_viewed', <String, Object?>{'source': source});
+  }
+
+  void removeAdsPurchased({required String price, required String currency}) {
+    _sink.event('remove_ads_purchased', <String, Object?>{
+      'price': price,
+      'currency': currency,
+    });
+  }
+
+  void starterBundleViewed({
+    required String source,
+    required int collectionProgressPercent,
+  }) {
+    _sink.event('starter_bundle_viewed', <String, Object?>{
+      'source': source,
+      'collection_progress_percent': collectionProgressPercent,
+    });
+  }
+
+  void starterBundlePurchased({
+    required String price,
+    required String currency,
+  }) {
+    _sink.event('starter_bundle_purchased', <String, Object?>{
+      'price': price,
+      'currency': currency,
+    });
+  }
+
+  // -- duplicate + reveal boost semantic aliases ---------------------
+  // The monetization spec uses slightly different names than the
+  // core-loop analytics surface. Emit the spec names too so dashboards
+  // can key off either without duplication logic.
+
+  void duplicateRewardGranted({
+    required String objectId,
+    required String packId,
+    required Rarity rarity,
+    required int coinsAwarded,
+  }) {
+    _sink.event('duplicate_reward_granted', <String, Object?>{
+      'object_id': objectId,
+      'pack_id': packId,
+      'rarity': rarity.token,
+      'coins_awarded': coinsAwarded,
+    });
+  }
+
+  void revealBoostUsed({required String packId}) {
+    _sink.event('reveal_boost_used', <String, Object?>{'pack_id': packId});
+  }
+
   // -- live-ops -------------------------------------------------------
 
   void packViewed({required String packId, required String source}) {

@@ -19,7 +19,13 @@ class PlayerProfile {
     this.currentStreak = 0,
     this.longestStreak = 0,
     this.boostTokens = 0,
-  })  : unlockedArenaKeys =
+    this.hasRemoveAds = false,
+    this.starterBundleClaimed = false,
+    Map<Rarity, int>? guaranteedRevealTokens,
+    Set<String>? purchasedSkus,
+  })  : guaranteedRevealTokens = guaranteedRevealTokens ?? <Rarity, int>{},
+        purchasedSkus = purchasedSkus ?? <String>{},
+        unlockedArenaKeys =
             unlockedArenaKeys ?? <String>{'mochi_sunset_beach'},
         discoveredSmashableIds = discoveredSmashableIds ?? <String>{},
         totalBurstsByPack = totalBurstsByPack ?? <String, int>{},
@@ -86,6 +92,26 @@ class PlayerProfile {
   /// on streak milestones or (later) from rewarded-ad views.
   int boostTokens;
 
+  /// Remove-ads entitlement — set to true after a successful purchase
+  /// of the `remove_ads` non-consumable IAP. Persists across relaunch.
+  bool hasRemoveAds;
+
+  /// True after the player has successfully purchased the
+  /// `starter_bundle_v1` IAP. Non-consumable — one per player.
+  bool starterBundleClaimed;
+
+  /// Queue of forced-tier reveal tokens. When the player has any tokens
+  /// of a given tier, the next spawn will bypass normal weighting and
+  /// force an object of that tier. Consumed on spawn. Granted by the
+  /// Starter Bundle ("guaranteed rare") or future premium offers.
+  Map<Rarity, int> guaranteedRevealTokens;
+
+  /// All non-consumable + consumable SKU IDs the player has purchased
+  /// in their lifetime. Used for analytics (`was_first_purchase` param)
+  /// and restore-purchases reconciliation. Does not count consumables
+  /// that have been used up — this is the "receipt history" set.
+  Set<String> purchasedSkus;
+
   factory PlayerProfile.empty() => PlayerProfile(
         coins: 0,
         unlockedPackIds: <String>{'launch_squishy_foods'},
@@ -104,5 +130,9 @@ class PlayerProfile {
         currentStreak: 0,
         longestStreak: 0,
         boostTokens: 0,
+        hasRemoveAds: false,
+        starterBundleClaimed: false,
+        guaranteedRevealTokens: <Rarity, int>{},
+        purchasedSkus: <String>{},
       );
 }

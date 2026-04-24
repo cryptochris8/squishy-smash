@@ -35,6 +35,15 @@ void main() {
       expect(profile.legendaryDryByPack, isEmpty);
     });
 
+    test('first-launch profile has no entitlements', () async {
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.hasRemoveAds, isFalse);
+      expect(profile.starterBundleClaimed, isFalse);
+      expect(profile.guaranteedRevealTokens, isEmpty);
+      expect(profile.purchasedSkus, isEmpty);
+    });
+
     test('first-launch profile unlocks only the launch arena', () async {
       final p = await Persistence.open();
       final profile = p.loadProfile();
@@ -90,6 +99,49 @@ void main() {
       expect(reloaded.discoveredSmashableIds,
           {'dumplio', 'jellyzap', 'slimeorb'});
       expect(reloaded.rarestSeen, Rarity.epic);
+    });
+
+    test('entitlement fields round-trip', () async {
+      final p = await Persistence.open();
+      final profile = PlayerProfile(
+        coins: 0,
+        unlockedPackIds: const {'launch'},
+        bestScore: 0,
+        bestCombo: 0,
+        hasRemoveAds: true,
+        starterBundleClaimed: true,
+        guaranteedRevealTokens: {Rarity.rare: 2, Rarity.epic: 1},
+        purchasedSkus: {'remove_ads', 'starter_bundle_v1'},
+      );
+      await p.saveProfile(profile);
+      final reloaded = p.loadProfile();
+      expect(reloaded.hasRemoveAds, isTrue);
+      expect(reloaded.starterBundleClaimed, isTrue);
+      expect(reloaded.guaranteedRevealTokens, {
+        Rarity.rare: 2,
+        Rarity.epic: 1,
+      });
+      expect(reloaded.purchasedSkus, {'remove_ads', 'starter_bundle_v1'});
+    });
+
+    test('zero-count guaranteed reveal tokens drop out of persistence',
+        () async {
+      final p = await Persistence.open();
+      final profile = PlayerProfile(
+        coins: 0,
+        unlockedPackIds: const {'launch'},
+        bestScore: 0,
+        bestCombo: 0,
+        guaranteedRevealTokens: {
+          Rarity.rare: 0,
+          Rarity.epic: 3,
+          Rarity.mythic: 0,
+        },
+      );
+      await p.saveProfile(profile);
+      final reloaded = p.loadProfile();
+      // Only the non-zero entry should round-trip.
+      expect(reloaded.guaranteedRevealTokens, {Rarity.epic: 3});
     });
 
     test('per-pack progression maps round-trip through JSON encoding',
