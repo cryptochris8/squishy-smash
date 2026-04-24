@@ -138,6 +138,12 @@ class ProgressionRepository {
   /// Repeat bursts count — a player bursting the same rare three
   /// times clears the rare-pity streak three times over, and still
   /// adds three toward the epic unlock gate.
+  ///
+  /// Contract: profile map mutations below are SYNCHRONOUS and happen
+  /// before the awaited persistence write. `SquishyGame` relies on this
+  /// so the very next `_selectNextSmashable` call sees the updated
+  /// dry-streak counters (pity ramp works within a session without
+  /// waiting for disk I/O). Do not reorder these lines after the await.
   Future<void> noteBurstForPack({
     required String packId,
     required Rarity rarity,

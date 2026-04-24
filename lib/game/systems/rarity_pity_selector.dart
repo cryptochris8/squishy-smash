@@ -148,24 +148,18 @@ class RarityPitySelector {
     }
 
     // Per-object base share of the tier's probability mass.
-    if (def.dropWeight != null) {
-      // Author override — bypass derivation, use the literal weight.
-      return _applyBoosts(
-        baseScaled: def.dropWeight! * _boostScale,
-        rarity: def.rarity,
-        rareDry: rareDry,
-        epicDry: epicDry,
-        legendaryDry: legendaryDry,
-        comboMultiplier: comboMultiplier,
-        boostActive: boostActive,
-        pity: pity,
-      );
-    }
     final tierCount = pack.countAtTier(def.rarity);
     if (tierCount == 0) return 0;
     final tierShare = pack.progression.baseOdds.shareFor(def.rarity);
-    final base = tierShare / tierCount;  // fraction per object
-    final baseScaled = (base * _weightScale).round();
+    final base = tierShare / tierCount; // fraction per object
+    // Author override: `dropWeight` acts as a relative multiplier on
+    // the natural per-object share. dropWeight=1 behaves like no
+    // override; dropWeight=3 makes this object ~3x more likely than a
+    // typical object of the same rarity in the same pack. Use for
+    // "hero" objects inside a tier (e.g., the mascot mythic). Null or
+    // absent means "use the natural share."
+    final multiplier = (def.dropWeight ?? 1).toDouble();
+    final baseScaled = (base * multiplier * _weightScale).round();
     return _applyBoosts(
       baseScaled: baseScaled,
       rarity: def.rarity,
@@ -207,6 +201,5 @@ class RarityPitySelector {
   }
 }
 
-// Scale factors so per-object fractions round to meaningful ints.
+// Scale factor so per-object fractions round to meaningful ints.
 const int _weightScale = 10000;
-const int _boostScale = 1;

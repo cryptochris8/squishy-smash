@@ -8,6 +8,7 @@ import '../data/models/rarity.dart';
 import '../game/components/hud_overlay.dart';
 import '../game/share_capture.dart';
 import '../game/squishy_game.dart';
+import 'widgets/starter_bundle_popup.dart';
 
 class GameplayScreen extends StatefulWidget {
   const GameplayScreen({super.key});
@@ -30,7 +31,21 @@ class _GameplayScreenState extends State<GameplayScreen> {
     _game = SquishyGame(
       onRoundEnd: _handleRoundEnd,
       onMythicReveal: _handleMythicReveal,
+      onFirstRareReveal: _handleFirstRareReveal,
     );
+  }
+
+  void _handleFirstRareReveal() {
+    // Fires on the Flame tick when the player's very first rare+ burst
+    // resolves. Defer to the next frame so the popup doesn't try to
+    // build during a Flame update.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      // Guard against re-showing if the profile already claimed the
+      // bundle via the Shop path earlier in the same round.
+      if (ServiceLocator.progression.profile.starterBundleClaimed) return;
+      StarterBundlePopup.show(context);
+    });
   }
 
   void _handleRoundEnd(int score, int combo, int coinsEarned) {

@@ -28,7 +28,11 @@ import 'systems/voice_line_registry.dart';
 import 'world/arena_world.dart';
 
 class SquishyGame extends FlameGame {
-  SquishyGame({this.onRoundEnd, this.onMythicReveal});
+  SquishyGame({
+    this.onRoundEnd,
+    this.onMythicReveal,
+    this.onFirstRareReveal,
+  });
 
   final void Function(int score, int combo, int coinsEarned)? onRoundEnd;
 
@@ -37,6 +41,14 @@ class SquishyGame extends FlameGame {
   /// the Flame tick; callers must use `WidgetsBinding.addPostFrameCallback`
   /// or similar if touching the widget tree.
   final VoidCallback? onMythicReveal;
+
+  /// Fires the first time — across all sessions — the player bursts a
+  /// rare-or-better object. Used to trigger the Starter Bundle paywall
+  /// (gated further by `profile.starterBundleClaimed`). Once fired,
+  /// `_hasFiredFirstRareReveal` prevents re-fires within the same
+  /// round.
+  final VoidCallback? onFirstRareReveal;
+  bool _hasFiredFirstRareReveal = false;
 
   late final ArenaWorld arena;
   late final ScoreController score;
@@ -348,6 +360,16 @@ class SquishyGame extends FlameGame {
       tier = FeedbackTier.burst;
     }
     feedback.dispatch(tier, c.def);
+
+    // Starter Bundle paywall trigger — one-shot per round, gated by
+    // profile state (hasn't claimed yet). UI code is responsible for
+    // not re-showing if the bundle is already claimed.
+    if (rarity.index >= Rarity.rare.index &&
+        !_hasFiredFirstRareReveal &&
+        !profile.starterBundleClaimed) {
+      _hasFiredFirstRareReveal = true;
+      onFirstRareReveal?.call();
+    }
 
     // Mythic gets an extra-heavy shake override on top of the dispatcher
     // default; rarity also swaps the skybox to its reveal variant.
