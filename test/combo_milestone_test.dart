@@ -29,7 +29,9 @@ void main() {
 
     test('returns null for bumps that stay within a tier', () {
       final c = ComboController();
-      for (var i = 0; i < 3; i++) c.bump();
+      for (var i = 0; i < 3; i++) {
+        c.bump();
+      }
       // Streak 3 → starter was already triggered. Stream 4, 5 stay in
       // starter so no milestone event.
       expect(c.bump(), isNull);
@@ -50,7 +52,10 @@ void main() {
 
     test('decay reset does not re-fire milestones when ramping back', () {
       final c = ComboController();
-      for (var i = 0; i < 3; i++) c.bump(); // -> starter
+      for (var i = 0; i < 3; i++) {
+        c.bump();
+      }
+      // streak 3 -> starter
       c.tick(5); // decay to zero
       expect(c.currentTier, ComboTier.none);
       // First bump after decay goes 0 -> 1, still none. No milestone.
@@ -65,7 +70,9 @@ void main() {
     test('tracks the live streak', () {
       final c = ComboController();
       expect(c.currentTier, ComboTier.none);
-      for (var i = 0; i < 6; i++) c.bump();
+      for (var i = 0; i < 6; i++) {
+        c.bump();
+      }
       expect(c.currentTier, ComboTier.stronger);
       c.tick(5);
       expect(c.currentTier, ComboTier.none);
