@@ -60,6 +60,12 @@ class SquishyGame extends FlameGame {
   String? _activePackId;
   bool _ended = false;
 
+  /// True for the single next spawn if a boost token is available at
+  /// round start. Consumed on the first pick; subsequent picks in the
+  /// same round use normal weighting. Keeps token burn predictable:
+  /// one token per round until the player runs out.
+  bool _useBoostOnNextSpawn = false;
+
   @override
   Color backgroundColor() => const Color(0xFF1A1320);
 
@@ -125,6 +131,13 @@ class SquishyGame extends FlameGame {
         tokensAfter: ServiceLocator.progression.profile.boostTokens,
       );
     }
+    // If the player has any tokens in the bank, arm the first spawn
+    // to consume one. This keeps token usage predictable (one per
+    // round) rather than silently burning all of them on consecutive
+    // picks.
+    if (ServiceLocator.progression.profile.boostTokens > 0) {
+      _useBoostOnNextSpawn = true;
+    }
     if (_activePackId != null) {
       events.levelStart(
         packId: _activePackId!,
@@ -175,12 +188,24 @@ class SquishyGame extends FlameGame {
     // spawning. Should only happen if a pack author mis-configures
     // thresholds for a pack with no commons.
     final effectivePool = gated.isEmpty ? _pool : gated;
+    final boost = _useBoostOnNextSpawn;
+    if (boost) {
+      _useBoostOnNextSpawn = false;
+      // Fire-and-forget — consuming the token is a persistence write.
+      // If the player quits mid-round they don't double-spend on
+      // relaunch.
+      ServiceLocator.progression.consumeBoostToken();
+      if (_activePackId != null) {
+        events.boostUsed(packId: _activePackId!);
+      }
+    }
     return pitySelector.pick(
       pool: effectivePool,
       rareDryByPack: profile.rareDryByPack,
       epicDryByPack: profile.epicDryByPack,
       legendaryDryByPack: profile.legendaryDryByPack,
       comboMultiplier: combo.multiplier,
+      boostActive: boost,
       rng: _rng,
     );
   }

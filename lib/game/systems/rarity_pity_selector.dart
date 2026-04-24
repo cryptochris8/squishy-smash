@@ -27,11 +27,19 @@ import 'pack_progression_gate.dart';
 /// If every object in the pool ends up at weight 0, the selector falls
 /// back to a uniform pick so spawns never stall.
 class RarityPitySelector {
-  const RarityPitySelector({this.comboBoostPerStep = 0.2});
+  const RarityPitySelector({
+    this.comboBoostPerStep = 0.2,
+    this.boostTokenMultiplier = 0.5,
+  });
 
   /// Boost added to rare+ object weights per step of combo above 1.
   /// At combo 8 (default cap) this yields a +1.4x multiplier.
   final double comboBoostPerStep;
+
+  /// Extra multiplier applied to rare+ weights when a boost token is
+  /// active on the pick. Default +50% stacks on top of any existing
+  /// soft-pity + combo boost.
+  final double boostTokenMultiplier;
 
   /// Pick the next object. [pool] should already have been filtered
   /// through [PackProgressionGate] for unlock gates.
@@ -41,6 +49,7 @@ class RarityPitySelector {
     required Map<String, int> epicDryByPack,
     required Map<String, int> legendaryDryByPack,
     int comboMultiplier = 1,
+    bool boostActive = false,
     Random? rng,
   }) {
     if (pool.isEmpty) {
@@ -55,6 +64,7 @@ class RarityPitySelector {
         epicDry: epicDryByPack[entry.packId] ?? 0,
         legendaryDry: legendaryDryByPack[entry.packId] ?? 0,
         comboMultiplier: comboMultiplier,
+        boostActive: boostActive,
       ));
     }
     final total = weights.fold<int>(0, (a, b) => a + b);
@@ -96,6 +106,7 @@ class RarityPitySelector {
     required int epicDry,
     required int legendaryDry,
     required int comboMultiplier,
+    required bool boostActive,
   }) {
     final def = entry.def;
     final pack = entry.pack;
@@ -123,6 +134,7 @@ class RarityPitySelector {
         epicDry: epicDry,
         legendaryDry: legendaryDry,
         comboMultiplier: comboMultiplier,
+        boostActive: boostActive,
         pity: pity,
       );
     }
@@ -138,6 +150,7 @@ class RarityPitySelector {
       epicDry: epicDry,
       legendaryDry: legendaryDry,
       comboMultiplier: comboMultiplier,
+      boostActive: boostActive,
       pity: pity,
     );
   }
@@ -149,6 +162,7 @@ class RarityPitySelector {
     required int epicDry,
     required int legendaryDry,
     required int comboMultiplier,
+    required bool boostActive,
     required PityThresholds pity,
   }) {
     if (rarity == Rarity.common) return baseScaled;
@@ -164,7 +178,8 @@ class RarityPitySelector {
         : ((dry - soft) / (hard - soft).clamp(1, 10000)).clamp(0.0, 1.0);
     final comboBoost =
         ((comboMultiplier - 1).clamp(0, 1000)) * comboBoostPerStep;
-    final scaled = baseScaled * (1 + softBoost + comboBoost);
+    final tokenBoost = boostActive ? boostTokenMultiplier : 0.0;
+    final scaled = baseScaled * (1 + softBoost + comboBoost + tokenBoost);
     return scaled.round();
   }
 }

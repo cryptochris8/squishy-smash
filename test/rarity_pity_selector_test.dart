@@ -221,6 +221,67 @@ void main() {
     });
   });
 
+  group('RarityPitySelector boost token', () {
+    const selector = RarityPitySelector();
+
+    int rareHits({required bool boost}) {
+      final rng = Random(77);
+      var hits = 0;
+      for (var i = 0; i < 20000; i++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          boostActive: boost,
+          rng: rng,
+        );
+        if (pick.rarity.index >= Rarity.rare.index) hits++;
+      }
+      return hits;
+    }
+
+    test('boost token boosts rare+ rate versus no boost', () {
+      final without = rareHits(boost: false);
+      final with_ = rareHits(boost: true);
+      expect(with_, greaterThan(without),
+          reason: 'boost token should materially lift rare+ rate');
+      // +50% on rare+ weights should push the ratio up meaningfully.
+      expect(with_ / without, greaterThan(1.1));
+    });
+
+    test('boost token does not affect common weight', () {
+      // Commons should be a smaller share of picks when boosted.
+      final rngBase = Random(101);
+      var baseCommons = 0;
+      for (var i = 0; i < 10000; i++) {
+        final p = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          boostActive: false,
+          rng: rngBase,
+        );
+        if (p.rarity == Rarity.common) baseCommons++;
+      }
+      final rngBoost = Random(101);
+      var boostCommons = 0;
+      for (var i = 0; i < 10000; i++) {
+        final p = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          boostActive: true,
+          rng: rngBoost,
+        );
+        if (p.rarity == Rarity.common) boostCommons++;
+      }
+      expect(boostCommons, lessThan(baseCommons));
+    });
+  });
+
   group('RarityPitySelector fallback behavior', () {
     test('empty pool after all-zero weights falls back to uniform pick', () {
       // Craft a pack where the only tier present is common, then force
