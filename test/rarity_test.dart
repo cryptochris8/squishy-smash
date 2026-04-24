@@ -40,12 +40,16 @@ void main() {
           greaterThan(Rarity.mythic.defaultWeight));
     });
 
-    test('mythic probability is below 1% of total weight', () {
-      final totalWeight = Rarity.values
+    test('tier-share values sum to 100 and match doc odds', () {
+      final totalShare = Rarity.values
           .map((r) => r.defaultWeight)
           .fold<int>(0, (a, b) => a + b);
-      final mythicPct = Rarity.mythic.defaultWeight / totalWeight;
-      expect(mythicPct, lessThan(0.01));
+      // 68 + 22 + 8 + 2 = 100, per the tuning-doc base odds.
+      expect(totalShare, 100);
+      expect(Rarity.common.defaultWeight / totalShare, 0.68);
+      expect(Rarity.rare.defaultWeight / totalShare, 0.22);
+      expect(Rarity.epic.defaultWeight / totalShare, 0.08);
+      expect(Rarity.mythic.defaultWeight / totalShare, 0.02);
     });
 
     test('triggersReveal starts at rare tier', () {

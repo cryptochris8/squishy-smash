@@ -161,39 +161,21 @@ class SquishyGame extends FlameGame {
     final profile = ServiceLocator.progression.profile;
     final gated = packGate.filterPool(
       objectsByPack: _pool,
-      rareBurstsByPack: profile.rareBurstsByPack,
-      epicBurstsByPack: profile.epicBurstsByPack,
+      totalBurstsByPack: profile.totalBurstsByPack,
     );
     // If gating produced an empty pool (pathological — every pack is
     // fully locked), fall back to the ungated pool so the game keeps
     // spawning. Should only happen if a pack author mis-configures
     // thresholds for a pack with no commons.
-    final effectivePool = (gated.isEmpty ? _pool : gated)
-        .map((e) => e.def)
-        .toList(growable: false);
-    final def = pitySelector.pick(
+    final effectivePool = gated.isEmpty ? _pool : gated;
+    return pitySelector.pick(
       pool: effectivePool,
-      rollsSinceRare: profile.rollsSinceRare,
-      rollsSinceEpic: profile.rollsSinceEpic,
-      rollsSinceMythic: profile.rollsSinceMythic,
+      rareDryByPack: profile.rareDryByPack,
+      epicDryByPack: profile.epicDryByPack,
+      legendaryDryByPack: profile.legendaryDryByPack,
       comboMultiplier: combo.multiplier,
       rng: _rng,
     );
-    final (nextRare, nextEpic, nextMythic) = pitySelector.advanceCounters(
-      pickedRarity: def.rarity,
-      rollsSinceRare: profile.rollsSinceRare,
-      rollsSinceEpic: profile.rollsSinceEpic,
-      rollsSinceMythic: profile.rollsSinceMythic,
-    );
-    // Fire-and-forget persistence — pity counters don't need to block
-    // the Flame tick. Worst case on a crash: a handful of rolls get
-    // replayed next session, which is fine.
-    ServiceLocator.progression.noteSpawnRoll(
-      rollsSinceRare: nextRare,
-      rollsSinceEpic: nextEpic,
-      rollsSinceMythic: nextMythic,
-    );
-    return def;
   }
 
   void _spawnNext(SmashableDef def) {
@@ -241,20 +223,18 @@ class SquishyGame extends FlameGame {
       }
     }
 
-    // Per-pack burst tracking for acquisition gating. Repeat bursts
-    // count so even a small pool of rares can still pace the gate.
+    // Per-pack burst tracking drives unlock gates + pity dry streaks.
+    // Every burst — even commons — counts toward totalBurstsByPack
+    // (unlock gates) and advances / resets the tier dry counters.
     // Look up the owning pack from the spawn-time context rather than
-    // _activePackId, which is featured-pack-scoped and not necessarily
+    // _activePackId, which is the featured pack and not necessarily
     // where this object lives.
-    if (c.def.rarity.index >= Rarity.rare.index) {
-      final owningPackId =
-          _defIdToPackId[c.def.id] ?? _activePackId;
-      if (owningPackId != null) {
-        ServiceLocator.progression.noteBurstForPack(
-          packId: owningPackId,
-          rarity: c.def.rarity,
-        );
-      }
+    final owningPackId = _defIdToPackId[c.def.id] ?? _activePackId;
+    if (owningPackId != null) {
+      ServiceLocator.progression.noteBurstForPack(
+        packId: owningPackId,
+        rarity: c.def.rarity,
+      );
     }
 
     // Pick a feedback tier. Rarity wins over combo (a mythic at combo 1

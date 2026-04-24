@@ -15,13 +15,13 @@ class Persistence {
   static const String _sessionCountKey = 'profile.session_count';
   static const String _arenaUnlocksKey = 'profile.arena_unlocks';
   static const String _activeArenaKey = 'profile.active_arena';
-  static const String _rollsSinceRareKey = 'profile.rolls_since_rare';
-  static const String _rollsSinceEpicKey = 'profile.rolls_since_epic';
-  static const String _rollsSinceMythicKey = 'profile.rolls_since_mythic';
   static const String _discoveredIdsKey = 'profile.discovered_ids';
   static const String _rarestSeenKey = 'profile.rarest_seen';
-  static const String _rareBurstsByPackKey = 'profile.rare_bursts_by_pack';
-  static const String _epicBurstsByPackKey = 'profile.epic_bursts_by_pack';
+  static const String _totalBurstsByPackKey = 'profile.total_bursts_by_pack';
+  static const String _rareDryByPackKey = 'profile.rare_dry_by_pack';
+  static const String _epicDryByPackKey = 'profile.epic_dry_by_pack';
+  static const String _legendaryDryByPackKey =
+      'profile.legendary_dry_by_pack';
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
 
@@ -50,13 +50,12 @@ class Persistence {
       unlockedArenaKeys: arenaUnlocks.toSet(),
       activeArenaKey:
           _prefs.getString(_activeArenaKey) ?? 'mochi_sunset_beach',
-      rollsSinceRare: _prefs.getInt(_rollsSinceRareKey) ?? 0,
-      rollsSinceEpic: _prefs.getInt(_rollsSinceEpicKey) ?? 0,
-      rollsSinceMythic: _prefs.getInt(_rollsSinceMythicKey) ?? 0,
       discoveredSmashableIds: discovered.toSet(),
       rarestSeen: rarityFromToken(_prefs.getString(_rarestSeenKey)),
-      rareBurstsByPack: _loadIntMap(_rareBurstsByPackKey),
-      epicBurstsByPack: _loadIntMap(_epicBurstsByPackKey),
+      totalBurstsByPack: _loadIntMap(_totalBurstsByPackKey),
+      rareDryByPack: _loadIntMap(_rareDryByPackKey),
+      epicDryByPack: _loadIntMap(_epicDryByPackKey),
+      legendaryDryByPack: _loadIntMap(_legendaryDryByPackKey),
     );
   }
 
@@ -92,21 +91,20 @@ class Persistence {
       p.unlockedArenaKeys.toList(),
     );
     await _prefs.setString(_activeArenaKey, p.activeArenaKey);
-    await _prefs.setInt(_rollsSinceRareKey, p.rollsSinceRare);
-    await _prefs.setInt(_rollsSinceEpicKey, p.rollsSinceEpic);
-    await _prefs.setInt(_rollsSinceMythicKey, p.rollsSinceMythic);
     await _prefs.setStringList(
       _discoveredIdsKey,
       p.discoveredSmashableIds.toList(),
     );
     await _prefs.setString(_rarestSeenKey, p.rarestSeen.token);
     await _prefs.setString(
-      _rareBurstsByPackKey,
-      jsonEncode(p.rareBurstsByPack),
+      _totalBurstsByPackKey,
+      jsonEncode(p.totalBurstsByPack),
     );
+    await _prefs.setString(_rareDryByPackKey, jsonEncode(p.rareDryByPack));
+    await _prefs.setString(_epicDryByPackKey, jsonEncode(p.epicDryByPack));
     await _prefs.setString(
-      _epicBurstsByPackKey,
-      jsonEncode(p.epicBurstsByPack),
+      _legendaryDryByPackKey,
+      jsonEncode(p.legendaryDryByPack),
     );
   }
 

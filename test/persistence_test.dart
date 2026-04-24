@@ -22,21 +22,17 @@ void main() {
       expect(profile.unlockedPackIds, <String>{'launch_squishy_foods'});
     });
 
-    test('first-launch profile has zeroed pity + empty discovery', () async {
+    test(
+        'first-launch profile has empty discovery + per-pack maps + common '
+        'rarest-seen', () async {
       final p = await Persistence.open();
       final profile = p.loadProfile();
-      expect(profile.rollsSinceRare, 0);
-      expect(profile.rollsSinceEpic, 0);
-      expect(profile.rollsSinceMythic, 0);
       expect(profile.discoveredSmashableIds, isEmpty);
       expect(profile.rarestSeen, Rarity.common);
-    });
-
-    test('first-launch profile has empty per-pack burst maps', () async {
-      final p = await Persistence.open();
-      final profile = p.loadProfile();
-      expect(profile.rareBurstsByPack, isEmpty);
-      expect(profile.epicBurstsByPack, isEmpty);
+      expect(profile.totalBurstsByPack, isEmpty);
+      expect(profile.rareDryByPack, isEmpty);
+      expect(profile.epicDryByPack, isEmpty);
+      expect(profile.legendaryDryByPack, isEmpty);
     });
 
     test('first-launch profile unlocks only the launch arena', () async {
@@ -71,9 +67,6 @@ void main() {
           'neon_fidget_arcade',
         },
         activeArenaKey: 'neon_fidget_arcade',
-        rollsSinceRare: 9,
-        rollsSinceEpic: 45,
-        rollsSinceMythic: 312,
         discoveredSmashableIds: <String>{'dumplio', 'jellyzap', 'slimeorb'},
         rarestSeen: Rarity.epic,
       );
@@ -94,35 +87,37 @@ void main() {
         'neon_fidget_arcade',
       });
       expect(reloaded.activeArenaKey, 'neon_fidget_arcade');
-      expect(reloaded.rollsSinceRare, 9);
-      expect(reloaded.rollsSinceEpic, 45);
-      expect(reloaded.rollsSinceMythic, 312);
       expect(reloaded.discoveredSmashableIds,
           {'dumplio', 'jellyzap', 'slimeorb'});
       expect(reloaded.rarestSeen, Rarity.epic);
     });
 
-    test('per-pack burst maps round-trip through JSON encoding', () async {
+    test('per-pack progression maps round-trip through JSON encoding',
+        () async {
       final p = await Persistence.open();
       final profile = PlayerProfile(
         coins: 0,
         unlockedPackIds: const <String>{'launch'},
         bestScore: 0,
         bestCombo: 0,
-        rareBurstsByPack: <String, int>{
-          'launch_squishy_foods': 7,
-          'goo_fidgets_drop_01': 3,
+        totalBurstsByPack: <String, int>{
+          'launch_squishy_foods': 42,
+          'goo_fidgets_drop_01': 7,
         },
-        epicBurstsByPack: <String, int>{'creepy_cute_pack_01': 2},
+        rareDryByPack: <String, int>{'launch_squishy_foods': 4},
+        epicDryByPack: <String, int>{'launch_squishy_foods': 13},
+        legendaryDryByPack: <String, int>{'launch_squishy_foods': 28},
       );
       await p.saveProfile(profile);
 
       final reloaded = p.loadProfile();
-      expect(reloaded.rareBurstsByPack, {
-        'launch_squishy_foods': 7,
-        'goo_fidgets_drop_01': 3,
+      expect(reloaded.totalBurstsByPack, {
+        'launch_squishy_foods': 42,
+        'goo_fidgets_drop_01': 7,
       });
-      expect(reloaded.epicBurstsByPack, {'creepy_cute_pack_01': 2});
+      expect(reloaded.rareDryByPack, {'launch_squishy_foods': 4});
+      expect(reloaded.epicDryByPack, {'launch_squishy_foods': 13});
+      expect(reloaded.legendaryDryByPack, {'launch_squishy_foods': 28});
     });
 
     test('settings toggles round-trip', () async {

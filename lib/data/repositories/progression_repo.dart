@@ -86,19 +86,6 @@ class ProgressionRepository {
     await _persistence.saveProfile(profile);
   }
 
-  /// Persist the advanced pity counters after a spawn roll. The
-  /// selector is pure; this method just writes back the new values.
-  Future<void> noteSpawnRoll({
-    required int rollsSinceRare,
-    required int rollsSinceEpic,
-    required int rollsSinceMythic,
-  }) async {
-    profile.rollsSinceRare = rollsSinceRare;
-    profile.rollsSinceEpic = rollsSinceEpic;
-    profile.rollsSinceMythic = rollsSinceMythic;
-    await _persistence.saveProfile(profile);
-  }
-
   /// Mark a smashable as discovered the first time the player bursts
   /// it. Returns true if this was a new discovery (so callers can fire
   /// a one-shot VFX/analytics event), false if it was already known.
@@ -119,28 +106,42 @@ class ProgressionRepository {
     return added;
   }
 
-  /// Record a burst for pack-level acquisition gating. Bumps the
-  /// rare-bursts counter when [rarity] is rare+ and the epic-bursts
-  /// counter when it's epic+. Callers should invoke this on every
-  /// rare+ burst regardless of whether the object was newly
-  /// discovered — repeat bursts count toward unlock thresholds.
+  /// Record a burst for the pack-level progression system. Always
+  /// bumps total-bursts-in-pack (drives unlock gates). Also advances
+  /// the pity dry-streak counters for every tier, resetting the
+  /// counter for the burst's tier or higher.
+  ///
+  /// Repeat bursts count — a player bursting the same rare three
+  /// times clears the rare-pity streak three times over, and still
+  /// adds three toward the epic unlock gate.
   Future<void> noteBurstForPack({
     required String packId,
     required Rarity rarity,
   }) async {
-    if (rarity.index < Rarity.rare.index) return;
-    profile.rareBurstsByPack[packId] =
-        (profile.rareBurstsByPack[packId] ?? 0) + 1;
-    if (rarity.index >= Rarity.epic.index) {
-      profile.epicBurstsByPack[packId] =
-          (profile.epicBurstsByPack[packId] ?? 0) + 1;
-    }
+    profile.totalBurstsByPack[packId] =
+        (profile.totalBurstsByPack[packId] ?? 0) + 1;
+
+    final rareDry = profile.rareDryByPack[packId] ?? 0;
+    final epicDry = profile.epicDryByPack[packId] ?? 0;
+    final legendaryDry = profile.legendaryDryByPack[packId] ?? 0;
+
+    profile.rareDryByPack[packId] =
+        rarity.index >= Rarity.rare.index ? 0 : rareDry + 1;
+    profile.epicDryByPack[packId] =
+        rarity.index >= Rarity.epic.index ? 0 : epicDry + 1;
+    profile.legendaryDryByPack[packId] =
+        rarity == Rarity.mythic ? 0 : legendaryDry + 1;
+
     await _persistence.saveProfile(profile);
   }
 
-  int rareBurstsInPack(String packId) =>
-      profile.rareBurstsByPack[packId] ?? 0;
+  int totalBurstsInPack(String packId) =>
+      profile.totalBurstsByPack[packId] ?? 0;
 
-  int epicBurstsInPack(String packId) =>
-      profile.epicBurstsByPack[packId] ?? 0;
+  int rareDryInPack(String packId) => profile.rareDryByPack[packId] ?? 0;
+
+  int epicDryInPack(String packId) => profile.epicDryByPack[packId] ?? 0;
+
+  int legendaryDryInPack(String packId) =>
+      profile.legendaryDryByPack[packId] ?? 0;
 }

@@ -9,18 +9,19 @@ class PlayerProfile {
     this.sessionCount = 0,
     Set<String>? unlockedArenaKeys,
     this.activeArenaKey = 'mochi_sunset_beach',
-    this.rollsSinceRare = 0,
-    this.rollsSinceEpic = 0,
-    this.rollsSinceMythic = 0,
     Set<String>? discoveredSmashableIds,
     this.rarestSeen = Rarity.common,
-    Map<String, int>? rareBurstsByPack,
-    Map<String, int>? epicBurstsByPack,
+    Map<String, int>? totalBurstsByPack,
+    Map<String, int>? rareDryByPack,
+    Map<String, int>? epicDryByPack,
+    Map<String, int>? legendaryDryByPack,
   })  : unlockedArenaKeys =
             unlockedArenaKeys ?? <String>{'mochi_sunset_beach'},
         discoveredSmashableIds = discoveredSmashableIds ?? <String>{},
-        rareBurstsByPack = rareBurstsByPack ?? <String, int>{},
-        epicBurstsByPack = epicBurstsByPack ?? <String, int>{};
+        totalBurstsByPack = totalBurstsByPack ?? <String, int>{},
+        rareDryByPack = rareDryByPack ?? <String, int>{},
+        epicDryByPack = epicDryByPack ?? <String, int>{},
+        legendaryDryByPack = legendaryDryByPack ?? <String, int>{};
 
   int coins;
   Set<String> unlockedPackIds;
@@ -42,16 +43,6 @@ class PlayerProfile {
   /// `mochi_sunset_beach` for new players.
   String activeArenaKey;
 
-  /// Spawns since the player last rolled a rare-or-better smashable.
-  /// Drives pity logic so unlucky streaks eventually force a rare+.
-  int rollsSinceRare;
-
-  /// Spawns since the last epic-or-better smashable.
-  int rollsSinceEpic;
-
-  /// Spawns since the last mythic.
-  int rollsSinceMythic;
-
   /// Smashable IDs the player has burst at least once. Source of truth
   /// for the collection shelf / rarity book meta layer.
   Set<String> discoveredSmashableIds;
@@ -60,13 +51,19 @@ class PlayerProfile {
   /// "rarest squishy found" stat — monotonically non-decreasing.
   Rarity rarestSeen;
 
-  /// Count of rare-or-better bursts per pack. Drives epic-tier
-  /// unlock gating. Keys are pack IDs; missing key = 0.
-  Map<String, int> rareBurstsByPack;
+  /// Total bursts per pack. Drives unlock-gate progression (rare/epic/
+  /// legendary tiers unlock after N total reveals in that pack).
+  Map<String, int> totalBurstsByPack;
 
-  /// Count of epic-or-better bursts per pack. Drives legendary-tier
-  /// unlock gating.
-  Map<String, int> epicBurstsByPack;
+  /// Reveals since the player last saw a rare-or-better in this pack.
+  /// Drives the rare pity soft/hard thresholds.
+  Map<String, int> rareDryByPack;
+
+  /// Reveals since the last epic-or-better in this pack.
+  Map<String, int> epicDryByPack;
+
+  /// Reveals since the last legendary in this pack.
+  Map<String, int> legendaryDryByPack;
 
   factory PlayerProfile.empty() => PlayerProfile(
         coins: 0,
@@ -76,12 +73,11 @@ class PlayerProfile {
         sessionCount: 0,
         unlockedArenaKeys: <String>{'mochi_sunset_beach'},
         activeArenaKey: 'mochi_sunset_beach',
-        rollsSinceRare: 0,
-        rollsSinceEpic: 0,
-        rollsSinceMythic: 0,
         discoveredSmashableIds: <String>{},
         rarestSeen: Rarity.common,
-        rareBurstsByPack: <String, int>{},
-        epicBurstsByPack: <String, int>{},
+        totalBurstsByPack: <String, int>{},
+        rareDryByPack: <String, int>{},
+        epicDryByPack: <String, int>{},
+        legendaryDryByPack: <String, int>{},
       );
 }

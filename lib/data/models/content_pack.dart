@@ -1,3 +1,4 @@
+import 'rarity.dart';
 import 'smashable_def.dart';
 
 enum ReleaseType { launch, weekly, seasonal, event }
@@ -30,36 +31,159 @@ class Palette {
       );
 }
 
-/// Acquisition-gating thresholds for a pack. Default values (both 0)
-/// disable gating entirely — that's the back-compat path for packs
-/// authored before the collectible rarity map system. Well-formed
-/// packs (8 common / 4 rare / 3 epic / 1 legendary) should declare
-/// these in JSON to pace the collection.
-class PackProgression {
-  const PackProgression({
-    this.epicUnlockRareBursts = 0,
-    this.legendaryUnlockEpicBursts = 0,
+/// Per-tier share of total spawn probability within a pack. Each
+/// object's effective weight is derived from this share divided by the
+/// number of objects of that rarity in the pack — so an 8C/4R/3E/1L
+/// pack with defaults yields 68/22/8/2% per tier, with each common at
+/// 8.5%, each rare at 5.5%, each epic at 2.67%, each legendary at 2%.
+///
+/// Values are fractions summing to 1.0 (approximately). Missing fields
+/// fall back to the doc defaults.
+class RarityOdds {
+  const RarityOdds({
+    this.common = 0.68,
+    this.rare = 0.22,
+    this.epic = 0.08,
+    this.legendary = 0.02,
   });
 
-  /// How many rare-or-better bursts the player must have in this pack
-  /// before epic-tier objects are eligible to spawn. Repeat bursts count
-  /// so even a small pool of rares can unlock the gate.
-  final int epicUnlockRareBursts;
+  final double common;
+  final double rare;
+  final double epic;
+  final double legendary;
 
-  /// How many epic-or-better bursts the player must have in this pack
-  /// before legendary-tier objects are eligible to spawn.
-  final int legendaryUnlockEpicBursts;
+  double shareFor(Rarity r) {
+    switch (r) {
+      case Rarity.common:
+        return common;
+      case Rarity.rare:
+        return rare;
+      case Rarity.epic:
+        return epic;
+      case Rarity.mythic:
+        return legendary;
+    }
+  }
 
-  bool get isGated =>
-      epicUnlockRareBursts > 0 || legendaryUnlockEpicBursts > 0;
+  factory RarityOdds.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const RarityOdds();
+    return RarityOdds(
+      common: (json['common'] as num?)?.toDouble() ?? 0.68,
+      rare: (json['rare'] as num?)?.toDouble() ?? 0.22,
+      epic: (json['epic'] as num?)?.toDouble() ?? 0.08,
+      legendary: (json['legendary'] as num?)?.toDouble() ?? 0.02,
+    );
+  }
+}
+
+/// Minimum total-bursts-in-this-pack before each tier is eligible to
+/// spawn from the pool. A value of 0 means the tier is unlocked from
+/// the start. Commons are always implicitly 0.
+class UnlockGates {
+  const UnlockGates({
+    this.rare = 3,
+    this.epic = 10,
+    this.legendary = 20,
+  });
+
+  final int rare;
+  final int epic;
+  final int legendary;
+
+  int gateFor(Rarity r) {
+    switch (r) {
+      case Rarity.common:
+        return 0;
+      case Rarity.rare:
+        return rare;
+      case Rarity.epic:
+        return epic;
+      case Rarity.mythic:
+        return legendary;
+    }
+  }
+
+  factory UnlockGates.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const UnlockGates();
+    return UnlockGates(
+      rare: (json['rare'] as num?)?.toInt() ?? 3,
+      epic: (json['epic'] as num?)?.toInt() ?? 10,
+      legendary: (json['legendary'] as num?)?.toInt() ?? 20,
+    );
+  }
+}
+
+/// Soft + hard pity thresholds per tier. Counts are dry-streaks in
+/// the same pack (reveals since the last time that tier dropped).
+///
+///   * reveals below soft: no boost
+///   * reveals in [soft, hard): linear ramp up to 2x base weight
+///   * reveals at hard: force the tier (exclude lower tiers from pool)
+class PityThresholds {
+  const PityThresholds({
+    this.rareSoft = 5,
+    this.rareHard = 7,
+    this.epicSoft = 14,
+    this.epicHard = 20,
+    this.legendarySoft = 25,
+    this.legendaryHard = 50,
+  });
+
+  final int rareSoft;
+  final int rareHard;
+  final int epicSoft;
+  final int epicHard;
+  final int legendarySoft;
+  final int legendaryHard;
+
+  (int soft, int hard) forTier(Rarity r) {
+    switch (r) {
+      case Rarity.rare:
+        return (rareSoft, rareHard);
+      case Rarity.epic:
+        return (epicSoft, epicHard);
+      case Rarity.mythic:
+        return (legendarySoft, legendaryHard);
+      case Rarity.common:
+        return (0, 0);
+    }
+  }
+
+  factory PityThresholds.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const PityThresholds();
+    return PityThresholds(
+      rareSoft: (json['rareSoft'] as num?)?.toInt() ?? 5,
+      rareHard: (json['rareHard'] as num?)?.toInt() ?? 7,
+      epicSoft: (json['epicSoft'] as num?)?.toInt() ?? 14,
+      epicHard: (json['epicHard'] as num?)?.toInt() ?? 20,
+      legendarySoft: (json['legendarySoft'] as num?)?.toInt() ?? 25,
+      legendaryHard: (json['legendaryHard'] as num?)?.toInt() ?? 50,
+    );
+  }
+}
+
+/// Pack-level drop-economy config. Missing blocks (or missing fields
+/// within a block) fall back to the tuning-doc defaults. This shape
+/// drives [RarityPitySelector] and [PackProgressionGate] behavior.
+class PackProgression {
+  const PackProgression({
+    this.baseOdds = const RarityOdds(),
+    this.unlockGates = const UnlockGates(),
+    this.pity = const PityThresholds(),
+  });
+
+  final RarityOdds baseOdds;
+  final UnlockGates unlockGates;
+  final PityThresholds pity;
 
   factory PackProgression.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const PackProgression();
     return PackProgression(
-      epicUnlockRareBursts:
-          (json['epicUnlockRareBursts'] as num?)?.toInt() ?? 0,
-      legendaryUnlockEpicBursts:
-          (json['legendaryUnlockEpicBursts'] as num?)?.toInt() ?? 0,
+      baseOdds:
+          RarityOdds.fromJson(json['baseOdds'] as Map<String, dynamic>?),
+      unlockGates:
+          UnlockGates.fromJson(json['unlockGates'] as Map<String, dynamic>?),
+      pity: PityThresholds.fromJson(json['pity'] as Map<String, dynamic>?),
     );
   }
 }
@@ -90,9 +214,15 @@ class ContentPack {
   final int unlockCost;
   final String? releaseWindow;
 
-  /// Acquisition gating config. See [PackProgression] — defaults to an
-  /// ungated pack so existing content keeps its current behavior.
+  /// Drop-economy config (base odds / unlock gates / pity). Missing
+  /// fields default to the tuning-doc values in [PackProgression].
   final PackProgression progression;
+
+  /// Number of objects in this pack at the given rarity tier. The
+  /// pity selector uses this to derive per-object weight from each
+  /// tier's share: object_weight = (tier_share / tier_count) * scale.
+  int countAtTier(Rarity r) =>
+      objects.where((o) => o.rarity == r).length;
 
   factory ContentPack.fromJson(Map<String, dynamic> json) => ContentPack(
         packId: json['packId'] as String,

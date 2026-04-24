@@ -5,8 +5,19 @@
   "releaseType": "launch",
   "unlockCost": 0,
   "packProgression": {
-    "epicUnlockRareBursts": 3,
-    "legendaryUnlockEpicBursts": 2
+    "unlockGates": {
+      "rare": 3,
+      "epic": 10,
+      "legendary": 20
+    },
+    "pity": {
+      "rareSoft": 5,
+      "rareHard": 7,
+      "epicSoft": 14,
+      "epicHard": 20,
+      "legendarySoft": 25,
+      "legendaryHard": 50
+    }
   },
   "palette": {
     "primary": "#FF8FB8",

@@ -36,18 +36,21 @@ extension RarityX on Rarity {
     }
   }
 
-  /// Default drop weight used when a pack does not override per-object weights.
-  /// Higher = more likely. Tuned so mythic is < 1% and epic is ~4%.
+  /// Default tier-share weight used when a pack doesn't override per-object
+  /// weights. Interpreted as the share of total spawn probability for this
+  /// tier (common 68 / rare 22 / epic 8 / legendary 2 — matches the tuning
+  /// doc). The pity selector derives per-object weight by dividing this
+  /// share across the pack's objects at that tier.
   int get defaultWeight {
     switch (this) {
       case Rarity.common:
-        return 750;
+        return 68;
       case Rarity.rare:
-        return 200;
+        return 22;
       case Rarity.epic:
-        return 45;
+        return 8;
       case Rarity.mythic:
-        return 5;
+        return 2;
     }
   }
 

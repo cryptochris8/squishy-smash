@@ -1,135 +1,174 @@
 import 'dart:math';
 
+import '../../data/models/content_pack.dart';
 import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
+import 'pack_progression_gate.dart';
 
-/// Picks the next smashable from a pool, factoring in two overlays on
-/// top of each object's base drop weight:
+/// Picks the next smashable from a filtered pool, applying per-pack
+/// pity ramps + combo boost on top of each pack's configured tier
+/// share odds.
 ///
-///   * **Pity** — per-tier counters of rolls since the player last saw
-///     that tier. Past a soft threshold the tier's weight ramps up; past
-///     a hard threshold it's forced (all weaker tiers are excluded).
-///   * **Combo reveal boost** — sustained combo multiplier scales
-///     rare-and-better weights up so in-the-zone players see more
-///     reveal moments.
+/// Weight derivation for each pool entry:
 ///
-/// Pure logic — no global state, no I/O. The caller owns the pity
-/// counters on `PlayerProfile` and advances them via [advanceCounters]
-/// after each pick.
+///   base       = pack.baseOdds.shareFor(tier) / pack.countAtTier(tier)
+///                (per-object share of the tier's probability mass)
+///   soft_boost = linear ramp from 0 at soft-pity to +1.0 at hard-pity
+///                using the pack's dry-streak counter for this tier
+///   combo      = (combo_multiplier - 1) * comboBoostPerStep
+///                (rare+ tiers only)
+///   weight     = max(0, base * (1 + soft_boost + combo) * SCALE)
+///
+/// Hard-pity exclusion: when a pack's dry counter is >= hard-pity for
+/// a tier, lower-tier objects in that same pack are weighted 0, forcing
+/// the tier (unless its unlock gate is closed, which
+/// [PackProgressionGate] handles upstream).
+///
+/// If every object in the pool ends up at weight 0, the selector falls
+/// back to a uniform pick so spawns never stall.
 class RarityPitySelector {
-  const RarityPitySelector({
-    this.rareSoftPity = 15,
-    this.rareHardPity = 30,
-    this.epicSoftPity = 80,
-    this.epicHardPity = 200,
-    this.mythicSoftPity = 500,
-    this.mythicHardPity = 1000,
-    this.comboBoostPerStep = 0.2,
-  });
+  const RarityPitySelector({this.comboBoostPerStep = 0.2});
 
-  /// Rolls without a rare+ before rare weights begin ramping.
-  final int rareSoftPity;
-
-  /// Rolls without a rare+ after which commons are excluded entirely.
-  final int rareHardPity;
-
-  final int epicSoftPity;
-  final int epicHardPity;
-
-  final int mythicSoftPity;
-  final int mythicHardPity;
-
-  /// Added to rare+ weight multiplier per step of combo above 1.
-  /// Default 0.2 means combo 8 gives +1.4× on top of the base weight.
+  /// Boost added to rare+ object weights per step of combo above 1.
+  /// At combo 8 (default cap) this yields a +1.4x multiplier.
   final double comboBoostPerStep;
 
-  /// Pick the next smashable from [pool], factoring in pity counters
-  /// and combo boost. [comboMultiplier] should match
-  /// `ComboController.multiplier` (1..N).
-  ///
-  /// Throws [ArgumentError] if [pool] is empty.
+  /// Pick the next object. [pool] should already have been filtered
+  /// through [PackProgressionGate] for unlock gates.
   SmashableDef pick({
-    required List<SmashableDef> pool,
-    required int rollsSinceRare,
-    required int rollsSinceEpic,
-    required int rollsSinceMythic,
+    required List<GatedObject> pool,
+    required Map<String, int> rareDryByPack,
+    required Map<String, int> epicDryByPack,
+    required Map<String, int> legendaryDryByPack,
     int comboMultiplier = 1,
     Random? rng,
   }) {
     if (pool.isEmpty) {
       throw ArgumentError('RarityPitySelector.pick: pool is empty');
     }
-    return weightedPick<SmashableDef>(
-      items: pool,
-      weightOf: (d) => _effectiveWeight(
-        d,
-        rollsSinceRare: rollsSinceRare,
-        rollsSinceEpic: rollsSinceEpic,
-        rollsSinceMythic: rollsSinceMythic,
+    final rnd = rng ?? Random();
+    final weights = <int>[];
+    for (final entry in pool) {
+      weights.add(_weightFor(
+        entry,
+        rareDry: rareDryByPack[entry.packId] ?? 0,
+        epicDry: epicDryByPack[entry.packId] ?? 0,
+        legendaryDry: legendaryDryByPack[entry.packId] ?? 0,
         comboMultiplier: comboMultiplier,
-      ),
-      rng: rng,
+      ));
+    }
+    final total = weights.fold<int>(0, (a, b) => a + b);
+    if (total == 0) {
+      // Degenerate — every candidate was excluded or zeroed. Uniform
+      // fallback so the game keeps spawning.
+      return pool[rnd.nextInt(pool.length)].def;
+    }
+    var roll = rnd.nextInt(total);
+    for (var i = 0; i < pool.length; i++) {
+      roll -= weights[i];
+      if (roll < 0) return pool[i].def;
+    }
+    return pool.last.def;
+  }
+
+  /// Advance per-pack dry counters after a pick. Increments every
+  /// counter for the picked pack, then resets any counter whose tier
+  /// was hit (or exceeded). Returns the new (rare, epic, legendary)
+  /// values for that pack.
+  (int rare, int epic, int legendary) advanceCountersForPack({
+    required Rarity pickedRarity,
+    required int rareDry,
+    required int epicDry,
+    required int legendaryDry,
+  }) {
+    final nextRare =
+        pickedRarity.index >= Rarity.rare.index ? 0 : rareDry + 1;
+    final nextEpic =
+        pickedRarity.index >= Rarity.epic.index ? 0 : epicDry + 1;
+    final nextLegendary =
+        pickedRarity == Rarity.mythic ? 0 : legendaryDry + 1;
+    return (nextRare, nextEpic, nextLegendary);
+  }
+
+  int _weightFor(
+    GatedObject entry, {
+    required int rareDry,
+    required int epicDry,
+    required int legendaryDry,
+    required int comboMultiplier,
+  }) {
+    final def = entry.def;
+    final pack = entry.pack;
+    final pity = pack.progression.pity;
+
+    // Hard-pity exclusion — force rarer tier by zeroing weaker ones.
+    // Mythic/legendary hard pity beats epic which beats rare.
+    if (legendaryDry >= pity.legendaryHard && def.rarity != Rarity.mythic) {
+      return 0;
+    }
+    if (epicDry >= pity.epicHard && def.rarity.index < Rarity.epic.index) {
+      return 0;
+    }
+    if (rareDry >= pity.rareHard && def.rarity == Rarity.common) {
+      return 0;
+    }
+
+    // Per-object base share of the tier's probability mass.
+    if (def.dropWeight != null) {
+      // Author override — bypass derivation, use the literal weight.
+      return _applyBoosts(
+        baseScaled: def.dropWeight! * _boostScale,
+        rarity: def.rarity,
+        rareDry: rareDry,
+        epicDry: epicDry,
+        legendaryDry: legendaryDry,
+        comboMultiplier: comboMultiplier,
+        pity: pity,
+      );
+    }
+    final tierCount = pack.countAtTier(def.rarity);
+    if (tierCount == 0) return 0;
+    final tierShare = pack.progression.baseOdds.shareFor(def.rarity);
+    final base = tierShare / tierCount;  // fraction per object
+    final baseScaled = (base * _weightScale).round();
+    return _applyBoosts(
+      baseScaled: baseScaled,
+      rarity: def.rarity,
+      rareDry: rareDry,
+      epicDry: epicDry,
+      legendaryDry: legendaryDry,
+      comboMultiplier: comboMultiplier,
+      pity: pity,
     );
   }
 
-  /// Returns the new (rollsSinceRare, rollsSinceEpic, rollsSinceMythic)
-  /// after a pick of [pickedRarity]. Every pick increments every
-  /// counter, and each counter is reset when its tier (or higher) is
-  /// hit — so a mythic resets all three, a rare resets only rare.
-  (int, int, int) advanceCounters({
-    required Rarity pickedRarity,
-    required int rollsSinceRare,
-    required int rollsSinceEpic,
-    required int rollsSinceMythic,
-  }) {
-    final nextRare =
-        pickedRarity.index >= Rarity.rare.index ? 0 : rollsSinceRare + 1;
-    final nextEpic =
-        pickedRarity.index >= Rarity.epic.index ? 0 : rollsSinceEpic + 1;
-    final nextMythic =
-        pickedRarity == Rarity.mythic ? 0 : rollsSinceMythic + 1;
-    return (nextRare, nextEpic, nextMythic);
-  }
-
-  int _effectiveWeight(
-    SmashableDef def, {
-    required int rollsSinceRare,
-    required int rollsSinceEpic,
-    required int rollsSinceMythic,
+  int _applyBoosts({
+    required int baseScaled,
+    required Rarity rarity,
+    required int rareDry,
+    required int epicDry,
+    required int legendaryDry,
     required int comboMultiplier,
+    required PityThresholds pity,
   }) {
-    final base = def.effectiveDropWeight;
-
-    // Hard-pity exclusions: bar all tiers weaker than whatever the
-    // pity has promised. Mythic hard-pity beats epic hard-pity which
-    // beats rare hard-pity.
-    if (rollsSinceMythic >= mythicHardPity && def.rarity != Rarity.mythic) {
-      return 0;
-    }
-    if (rollsSinceEpic >= epicHardPity &&
-        def.rarity.index < Rarity.epic.index) {
-      return 0;
-    }
-    if (rollsSinceRare >= rareHardPity && def.rarity == Rarity.common) {
-      return 0;
-    }
-
-    if (def.rarity == Rarity.common) return base;
-
-    final (soft, hard, count) = switch (def.rarity) {
-      Rarity.rare => (rareSoftPity, rareHardPity, rollsSinceRare),
-      Rarity.epic => (epicSoftPity, epicHardPity, rollsSinceEpic),
-      Rarity.mythic => (mythicSoftPity, mythicHardPity, rollsSinceMythic),
-      Rarity.common => (0, 1, 0),
+    if (rarity == Rarity.common) return baseScaled;
+    final (soft, hard) = pity.forTier(rarity);
+    final dry = switch (rarity) {
+      Rarity.rare => rareDry,
+      Rarity.epic => epicDry,
+      Rarity.mythic => legendaryDry,
+      Rarity.common => 0,
     };
-
-    final softBoost = count <= soft
+    final softBoost = dry <= soft
         ? 0.0
-        : 2.0 * ((count - soft) / (hard - soft)).clamp(0.0, 1.0);
+        : ((dry - soft) / (hard - soft).clamp(1, 10000)).clamp(0.0, 1.0);
     final comboBoost =
         ((comboMultiplier - 1).clamp(0, 1000)) * comboBoostPerStep;
-
-    final scaled = base * (1 + softBoost + comboBoost);
+    final scaled = baseScaled * (1 + softBoost + comboBoost);
     return scaled.round();
   }
 }
+
+// Scale factors so per-object fractions round to meaningful ints.
+const int _weightScale = 10000;
+const int _boostScale = 1;

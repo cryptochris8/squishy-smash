@@ -202,38 +202,6 @@ void main() {
     });
   });
 
-  group('ProgressionRepository pity counters', () {
-    test('noteSpawnRoll writes counters through to the profile', () async {
-      final repo = await _open();
-      expect(repo.profile.rollsSinceRare, 0);
-      await repo.noteSpawnRoll(
-        rollsSinceRare: 5,
-        rollsSinceEpic: 12,
-        rollsSinceMythic: 88,
-      );
-      expect(repo.profile.rollsSinceRare, 5);
-      expect(repo.profile.rollsSinceEpic, 12);
-      expect(repo.profile.rollsSinceMythic, 88);
-    });
-
-    test('pity counters persist across repo re-open', () async {
-      SharedPreferences.setMockInitialValues(<String, Object>{});
-      final p1 = await Persistence.open();
-      final packs = PackRepository(<ContentPack>[], _emptySchedule());
-      final repo1 = ProgressionRepository(p1, packs);
-      await repo1.noteSpawnRoll(
-        rollsSinceRare: 3,
-        rollsSinceEpic: 9,
-        rollsSinceMythic: 27,
-      );
-
-      final p2 = await Persistence.open();
-      final repo2 = ProgressionRepository(p2, packs);
-      expect(repo2.profile.rollsSinceRare, 3);
-      expect(repo2.profile.rollsSinceEpic, 9);
-      expect(repo2.profile.rollsSinceMythic, 27);
-    });
-  });
 
   group('ProgressionRepository collection discovery', () {
     test('markDiscovered returns true on first sighting only', () async {
@@ -304,50 +272,72 @@ void main() {
   });
 
   group('ProgressionRepository per-pack burst tracking', () {
-    test('noteBurstForPack is a no-op for commons', () async {
+    test('common burst bumps totalBursts + all three dry counters',
+        () async {
       final repo = await _open();
       await repo.noteBurstForPack(
         packId: 'launch_squishy_foods',
         rarity: Rarity.common,
       );
-      expect(repo.profile.rareBurstsByPack, isEmpty);
-      expect(repo.profile.epicBurstsByPack, isEmpty);
+      expect(repo.totalBurstsInPack('launch_squishy_foods'), 1);
+      expect(repo.rareDryInPack('launch_squishy_foods'), 1);
+      expect(repo.epicDryInPack('launch_squishy_foods'), 1);
+      expect(repo.legendaryDryInPack('launch_squishy_foods'), 1);
     });
 
-    test('rare burst bumps only the rare counter for that pack', () async {
+    test('rare burst resets rareDry, increments epic + legendary dry',
+        () async {
       final repo = await _open();
+      // Warm up the counters with two commons first
       await repo.noteBurstForPack(
         packId: 'launch_squishy_foods',
-        rarity: Rarity.rare,
+        rarity: Rarity.common,
+      );
+      await repo.noteBurstForPack(
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.common,
       );
       await repo.noteBurstForPack(
         packId: 'launch_squishy_foods',
         rarity: Rarity.rare,
       );
-      expect(repo.rareBurstsInPack('launch_squishy_foods'), 2);
-      expect(repo.epicBurstsInPack('launch_squishy_foods'), 0);
-      // Other packs untouched.
-      expect(repo.rareBurstsInPack('goo_fidgets_drop_01'), 0);
+      expect(repo.totalBurstsInPack('launch_squishy_foods'), 3);
+      expect(repo.rareDryInPack('launch_squishy_foods'), 0);
+      expect(repo.epicDryInPack('launch_squishy_foods'), 3);
+      expect(repo.legendaryDryInPack('launch_squishy_foods'), 3);
     });
 
-    test('epic burst bumps both rare and epic counters', () async {
+    test('epic burst resets rareDry + epicDry', () async {
       final repo = await _open();
       await repo.noteBurstForPack(
         packId: 'creepy_cute_pack_01',
         rarity: Rarity.epic,
       );
-      expect(repo.rareBurstsInPack('creepy_cute_pack_01'), 1);
-      expect(repo.epicBurstsInPack('creepy_cute_pack_01'), 1);
+      expect(repo.totalBurstsInPack('creepy_cute_pack_01'), 1);
+      expect(repo.rareDryInPack('creepy_cute_pack_01'), 0);
+      expect(repo.epicDryInPack('creepy_cute_pack_01'), 0);
+      expect(repo.legendaryDryInPack('creepy_cute_pack_01'), 1);
     });
 
-    test('mythic burst bumps both counters too', () async {
+    test('mythic burst resets every dry counter', () async {
       final repo = await _open();
       await repo.noteBurstForPack(
         packId: 'dumpling_squishy_drop_01',
         rarity: Rarity.mythic,
       );
-      expect(repo.rareBurstsInPack('dumpling_squishy_drop_01'), 1);
-      expect(repo.epicBurstsInPack('dumpling_squishy_drop_01'), 1);
+      expect(repo.rareDryInPack('dumpling_squishy_drop_01'), 0);
+      expect(repo.epicDryInPack('dumpling_squishy_drop_01'), 0);
+      expect(repo.legendaryDryInPack('dumpling_squishy_drop_01'), 0);
+    });
+
+    test('other packs are untouched by a burst in one pack', () async {
+      final repo = await _open();
+      await repo.noteBurstForPack(
+        packId: 'launch_squishy_foods',
+        rarity: Rarity.common,
+      );
+      expect(repo.totalBurstsInPack('goo_fidgets_drop_01'), 0);
+      expect(repo.rareDryInPack('goo_fidgets_drop_01'), 0);
     });
 
     test('per-pack counters persist across repo re-open', () async {
@@ -366,9 +356,10 @@ void main() {
 
       final p2 = await Persistence.open();
       final repo2 = ProgressionRepository(p2, packs);
-      expect(repo2.rareBurstsInPack('launch_squishy_foods'), 1);
-      expect(repo2.rareBurstsInPack('creepy_cute_pack_01'), 1);
-      expect(repo2.epicBurstsInPack('creepy_cute_pack_01'), 1);
+      expect(repo2.totalBurstsInPack('launch_squishy_foods'), 1);
+      expect(repo2.totalBurstsInPack('creepy_cute_pack_01'), 1);
+      expect(repo2.rareDryInPack('creepy_cute_pack_01'), 0);
+      expect(repo2.epicDryInPack('creepy_cute_pack_01'), 0);
     });
   });
 

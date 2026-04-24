@@ -3,57 +3,41 @@ import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
 
 /// Per-pack acquisition gating — determines which rarity tiers are
-/// eligible to spawn from a given pack based on the player's per-pack
-/// burst history.
+/// eligible to spawn based on how many total bursts the player has
+/// accumulated in a pack. Semantics follow the tuning-doc:
 ///
-/// Semantics:
-///   * Common and rare tiers are always unlocked (packs should feel
-///     immediately rewarding).
-///   * Epic is gated behind [PackProgression.epicUnlockRareBursts]
-///     rare-or-better bursts in that pack.
-///   * Legendary (the [Rarity.mythic] enum variant) is gated behind
-///     [PackProgression.legendaryUnlockEpicBursts] epic bursts.
+///   * Common — always unlocked.
+///   * Rare — unlocked after [UnlockGates.rare] total bursts in the pack.
+///   * Epic — unlocked after [UnlockGates.epic] total bursts in the pack.
+///   * Legendary ([Rarity.mythic] enum) — unlocked after
+///     [UnlockGates.legendary] total bursts in the pack.
 ///
-/// Packs with [PackProgression.isGated] == false skip gating entirely,
-/// preserving back-compat with content authored before the rarity map.
+/// Repeated bursts of the same object still count toward unlocks so
+/// small pools of low-tier objects naturally gate top-tier drops.
 class PackProgressionGate {
   const PackProgressionGate();
 
-  /// Is [tier] eligible to spawn from [pack] given the player's
-  /// per-pack burst counters?
+  /// Is [tier] eligible to spawn from [pack] given the player's total
+  /// burst count in that pack?
   bool isTierUnlocked({
     required ContentPack pack,
     required Rarity tier,
-    required int rareBurstsInPack,
-    required int epicBurstsInPack,
+    required int totalBurstsInPack,
   }) {
-    final gating = pack.progression;
-    if (!gating.isGated) return true;
-    switch (tier) {
-      case Rarity.common:
-      case Rarity.rare:
-        return true;
-      case Rarity.epic:
-        return rareBurstsInPack >= gating.epicUnlockRareBursts;
-      case Rarity.mythic:
-        return epicBurstsInPack >= gating.legendaryUnlockEpicBursts;
-    }
+    return totalBurstsInPack >= pack.progression.unlockGates.gateFor(tier);
   }
 
-  /// Filter [objectsByPack] down to only objects whose tier is
-  /// currently unlocked for their pack. Objects from ungated packs
-  /// pass through unchanged.
+  /// Filter [objectsByPack] down to the objects whose tier is currently
+  /// unlocked in their owning pack.
   List<GatedObject> filterPool({
     required List<GatedObject> objectsByPack,
-    required Map<String, int> rareBurstsByPack,
-    required Map<String, int> epicBurstsByPack,
+    required Map<String, int> totalBurstsByPack,
   }) {
     return objectsByPack.where((entry) {
       return isTierUnlocked(
         pack: entry.pack,
         tier: entry.def.rarity,
-        rareBurstsInPack: rareBurstsByPack[entry.pack.packId] ?? 0,
-        epicBurstsInPack: epicBurstsByPack[entry.pack.packId] ?? 0,
+        totalBurstsInPack: totalBurstsByPack[entry.pack.packId] ?? 0,
       );
     }).toList(growable: false);
   }
