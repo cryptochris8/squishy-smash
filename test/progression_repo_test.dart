@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squishy_smash/data/content_loader.dart';
+import 'package:squishy_smash/data/models/card_entry.dart';
 import 'package:squishy_smash/data/models/content_pack.dart';
 import 'package:squishy_smash/data/models/liveops_schedule.dart';
 import 'package:squishy_smash/data/models/rarity.dart';
@@ -318,6 +319,9 @@ void main() {
         smashableId: 'slimeorb',
         rarity: Rarity.common,
       );
+      // markDiscovered now uses a debounced write; flush before we
+      // re-open Persistence so the second instance sees the data.
+      await repo1.flushPending();
 
       final p2 = await Persistence.open();
       final repo2 = ProgressionRepository(p2, packs);
@@ -409,6 +413,8 @@ void main() {
         packId: 'creepy_cute_pack_01',
         rarity: Rarity.epic,
       );
+      // noteBurstForPack is now debounced; flush before re-open.
+      await repo1.flushPending();
 
       final p2 = await Persistence.open();
       final repo2 = ProgressionRepository(p2, packs);
@@ -476,6 +482,147 @@ void main() {
       expect(repo.profile.starterBundleClaimed, isFalse);
       await repo.markStarterBundleClaimed();
       expect(repo.profile.starterBundleClaimed, isTrue);
+    });
+  });
+
+  group('ProgressionRepository card collection (3-path system)', () {
+    test('incrementBurstForCard bumps the per-card counter', () async {
+      final repo = await _open();
+      expect(repo.cardBurstCount('001/048'), 0);
+      expect(repo.incrementBurstForCard('001/048'), 1);
+      expect(repo.incrementBurstForCard('001/048'), 2);
+      expect(repo.cardBurstCount('001/048'), 2);
+    });
+
+    test('incrementBurstForCard isolates counters per card_number',
+        () async {
+      final repo = await _open();
+      repo.incrementBurstForCard('001/048');
+      repo.incrementBurstForCard('001/048');
+      repo.incrementBurstForCard('016/048');
+      expect(repo.cardBurstCount('001/048'), 2);
+      expect(repo.cardBurstCount('016/048'), 1);
+      expect(repo.cardBurstCount('048/048'), 0);
+    });
+
+    test('tryPurchaseCard succeeds when coins suffice', () async {
+      final repo = await _open();
+      await repo.awardCoins(300);
+      final ok = await repo.tryPurchaseCard(
+        cardNumber: '001/048',
+        costCoins: 200,
+      );
+      expect(ok, isTrue);
+      expect(repo.profile.coins, 100);
+      expect(repo.isCardPurchased('001/048'), isTrue);
+    });
+
+    test('tryPurchaseCard fails when coins insufficient', () async {
+      final repo = await _open();
+      await repo.awardCoins(50);
+      final ok = await repo.tryPurchaseCard(
+        cardNumber: '001/048',
+        costCoins: 200,
+      );
+      expect(ok, isFalse);
+      expect(repo.profile.coins, 50);
+      expect(repo.isCardPurchased('001/048'), isFalse);
+    });
+
+    test('tryPurchaseCard is idempotent (no double-charge)', () async {
+      final repo = await _open();
+      await repo.awardCoins(500);
+      expect(
+        await repo.tryPurchaseCard(cardNumber: '001/048', costCoins: 200),
+        isTrue,
+      );
+      // Second purchase of the same card returns false and does not
+      // deduct coins again.
+      expect(
+        await repo.tryPurchaseCard(cardNumber: '001/048', costCoins: 200),
+        isFalse,
+      );
+      expect(repo.profile.coins, 300);
+    });
+
+    test('claimAchievement marks the achievement and returns true once',
+        () async {
+      final repo = await _open();
+      expect(await repo.claimAchievement('first_mythic'), isTrue);
+      expect(repo.hasClaimedAchievement('first_mythic'), isTrue);
+      // Idempotent — second claim is a no-op returning false.
+      expect(await repo.claimAchievement('first_mythic'), isFalse);
+    });
+
+    test('rarity-priced purchase: epic card costs 750 coins', () async {
+      final repo = await _open();
+      await repo.awardCoins(800);
+      const epicCard = CardEntry(
+        index: 14,
+        cardNumber: '014/048',
+        name: 'Crystal Mochi',
+        pack: CardPack.squishyFoods,
+        rarity: Rarity.epic,
+        assetPath: 'assets/cards/final_48/014_Crystal_Mochi.webp',
+      );
+      expect(await repo.tryPurchaseCardAtRarityPrice(epicCard), isTrue);
+      expect(repo.profile.coins, 50,
+          reason: '800 - 750 = 50');
+      expect(repo.isCardPurchased('014/048'), isTrue);
+    });
+
+    test('rarity-priced purchase: legendary card costs 2500 coins',
+        () async {
+      final repo = await _open();
+      await repo.awardCoins(2500);
+      const legendaryCard = CardEntry(
+        index: 48,
+        cardNumber: '048/048',
+        name: 'Mythic Plush Familiar',
+        pack: CardPack.creepyCuteCreatures,
+        rarity: Rarity.mythic,
+        assetPath:
+            'assets/cards/final_48/048_Mythic_Plush_Familiar.webp',
+      );
+      expect(await repo.tryPurchaseCardAtRarityPrice(legendaryCard),
+          isTrue);
+      expect(repo.profile.coins, 0);
+    });
+
+    test('rarity-priced purchase fails when broke', () async {
+      final repo = await _open();
+      await repo.awardCoins(100); // less than any rarity price
+      const rareCard = CardEntry(
+        index: 9,
+        cardNumber: '009/048',
+        name: 'Strawberry Dumpling',
+        pack: CardPack.squishyFoods,
+        rarity: Rarity.rare,
+        assetPath:
+            'assets/cards/final_48/009_Strawberry_Dumpling.webp',
+      );
+      expect(await repo.tryPurchaseCardAtRarityPrice(rareCard), isFalse);
+      expect(repo.profile.coins, 100);
+    });
+
+    test('card collection state persists across repo re-open', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final p1 = await Persistence.open();
+      final packs = PackRepository(<ContentPack>[], _emptySchedule());
+      final repo1 = ProgressionRepository(p1, packs);
+      repo1.incrementBurstForCard('016/048');
+      repo1.incrementBurstForCard('016/048');
+      await repo1.awardCoins(1000);
+      await repo1.tryPurchaseCard(cardNumber: '048/048', costCoins: 500);
+      await repo1.claimAchievement('first_mythic');
+      // Hot-path uses scheduleSave; flush before re-opening.
+      await repo1.flushPending();
+
+      final p2 = await Persistence.open();
+      final repo2 = ProgressionRepository(p2, packs);
+      expect(repo2.cardBurstCount('016/048'), 2);
+      expect(repo2.isCardPurchased('048/048'), isTrue);
+      expect(repo2.hasClaimedAchievement('first_mythic'), isTrue);
     });
   });
 

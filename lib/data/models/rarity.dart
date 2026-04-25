@@ -2,6 +2,19 @@ import 'dart:math';
 
 /// Rarity tier for a smashable. Drives reveal-moment gating,
 /// particle intensity, and social-clip capture.
+///
+/// **Naming.** The top tier carries two names by design:
+///   * `Rarity.mythic` — the internal enum variant + the legacy
+///     persistence token.
+///   * `"Legendary"` — the player-facing label (everywhere the user
+///     can see it: cards manifest, UI display, pack JSON keys).
+///
+/// JSON authors writing pack content should use `"legendary"`. The
+/// loader also accepts `"mythic"` as an alias so older content keeps
+/// parsing — see `rarityFromToken` and the `legendary`/`mythic` key
+/// handlers on `UnlockGates.fromJson` and `RarityOdds.fromJson`. The
+/// alias direction is one-way: persisted profile data keeps using
+/// `"mythic"` so installed players don't need a save migration.
 enum Rarity { common, rare, epic, mythic }
 
 extension RarityX on Rarity {
@@ -83,6 +96,10 @@ extension RarityX on Rarity {
 
 /// Parse a rarity token to the enum. Unknown or null values fall back
 /// to [Rarity.common] so older packs without the field keep working.
+///
+/// Accepts the player-facing alias `'legendary'` as an equivalent of
+/// `'mythic'` so pack JSONs and manifests can use either. See the
+/// `Rarity` doc comment for the naming-split rationale.
 Rarity rarityFromToken(String? token) {
   switch (token) {
     case 'rare':
@@ -90,6 +107,7 @@ Rarity rarityFromToken(String? token) {
     case 'epic':
       return Rarity.epic;
     case 'mythic':
+    case 'legendary':
       return Rarity.mythic;
     case 'common':
     case null:

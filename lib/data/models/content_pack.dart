@@ -67,11 +67,18 @@ class RarityOdds {
 
   factory RarityOdds.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const RarityOdds();
+    // The top-tier key accepts both `legendary` (player-facing /
+    // canonical) and `mythic` (internal alias). `legendary` wins if
+    // both are set so JSON authors get an obvious precedence; see
+    // the Rarity enum doc for the naming-split rationale.
+    final topTier = (json['legendary'] as num?)?.toDouble() ??
+        (json['mythic'] as num?)?.toDouble() ??
+        0.02;
     return RarityOdds(
       common: (json['common'] as num?)?.toDouble() ?? 0.68,
       rare: (json['rare'] as num?)?.toDouble() ?? 0.22,
       epic: (json['epic'] as num?)?.toDouble() ?? 0.08,
-      legendary: (json['legendary'] as num?)?.toDouble() ?? 0.02,
+      legendary: topTier,
     );
   }
 }
@@ -105,10 +112,14 @@ class UnlockGates {
 
   factory UnlockGates.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const UnlockGates();
+    // Accept both `legendary` (canonical) and `mythic` (alias).
+    final topTier = (json['legendary'] as num?)?.toInt() ??
+        (json['mythic'] as num?)?.toInt() ??
+        20;
     return UnlockGates(
       rare: (json['rare'] as num?)?.toInt() ?? 3,
       epic: (json['epic'] as num?)?.toInt() ?? 10,
-      legendary: (json['legendary'] as num?)?.toInt() ?? 20,
+      legendary: topTier,
     );
   }
 }
@@ -151,13 +162,23 @@ class PityThresholds {
 
   factory PityThresholds.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const PityThresholds();
+    // Top-tier pity accepts both `legendarySoft/legendaryHard`
+    // (canonical) and `mythicSoft/mythicHard` (alias). `legendary`
+    // wins on conflict so authors mixing both forms see consistent
+    // behavior.
+    final topSoft = (json['legendarySoft'] as num?)?.toInt() ??
+        (json['mythicSoft'] as num?)?.toInt() ??
+        25;
+    final topHard = (json['legendaryHard'] as num?)?.toInt() ??
+        (json['mythicHard'] as num?)?.toInt() ??
+        50;
     return PityThresholds(
       rareSoft: (json['rareSoft'] as num?)?.toInt() ?? 5,
       rareHard: (json['rareHard'] as num?)?.toInt() ?? 7,
       epicSoft: (json['epicSoft'] as num?)?.toInt() ?? 14,
       epicHard: (json['epicHard'] as num?)?.toInt() ?? 20,
-      legendarySoft: (json['legendarySoft'] as num?)?.toInt() ?? 25,
-      legendaryHard: (json['legendaryHard'] as num?)?.toInt() ?? 50,
+      legendarySoft: topSoft,
+      legendaryHard: topHard,
     );
   }
 }

@@ -6,6 +6,11 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'models/content_pack.dart';
 import 'models/liveops_schedule.dart';
 
+/// Reads an asset by path. Defaults to [rootBundle.loadString] in
+/// production; tests inject a fake to simulate missing/malformed/
+/// future-versioned files without touching the bundle.
+typedef AssetReader = Future<String> Function(String path);
+
 class LoadedContent {
   const LoadedContent({required this.packs, required this.schedule});
   final List<ContentPack> packs;
@@ -16,7 +21,13 @@ class LoadedContent {
 /// changes are made to the pack or liveops JSON shape; missing versions
 /// on disk are treated as this value for backward compatibility with
 /// pre-versioning content.
-const int contentSchemaVersion = 1;
+///
+/// Version history:
+///   v1 — initial versioned schema
+///   v2 — adds optional `cardNumber` to each smashable for the 48-card
+///        collection link. Additive; v1 packs still parse cleanly
+///        because the field is nullable.
+const int contentSchemaVersion = 2;
 
 class ContentLoader {
   static const List<String> bundledPackPaths = <String>[
@@ -32,11 +43,15 @@ class ContentLoader {
   /// asset can't crash the app during bootstrap. Returns whatever
   /// loaded successfully; an empty packs list is possible but callers
   /// must handle that gracefully.
-  Future<LoadedContent> loadAll() async {
+  ///
+  /// [readAsset] defaults to [rootBundle.loadString]. Tests inject a
+  /// fake to simulate missing/malformed/future-versioned files.
+  Future<LoadedContent> loadAll({AssetReader? readAsset}) async {
+    final read = readAsset ?? rootBundle.loadString;
     final packs = <ContentPack>[];
     for (final path in bundledPackPaths) {
       try {
-        final raw = await rootBundle.loadString(path);
+        final raw = await read(path);
         final map = json.decode(raw) as Map<String, dynamic>;
         _assertSchemaVersion(path, map);
         packs.add(ContentPack.fromJson(map));
@@ -46,7 +61,7 @@ class ContentLoader {
     }
     LiveOpsSchedule schedule = const LiveOpsSchedule(featuredRotation: []);
     try {
-      final scheduleRaw = await rootBundle.loadString(schedulePath);
+      final scheduleRaw = await read(schedulePath);
       final scheduleMap = json.decode(scheduleRaw) as Map<String, dynamic>;
       _assertSchemaVersion(schedulePath, scheduleMap);
       schedule = LiveOpsSchedule.fromJson(scheduleMap);

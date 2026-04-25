@@ -1,4 +1,7 @@
 import '../../game/systems/arena_registry.dart';
+import '../card_unlock.dart';
+import '../models/achievement.dart';
+import '../models/card_entry.dart';
 import '../models/player_profile.dart';
 import '../models/rarity.dart';
 import '../persistence.dart';
@@ -252,6 +255,92 @@ class ProgressionRepository {
   Future<void> markStarterBundleClaimed() async {
     profile.starterBundleClaimed = true;
     await _persistence.saveProfile(profile);
+  }
+
+  // -- Card collection (3-path unlock system) -----------------------
+
+  /// Bump the per-card burst counter for [cardNumber]. Cheap path —
+  /// debounced through the same scheduleSave mechanism as other hot-path
+  /// mutations. Returns the new count so callers can detect the
+  /// just-crossed-threshold moment for one-shot UI/analytics.
+  int incrementBurstForCard(String cardNumber) {
+    final next = (profile.cardBurstCounts[cardNumber] ?? 0) + 1;
+    profile.cardBurstCounts[cardNumber] = next;
+    _persistence.scheduleSave(profile);
+    return next;
+  }
+
+  int cardBurstCount(String cardNumber) =>
+      profile.cardBurstCounts[cardNumber] ?? 0;
+
+  /// Direct coin purchase of a card. Returns true if the purchase
+  /// landed (sufficient coins + not already purchased), false otherwise.
+  /// Idempotent — a second call after a successful purchase is a no-op
+  /// that returns false (no double-charge).
+  Future<bool> tryPurchaseCard({
+    required String cardNumber,
+    required int costCoins,
+  }) async {
+    if (profile.cardsPurchased.contains(cardNumber)) return false;
+    if (profile.coins < costCoins) return false;
+    profile.coins -= costCoins;
+    profile.cardsPurchased.add(cardNumber);
+    await _persistence.saveProfile(profile);
+    return true;
+  }
+
+  bool isCardPurchased(String cardNumber) =>
+      profile.cardsPurchased.contains(cardNumber);
+
+  /// Convenience: purchase [card] at the canonical rarity-tuned price
+  /// from [CardCoinPrice]. Equivalent to calling [tryPurchaseCard]
+  /// with the manually-looked-up cost — keeps the pricing decision in
+  /// one place so the shop UI doesn't drift.
+  Future<bool> tryPurchaseCardAtRarityPrice(CardEntry card) =>
+      tryPurchaseCard(
+        cardNumber: card.cardNumber,
+        costCoins: CardCoinPrice.coinsFor(card.rarity),
+      );
+
+  /// Mark an achievement as claimed. Idempotent. Caller is responsible
+  /// for awarding the actual reward (coins / token / card unlock) — this
+  /// method only persists the "this player has claimed it" bit.
+  Future<bool> claimAchievement(String achievementId) async {
+    final added = profile.claimedAchievements.add(achievementId);
+    if (added) await _persistence.saveProfile(profile);
+    return added;
+  }
+
+  bool hasClaimedAchievement(String achievementId) =>
+      profile.claimedAchievements.contains(achievementId);
+
+  /// Atomic claim + reward. Returns the reward that was applied, or
+  /// null if the achievement was already claimed (idempotent — no
+  /// double-grant). Each reward variant routes to the matching repo
+  /// method so coin/token/card paths stay in one place.
+  ///
+  /// Note: `CardUnlockReward` doesn't trigger a separate write because
+  /// the unlock derives from the claim itself — see
+  /// `unlockedCardNumbersFromAchievements` in achievement.dart.
+  Future<AchievementReward?> grantAchievement(
+      Achievement achievement) async {
+    final added = profile.claimedAchievements.add(achievement.id);
+    if (!added) return null;
+    final reward = achievement.reward;
+    switch (reward) {
+      case CoinReward r:
+        profile.coins += r.coins;
+      case GuaranteedRevealReward r:
+        profile.guaranteedRevealTokens[r.tier] =
+            (profile.guaranteedRevealTokens[r.tier] ?? 0) + r.count;
+      case CardUnlockReward _:
+        // No additional state change — the card unlock is derived
+        // from the claimed achievement set on demand. The claim itself
+        // is the receipt.
+        break;
+    }
+    await _persistence.saveProfile(profile);
+    return reward;
   }
 }
 

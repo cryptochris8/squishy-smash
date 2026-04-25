@@ -39,8 +39,19 @@ void main() {
     });
 
     test('unknown rarity token falls back to common', () {
-      final def = SmashableDef.fromJson(_base()..['rarity'] = 'legendary');
+      // "legendary" used to be unknown, but was deliberately added as
+      // an alias for `Rarity.mythic` (see rarity.dart). Use a token
+      // that's still unknown to assert the fallback behavior.
+      final def =
+          SmashableDef.fromJson(_base()..['rarity'] = 'made_up_tier');
       expect(def.rarity, Rarity.common);
+    });
+
+    test('"legendary" parses as Rarity.mythic (player-facing alias)', () {
+      // Pins the new aliasing behavior at the SmashableDef boundary
+      // — the loader uses `rarityFromToken` which accepts both forms.
+      final def = SmashableDef.fromJson(_base()..['rarity'] = 'legendary');
+      expect(def.rarity, Rarity.mythic);
     });
 
     test('explicit dropWeight overrides tier default', () {
@@ -156,6 +167,35 @@ void main() {
       final def = SmashableDef.fromJson(_base());
       expect(def.behaviorProfile, isNull);
       expect(def.deformability, 0.88);
+    });
+  });
+
+  group('SmashableDef.fromJson cardNumber', () {
+    test('cardNumber defaults to null when field is missing', () {
+      // Backward compat: pre-v2 pack JSONs have no cardNumber field.
+      final def = SmashableDef.fromJson(_base());
+      expect(def.cardNumber, isNull);
+    });
+
+    test('cardNumber parses through verbatim when present', () {
+      final def = SmashableDef.fromJson(
+        _base()..['cardNumber'] = '016/048',
+      );
+      expect(def.cardNumber, '016/048');
+    });
+
+    test('cardNumber preserves the canonical "NNN/048" format', () {
+      // The format is the wire contract between pack JSON and the
+      // cards manifest — anything else would silently fail to match
+      // a CardEntry. Pin the format here.
+      final def = SmashableDef.fromJson(
+        _base()..['cardNumber'] = '001/048',
+      );
+      expect(
+        def.cardNumber,
+        matches(RegExp(r'^\d{3}/048$')),
+        reason: 'cardNumber must match the manifest card_number format',
+      );
     });
   });
 }

@@ -1,9 +1,11 @@
 import 'dart:io' show Platform;
 
+import '../data/card_manifest_loader.dart';
 import '../data/content_loader.dart';
 import '../data/persistence.dart';
 import '../data/repositories/pack_repository.dart';
 import '../data/repositories/progression_repo.dart';
+import 'diagnostics.dart';
 import '../game/systems/sound_manager.dart';
 import '../game/systems/ui_sound_registry.dart';
 import '../game/systems/voice_line_registry.dart';
@@ -21,9 +23,16 @@ import 'analytics_stub.dart';
 class ServiceLocator {
   ServiceLocator._();
 
+  /// Always-available — initialized synchronously at the very top of
+  /// `main()` so global error handlers can record into it before
+  /// bootstrap runs (and even if bootstrap throws). Not `late` because
+  /// it must exist before async init can fail.
+  static final DiagnosticsService diagnostics = DiagnosticsService();
+
   static late final Persistence persistence;
   static late final PackRepository packs;
   static late final ProgressionRepository progression;
+  static late final LoadedCardManifest cards;
   static late final SoundManager sounds;
   static late final UiSounds ui;
   static late final Analytics analytics;
@@ -39,6 +48,10 @@ class ServiceLocator {
     final loaded = await loader.loadAll();
     packs = PackRepository(loaded.packs, loaded.schedule);
     progression = ProgressionRepository(persistence, packs);
+    // Card manifests load defensively — a missing manifest yields an
+    // empty cards list, so the album just shows nothing rather than
+    // crashing bootstrap.
+    cards = await CardManifestLoader().loadAll();
     sounds = SoundManager();
     await sounds.warm(<String>[
       ...packs.allObjectSoundPaths(),

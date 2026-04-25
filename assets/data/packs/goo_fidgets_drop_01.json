@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "packId": "goo_fidgets_drop_01",
   "displayName": "Goo & Fidgets",
   "themeTag": "antistress_goo",
@@ -55,7 +55,8 @@
         "antistress",
         "fidget",
         "satisfying"
-      ]
+      ],
+      "cardNumber": "017/048"
     },
     {
       "id": "bubble_blob",
@@ -79,7 +80,8 @@
       "searchTags": [
         "bubble",
         "fidget"
-      ]
+      ],
+      "cardNumber": "018/048"
     },
     {
       "id": "stretch_cube",
@@ -104,7 +106,8 @@
         "stretch",
         "cube",
         "fidget"
-      ]
+      ],
+      "cardNumber": "019/048"
     },
     {
       "id": "soft_stress_orb",
@@ -129,7 +132,8 @@
         "stress",
         "ball",
         "fidget"
-      ]
+      ],
+      "cardNumber": "020/048"
     },
     {
       "id": "jelly_pad",
@@ -153,7 +157,8 @@
       "searchTags": [
         "jelly",
         "pad"
-      ]
+      ],
+      "cardNumber": "021/048"
     },
     {
       "id": "sticky_pop_ball",
@@ -178,7 +183,8 @@
         "sticky",
         "pop",
         "fidget"
-      ]
+      ],
+      "cardNumber": "022/048"
     },
     {
       "id": "wobble_drop",
@@ -202,7 +208,8 @@
       "searchTags": [
         "wobble",
         "drop"
-      ]
+      ],
+      "cardNumber": "023/048"
     },
     {
       "id": "glitter_goo_ball",
@@ -227,7 +234,8 @@
         "glitter",
         "goo",
         "rare"
-      ]
+      ],
+      "cardNumber": "025/048"
     },
     {
       "id": "shockwave_blob",
@@ -252,7 +260,8 @@
         "shockwave",
         "electric",
         "rare"
-      ]
+      ],
+      "cardNumber": "026/048"
     },
     {
       "id": "frost_gel_cube",
@@ -277,7 +286,8 @@
         "frost",
         "ice",
         "rare"
-      ]
+      ],
+      "cardNumber": "027/048"
     },
     {
       "id": "plasma_goo_ball",
@@ -302,7 +312,8 @@
         "plasma",
         "goo",
         "epic"
-      ]
+      ],
+      "cardNumber": "029/048"
     },
     {
       "id": "aurora_stretch_cube",
@@ -327,7 +338,8 @@
         "aurora",
         "stretch",
         "epic"
-      ]
+      ],
+      "cardNumber": "030/048"
     },
     {
       "id": "cosmic_jelly_pad",
@@ -352,7 +364,8 @@
         "cosmic",
         "jelly",
         "epic"
-      ]
+      ],
+      "cardNumber": "031/048"
     },
     {
       "id": "singularity_goo_core",
@@ -377,7 +390,8 @@
         "singularity",
         "legendary",
         "mythic"
-      ]
+      ],
+      "cardNumber": "032/048"
     },
     {
       "id": "squish_capsule",
@@ -402,7 +416,8 @@
         "capsule",
         "pill",
         "fidget"
-      ]
+      ],
+      "cardNumber": "024/048"
     },
     {
       "id": "prism_stress_orb",
@@ -427,7 +442,8 @@
         "prism",
         "rainbow",
         "rare"
-      ]
+      ],
+      "cardNumber": "028/048"
     }
   ]
 }

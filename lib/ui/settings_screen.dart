@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/service_locator.dart';
 import '../game/systems/arena_registry.dart';
+import 'diagnostics_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -55,6 +56,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           _ArenaPicker(onSelected: () => setState(() {})),
+          const SizedBox(height: 24),
+          ListTile(
+            leading: const Icon(Icons.bug_report_outlined,
+                color: Colors.white70),
+            title: const Text('Diagnostics'),
+            subtitle: Text(
+              '${ServiceLocator.diagnostics.count} recent error'
+              '${ServiceLocator.diagnostics.count == 1 ? '' : 's'} captured',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withValues(alpha: 0.55),
+              ),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white54),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const DiagnosticsScreen(),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -129,9 +152,25 @@ class _ArenaTile extends StatelessWidget {
     final borderColor = isActive
         ? const Color(0xFFFF8FB8)
         : Colors.white.withValues(alpha: 0.12);
-    return GestureDetector(
+    // Compose an assistive-tech-friendly label that includes the
+    // arena name, ownership state, and active state. Without this,
+    // VoiceOver reads only the visible text — which doesn't include
+    // "locked" or "currently selected".
+    final stateSuffix = !unlocked
+        ? ', locked, tap to learn how to unlock'
+        : isActive
+            ? ', currently selected'
+            : ', tap to select';
+    return Semantics(
+      button: true,
+      enabled: true,
+      selected: isActive,
+      label: '${theme.displayName}$stateSuffix',
       onTap: onTap,
-      child: SizedBox(
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: SizedBox(
         width: 96,
         child: Column(
           children: [
@@ -176,6 +215,7 @@ class _ArenaTile extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

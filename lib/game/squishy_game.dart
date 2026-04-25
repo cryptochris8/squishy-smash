@@ -8,6 +8,9 @@ import 'package:flutter/painting.dart';
 
 import '../analytics/events.dart';
 import '../core/service_locator.dart';
+import '../data/achievement_detector.dart';
+import '../data/achievement_registry.dart';
+import '../data/models/player_profile.dart';
 import '../data/models/rarity.dart';
 import '../data/models/smashable_def.dart';
 import 'components/decal_manager.dart';
@@ -17,6 +20,7 @@ import 'components/screen_shake.dart';
 import 'components/skybox_component.dart';
 import 'components/smashable_component.dart';
 import 'systems/arena_registry.dart';
+import 'systems/burst_resolver.dart';
 import 'systems/combo_controller.dart';
 import 'systems/feedback_dispatcher.dart';
 import 'systems/flame_feedback_sink.dart';
@@ -41,6 +45,22 @@ const HudSnapshot _initialHudSnapshot = (
   fill: 0.0,
   tier: ComboTier.none,
 );
+
+/// Compose a [HudSnapshot] with `fill` quantized to 1% granularity.
+/// Pulled out of `SquishyGame._publishHud` so tests can verify the
+/// quantization contract without spinning up a Flame harness.
+HudSnapshot composeHudSnapshot({
+  required int score,
+  required int mult,
+  required double fill,
+  required ComboTier tier,
+}) {
+  // Clamp + round to 1%. Smooth enough for the decay bar; ~100x cheaper
+  // than raw double updates (and keeps record equality short-circuiting
+  // sub-percent jitter that the user can't perceive anyway).
+  final quantized = (fill.clamp(0.0, 1.0) * 100).round() / 100;
+  return (score: score, mult: mult, fill: quantized, tier: tier);
+}
 
 class SquishyGame extends FlameGame {
   SquishyGame({
@@ -227,16 +247,12 @@ class SquishyGame extends FlameGame {
   /// writing every tick is cheap — the HUD rebuilds only on real
   /// score/multiplier/tier changes or when the quantized fill moves.
   void _publishHud() {
-    final next = (
+    hudNotifier.value = composeHudSnapshot(
       score: score.total,
       mult: combo.multiplier,
-      // Quantize to 1% so a decaying fill bar doesn't force 60-fps
-      // widget rebuilds. Smooth enough for the visual; ~100× cheaper
-      // than raw double updates.
-      fill: (combo.fill * 100).round() / 100,
+      fill: combo.fill,
       tier: combo.currentTier,
     );
-    hudNotifier.value = next;
   }
 
   SmashableDef? _selectNextSmashable() {
@@ -312,149 +328,151 @@ class SquishyGame extends FlameGame {
   }
 
   void _handleBurst(SmashableComponent c) {
-    final bonus = 25 + (c.def.gooLevel * 30).round();
-    score.addBurst(bonus, multiplier: combo.multiplier);
-    _coinsEarned += c.def.coinReward;
-    _smashes += 1;
-    ServiceLocator.progression.awardCoins(c.def.coinReward);
-
-    // Collection tracking: first-burst check is against the in-memory
-    // profile so we can fire the analytics event synchronously. The
-    // repo persists asynchronously.
     final profile = ServiceLocator.progression.profile;
+    final outcome = const BurstResolver().resolve(
+      def: c.def,
+      profile: profile,
+      comboMultiplier: combo.multiplier,
+      firstRareAlreadyFiredThisRound: _hasFiredFirstRareReveal,
+    );
     final owningPackId = _defIdToPackId[c.def.id] ?? _activePackId;
-    final isFirstBurst = !profile.discoveredSmashableIds.contains(c.def.id);
-    if (isFirstBurst) {
-      ServiceLocator.progression.markDiscovered(
-        smashableId: c.def.id,
-        rarity: c.def.rarity,
-      );
-      if (owningPackId != null) {
-        events.collectionDiscovery(
-          objectId: c.def.id,
-          packId: owningPackId,
-          rarity: c.def.rarity,
-          discoveredCount: profile.discoveredSmashableIds.length,
-        );
-        if (c.def.rarity == Rarity.epic) {
-          events.firstEpicFound(
-              packId: owningPackId, objectId: c.def.id);
-        } else if (c.def.rarity == Rarity.mythic) {
-          events.firstLegendaryFound(
-              packId: owningPackId, objectId: c.def.id);
-        }
-      }
-    } else {
-      // Duplicate — award scaled coin bonus and fire analytics so we
-      // can dashboard duplicate frustration vs. reward feel.
-      final bonus = c.def.rarity.duplicateCoinBonus;
-      _coinsEarned += bonus;
-      ServiceLocator.progression.awardCoins(bonus);
-      if (owningPackId != null) {
-        events.duplicateAwarded(
-          objectId: c.def.id,
-          packId: owningPackId,
-          rarity: c.def.rarity,
-          coinsAwarded: bonus,
-        );
-      }
-    }
 
-    // Pack-progress update — fires on every burst so dashboards can
-    // plot collection completion over time per pack.
-    if (owningPackId != null) {
-      final owningPack = ServiceLocator.packs.byId(owningPackId);
-      if (owningPack != null) {
-        final discoveredInPack = owningPack.objects
-            .where((o) => profile.discoveredSmashableIds.contains(o.id))
-            .length;
-        events.packProgressUpdated(
-          packId: owningPackId,
-          discovered: discoveredInPack,
-          total: owningPack.objects.length,
-        );
-      }
-    }
-
-    // Per-pack burst tracking drives unlock gates + pity dry streaks.
-    // Every burst — even commons — counts toward totalBurstsByPack
-    // (unlock gates) and advances / resets the tier dry counters.
-    if (owningPackId != null) {
-      ServiceLocator.progression.noteBurstForPack(
-        packId: owningPackId,
-        rarity: c.def.rarity,
-      );
-    }
-
-    // Pick a feedback tier. Rarity wins over combo (a mythic at combo 1
-    // should still reveal); common-tier bursts upgrade to megaBurst once
-    // the combo multiplier hits 3+.
-    final rarity = c.def.rarity;
-    final FeedbackTier tier;
-    if (rarity.triggersReveal) {
-      tier = FeedbackTier.revealBurst;
-    } else if (combo.multiplier >= 3) {
-      tier = FeedbackTier.megaBurst;
-    } else {
-      tier = FeedbackTier.burst;
-    }
-    feedback.dispatch(tier, c.def);
-
-    // Starter Bundle paywall trigger — one-shot per round, gated by
-    // profile state (hasn't claimed yet). UI code is responsible for
-    // not re-showing if the bundle is already claimed.
-    if (rarity.index >= Rarity.rare.index &&
-        !_hasFiredFirstRareReveal &&
-        !profile.starterBundleClaimed) {
-      _hasFiredFirstRareReveal = true;
-      onFirstRareReveal?.call();
-    }
-
-    // Mythic gets an extra-heavy shake override on top of the dispatcher
-    // default; rarity also swaps the skybox to its reveal variant.
-    if (rarity.triggersReveal) {
-      skybox.triggerReveal(hold: rarity == Rarity.mythic ? 1.6 : 1.0);
-      // Bloom flash — intensity + duration scale with rarity so the
-      // emotional beat matches the tier. Mythic gets a longer held
-      // flash so the "whoa, something special" read lands.
-      final bloomPeak = switch (rarity) {
-        Rarity.rare => 0.35,
-        Rarity.epic => 0.50,
-        Rarity.mythic => 0.65,
-        _ => 0.0,
-      };
-      final bloomMs = rarity == Rarity.mythic ? 700 : 450;
-      arena.add(RevealBloom(
-        arenaSize: arena.arenaSize.clone(),
-        peakOpacity: bloomPeak,
-        duration: Duration(milliseconds: bloomMs),
-      ));
-      if (rarity == Rarity.mythic) {
-        shaker.shake(duration: 0.28, intensity: 14);
-        onMythicReveal?.call();
-      }
-    }
-
-    particles.burst(c.position, preset: c.def.particlePreset, intensity: c.def.gooLevel);
-    decals.spawn(c.position, preset: c.def.decalPreset);
-
-    if (_activePackId != null) {
-      events.objectSmashed(
-        objectId: c.def.id,
-        packId: _activePackId!,
-        comboCount: combo.multiplier,
-        rarity: rarity,
-      );
-      if (tier == FeedbackTier.megaBurst) {
-        events.megaBurstTriggered(
-          comboCount: combo.multiplier,
-          packId: _activePackId!,
-        );
-      }
-    }
+    _applyScoreAndCoins(outcome);
+    _applyCollectionUpdate(outcome, owningPackId);
+    _applyPackProgress(outcome, profile, owningPackId);
+    _applyCardCollection(c.def);
+    feedback.dispatch(outcome.feedbackTier, c.def);
+    _applyPaywallTrigger(outcome);
+    _applyVisualEffects(outcome, c.position);
+    _applyAnalytics(outcome, c.def);
 
     c.removeFromParent();
     spawner.requestSpawn(0.4);
+  }
+
+  void _applyScoreAndCoins(BurstOutcome outcome) {
+    score.addBurst(outcome.burstScoreBonus, multiplier: combo.multiplier);
+    _coinsEarned += outcome.totalCoinsAwarded;
+    _smashes += 1;
+    ServiceLocator.progression.awardCoins(outcome.totalCoinsAwarded);
+  }
+
+  /// First-burst path: mark discovered + fire collection-discovery
+  /// analytics. Duplicate path: fire duplicate-awarded analytics with
+  /// the bonus coin amount the resolver already computed.
+  void _applyCollectionUpdate(BurstOutcome outcome, String? owningPackId) {
+    if (outcome.isFirstBurst) {
+      ServiceLocator.progression.markDiscovered(
+        smashableId: outcome.def.id,
+        rarity: outcome.rarity,
+      );
+      if (owningPackId != null) {
+        events.collectionDiscovery(
+          objectId: outcome.def.id,
+          packId: owningPackId,
+          rarity: outcome.rarity,
+          discoveredCount: ServiceLocator.progression.profile
+              .discoveredSmashableIds.length,
+        );
+        if (outcome.rarity == Rarity.epic) {
+          events.firstEpicFound(
+              packId: owningPackId, objectId: outcome.def.id);
+        } else if (outcome.rarity == Rarity.mythic) {
+          events.firstLegendaryFound(
+              packId: owningPackId, objectId: outcome.def.id);
+        }
+      }
+    } else if (owningPackId != null) {
+      events.duplicateAwarded(
+        objectId: outcome.def.id,
+        packId: owningPackId,
+        rarity: outcome.rarity,
+        coinsAwarded: outcome.duplicateCoinBonus,
+      );
+    }
+  }
+
+  /// Pack-progress analytics + per-pack burst counter (drives unlock
+  /// gates and pity streaks). Both fire on every burst, including
+  /// duplicates and commons.
+  void _applyPackProgress(
+    BurstOutcome outcome,
+    PlayerProfile profile,
+    String? owningPackId,
+  ) {
+    if (owningPackId == null) return;
+    final owningPack = ServiceLocator.packs.byId(owningPackId);
+    if (owningPack != null) {
+      final discoveredInPack = owningPack.objects
+          .where((o) => profile.discoveredSmashableIds.contains(o.id))
+          .length;
+      events.packProgressUpdated(
+        packId: owningPackId,
+        discovered: discoveredInPack,
+        total: owningPack.objects.length,
+      );
+    }
+    ServiceLocator.progression.noteBurstForPack(
+      packId: owningPackId,
+      rarity: outcome.rarity,
+    );
+  }
+
+  /// "Play to earn" path on the 48-card collection. A smashable without
+  /// a cardNumber mapping plays normally but doesn't progress any card.
+  void _applyCardCollection(SmashableDef def) {
+    final cardNumber = def.cardNumber;
+    if (cardNumber != null) {
+      ServiceLocator.progression.incrementBurstForCard(cardNumber);
+    }
+  }
+
+  /// Starter Bundle paywall trigger — one-shot per round, gated by the
+  /// resolver. Once fired, locks via [_hasFiredFirstRareReveal].
+  void _applyPaywallTrigger(BurstOutcome outcome) {
+    if (outcome.fireFirstRareReveal) {
+      _hasFiredFirstRareReveal = true;
+      onFirstRareReveal?.call();
+    }
+  }
+
+  void _applyVisualEffects(BurstOutcome outcome, Vector2 position) {
+    if (outcome.triggersReveal) {
+      skybox.triggerReveal(hold: outcome.skyboxRevealHold);
+      arena.add(RevealBloom(
+        arenaSize: arena.arenaSize.clone(),
+        peakOpacity: outcome.bloomPeakOpacity,
+        duration: outcome.bloomDuration,
+      ));
+      if (outcome.triggersMythicShake) {
+        shaker.shake(duration: 0.28, intensity: 14);
+      }
+      if (outcome.fireMythicReveal) {
+        onMythicReveal?.call();
+      }
+    }
+    particles.burst(
+      position,
+      preset: outcome.def.particlePreset,
+      intensity: outcome.def.gooLevel,
+    );
+    decals.spawn(position, preset: outcome.def.decalPreset);
+  }
+
+  void _applyAnalytics(BurstOutcome outcome, SmashableDef def) {
+    if (_activePackId == null) return;
+    events.objectSmashed(
+      objectId: def.id,
+      packId: _activePackId!,
+      comboCount: combo.multiplier,
+      rarity: outcome.rarity,
+    );
+    if (outcome.fireMegaBurstAnalytics) {
+      events.megaBurstTriggered(
+        comboCount: combo.multiplier,
+        packId: _activePackId!,
+      );
+    }
   }
 
   Future<void> _endRound() async {
@@ -474,6 +492,17 @@ class SquishyGame extends FlameGame {
         durationMs: 60000,
         success: _smashes > 0,
       );
+    }
+    // Scan + grant any newly eligible achievements. Done at round end
+    // (rather than mid-round) so the player always sees rewards land
+    // alongside the results screen — and so the `bestScore`/`bestCombo`
+    // criteria see this round's updated values.
+    final eligible = const AchievementDetector().detectEligible(
+      achievements: starterAchievements,
+      profile: ServiceLocator.progression.profile,
+    );
+    for (final achievement in eligible) {
+      await ServiceLocator.progression.grantAchievement(achievement);
     }
     onRoundEnd?.call(score.total, combo.peak, _coinsEarned);
   }

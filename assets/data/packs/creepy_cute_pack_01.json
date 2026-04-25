@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "packId": "creepy_cute_pack_01",
   "displayName": "Creepy-Cute Creatures",
   "themeTag": "weird_cute",
@@ -55,7 +55,8 @@
         "monster",
         "blind box",
         "weird"
-      ]
+      ],
+      "cardNumber": "040/048"
     },
     {
       "id": "candy_fang_creature",
@@ -83,7 +84,8 @@
         "creepy",
         "cute",
         "spooky"
-      ]
+      ],
+      "cardNumber": "044/048"
     },
     {
       "id": "blushy_bun_bunny",
@@ -107,7 +109,8 @@
       "searchTags": [
         "bunny",
         "creature"
-      ]
+      ],
+      "cardNumber": "033/048"
     },
     {
       "id": "squish_bat",
@@ -131,7 +134,8 @@
       "searchTags": [
         "bat",
         "creepy_cute"
-      ]
+      ],
+      "cardNumber": "034/048"
     },
     {
       "id": "puff_ghost",
@@ -155,7 +159,8 @@
       "searchTags": [
         "ghost",
         "spooky"
-      ]
+      ],
+      "cardNumber": "035/048"
     },
     {
       "id": "wobble_kitty",
@@ -179,7 +184,8 @@
       "searchTags": [
         "cat",
         "kitty"
-      ]
+      ],
+      "cardNumber": "036/048"
     },
     {
       "id": "tiny_blob_monster",
@@ -203,7 +209,8 @@
       "searchTags": [
         "monster",
         "blob"
-      ]
+      ],
+      "cardNumber": "037/048"
     },
     {
       "id": "soft_fang_critter",
@@ -227,7 +234,8 @@
       "searchTags": [
         "fang",
         "critter"
-      ]
+      ],
+      "cardNumber": "038/048"
     },
     {
       "id": "sleepy_slime_pet",
@@ -251,7 +259,8 @@
       "searchTags": [
         "slime",
         "sleepy"
-      ]
+      ],
+      "cardNumber": "039/048"
     },
     {
       "id": "star_eyed_bunny",
@@ -276,7 +285,8 @@
         "bunny",
         "star",
         "rare"
-      ]
+      ],
+      "cardNumber": "041/048"
     },
     {
       "id": "moon_bat_blob",
@@ -301,7 +311,8 @@
         "moon",
         "bat",
         "rare"
-      ]
+      ],
+      "cardNumber": "042/048"
     },
     {
       "id": "glow_ghost_puff",
@@ -326,7 +337,8 @@
         "ghost",
         "glow",
         "rare"
-      ]
+      ],
+      "cardNumber": "043/048"
     },
     {
       "id": "dream_eater_squish",
@@ -350,7 +362,8 @@
       "searchTags": [
         "dream_eater",
         "epic"
-      ]
+      ],
+      "cardNumber": "045/048"
     },
     {
       "id": "arcane_wobble_kitty",
@@ -375,7 +388,8 @@
         "arcane",
         "cat",
         "epic"
-      ]
+      ],
+      "cardNumber": "046/048"
     },
     {
       "id": "mythic_plush_familiar",
@@ -400,7 +414,8 @@
         "legendary",
         "familiar",
         "mythic"
-      ]
+      ],
+      "cardNumber": "048/048"
     },
     {
       "id": "phantom_jelly_beast",
@@ -425,7 +440,8 @@
         "phantom",
         "jelly",
         "epic"
-      ]
+      ],
+      "cardNumber": "047/048"
     }
   ]
 }

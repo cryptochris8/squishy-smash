@@ -1,0 +1,386 @@
+[
+  {
+    "card_number": "001/048",
+    "name": "Soft Dumpling",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "bouncy_dumpling_in_a_cozy_kitchen.png",
+    "packaged_filename": "assets/cards/final_48/001_Soft_Dumpling.webp"
+  },
+  {
+    "card_number": "002/048",
+    "name": "Jelly Bun",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "jelly_bun_sweet_squish_edition.png",
+    "packaged_filename": "assets/cards/final_48/002_Jelly_Bun.webp"
+  },
+  {
+    "card_number": "003/048",
+    "name": "Peach Mochi",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "peach_mochi_squish_card_design.png",
+    "packaged_filename": "assets/cards/final_48/003_Peach_Mochi.webp"
+  },
+  {
+    "card_number": "004/048",
+    "name": "Syrup Cube",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "syrup_cube_s_sweet_splat_adventure.png",
+    "packaged_filename": "assets/cards/final_48/004_Syrup_Cube.webp"
+  },
+  {
+    "card_number": "005/048",
+    "name": "Cream Puff",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "cream_puff_burst_of_sweetness.png",
+    "packaged_filename": "assets/cards/final_48/005_Cream_Puff.webp"
+  },
+  {
+    "card_number": "006/048",
+    "name": "Rice Ball Squish",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "squishy_rice_ball_delight.png",
+    "packaged_filename": "assets/cards/final_48/006_Rice_Ball_Squish.webp"
+  },
+  {
+    "card_number": "007/048",
+    "name": "Marshmallow Puff",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "marshmallow_puff_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/007_Marshmallow_Puff.webp"
+  },
+  {
+    "card_number": "008/048",
+    "name": "Pudding Pop",
+    "pack": "Squishy Foods",
+    "rarity": "Common",
+    "source_filename": "pudding_pop_card_character_design.png",
+    "packaged_filename": "assets/cards/final_48/008_Pudding_Pop.webp"
+  },
+  {
+    "card_number": "009/048",
+    "name": "Strawberry Dumpling",
+    "pack": "Squishy Foods",
+    "rarity": "Rare",
+    "source_filename": "strawberry_dumpling_berry_burst_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/009_Strawberry_Dumpling.webp"
+  },
+  {
+    "card_number": "010/048",
+    "name": "Rainbow Jelly Bun",
+    "pack": "Squishy Foods",
+    "rarity": "Rare",
+    "source_filename": "rainbow_jelly_bun_explosion_of_joy.png",
+    "packaged_filename": "assets/cards/final_48/010_Rainbow_Jelly_Bun.webp"
+  },
+  {
+    "card_number": "011/048",
+    "name": "Sparkle Mochi",
+    "pack": "Squishy Foods",
+    "rarity": "Rare",
+    "source_filename": "sparkle_mochi_delight_card.png",
+    "packaged_filename": "assets/cards/final_48/011_Sparkle_Mochi.webp"
+  },
+  {
+    "card_number": "012/048",
+    "name": "Golden Syrup Cube",
+    "pack": "Squishy Foods",
+    "rarity": "Rare",
+    "source_filename": "golden_syrup_cube_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/012_Golden_Syrup_Cube.webp"
+  },
+  {
+    "card_number": "013/048",
+    "name": "Galaxy Dumpling",
+    "pack": "Squishy Foods",
+    "rarity": "Epic",
+    "source_filename": "galaxy_dumpling_cosmic_squish_adventure.png",
+    "packaged_filename": "assets/cards/final_48/013_Galaxy_Dumpling.webp"
+  },
+  {
+    "card_number": "014/048",
+    "name": "Crystal Mochi",
+    "pack": "Squishy Foods",
+    "rarity": "Epic",
+    "source_filename": "crystal_mochi_sparkle_burst_card.png",
+    "packaged_filename": "assets/cards/final_48/014_Crystal_Mochi.webp"
+  },
+  {
+    "card_number": "015/048",
+    "name": "Neon Dessert Blob",
+    "pack": "Squishy Foods",
+    "rarity": "Epic",
+    "source_filename": "neon_dessert_blob_card_illustration.png",
+    "packaged_filename": "assets/cards/final_48/015_Neon_Dessert_Blob.webp"
+  },
+  {
+    "card_number": "016/048",
+    "name": "Celestial Dumpling Core",
+    "pack": "Squishy Foods",
+    "rarity": "Legendary",
+    "source_filename": "celestial_dumpling_core_legend.png",
+    "packaged_filename": "assets/cards/final_48/016_Celestial_Dumpling_Core.webp"
+  },
+  {
+    "card_number": "017/048",
+    "name": "Goo Ball",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "goo_ball_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/017_Goo_Ball.webp"
+  },
+  {
+    "card_number": "018/048",
+    "name": "Bubble Blob",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "bubble_blob_s_bubbly_adventure_card.png",
+    "packaged_filename": "assets/cards/final_48/018_Bubble_Blob.webp"
+  },
+  {
+    "card_number": "019/048",
+    "name": "Stretch Cube",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "stretch_cube_squishy_magic_in_motion.png",
+    "packaged_filename": "assets/cards/final_48/019_Stretch_Cube.webp"
+  },
+  {
+    "card_number": "020/048",
+    "name": "Soft Stress Orb",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "soft_stress_orb_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/020_Soft_Stress_Orb.webp"
+  },
+  {
+    "card_number": "021/048",
+    "name": "Jelly Pad",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "kawaii_jelly_pad_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/021_Jelly_Pad.webp"
+  },
+  {
+    "card_number": "022/048",
+    "name": "Sticky Pop Ball",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "sticky_pop_ball_character_card.png",
+    "packaged_filename": "assets/cards/final_48/022_Sticky_Pop_Ball.webp"
+  },
+  {
+    "card_number": "023/048",
+    "name": "Wobble Drop",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "wobble_drop_liquid_wiggle_edition.png",
+    "packaged_filename": "assets/cards/final_48/023_Wobble_Drop.webp"
+  },
+  {
+    "card_number": "024/048",
+    "name": "Squish Capsule",
+    "pack": "Goo & Fidgets",
+    "rarity": "Common",
+    "source_filename": "squish_capsule_toy_trading_card.png",
+    "packaged_filename": "assets/cards/final_48/024_Squish_Capsule.webp"
+  },
+  {
+    "card_number": "025/048",
+    "name": "Glitter Goo Ball",
+    "pack": "Goo & Fidgets",
+    "rarity": "Rare",
+    "source_filename": "glitter_goo_ball_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/025_Glitter_Goo_Ball.webp"
+  },
+  {
+    "card_number": "026/048",
+    "name": "Shockwave Blob",
+    "pack": "Goo & Fidgets",
+    "rarity": "Rare",
+    "source_filename": "shockwave_blob_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/026_Shockwave_Blob.webp"
+  },
+  {
+    "card_number": "027/048",
+    "name": "Frost Gel Cube",
+    "pack": "Goo & Fidgets",
+    "rarity": "Rare",
+    "source_filename": "frost_gel_cube_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/027_Frost_Gel_Cube.webp"
+  },
+  {
+    "card_number": "028/048",
+    "name": "Prism Stress Orb",
+    "pack": "Goo & Fidgets",
+    "rarity": "Rare",
+    "source_filename": "prism_stress_orb_power_up_card.png",
+    "packaged_filename": "assets/cards/final_48/028_Prism_Stress_Orb.webp"
+  },
+  {
+    "card_number": "029/048",
+    "name": "Plasma Goo Ball",
+    "pack": "Goo & Fidgets",
+    "rarity": "Epic",
+    "source_filename": "plasma_goo_ball_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/029_Plasma_Goo_Ball.webp"
+  },
+  {
+    "card_number": "030/048",
+    "name": "Aurora Stretch Cube",
+    "pack": "Goo & Fidgets",
+    "rarity": "Epic",
+    "source_filename": "aurora_stretch_cube_collection_card.png",
+    "packaged_filename": "assets/cards/final_48/030_Aurora_Stretch_Cube.webp"
+  },
+  {
+    "card_number": "031/048",
+    "name": "Cosmic Jelly Pad",
+    "pack": "Goo & Fidgets",
+    "rarity": "Epic",
+    "source_filename": "cosmic_jelly_pad_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/031_Cosmic_Jelly_Pad.webp"
+  },
+  {
+    "card_number": "032/048",
+    "name": "Singularity Goo Core",
+    "pack": "Goo & Fidgets",
+    "rarity": "Legendary",
+    "source_filename": "cosmic_goo_core_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/032_Singularity_Goo_Core.webp"
+  },
+  {
+    "card_number": "033/048",
+    "name": "Blushy Bun Bunny",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "blushy_bun_bunny_cheer_pop_edition.png",
+    "packaged_filename": "assets/cards/final_48/033_Blushy_Bun_Bunny.webp"
+  },
+  {
+    "card_number": "034/048",
+    "name": "Squish Bat",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "squish_bat_fluttering_in_the_clouds.png",
+    "packaged_filename": "assets/cards/final_48/034_Squish_Bat.webp"
+  },
+  {
+    "card_number": "035/048",
+    "name": "Puff Ghost",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "puff_ghost_in_dreamy_mist.png",
+    "packaged_filename": "assets/cards/final_48/035_Puff_Ghost.webp"
+  },
+  {
+    "card_number": "036/048",
+    "name": "Wobble Kitty",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "wobble_kitty_s_cheerful_sparkle_fun.png",
+    "packaged_filename": "assets/cards/final_48/036_Wobble_Kitty.webp"
+  },
+  {
+    "card_number": "037/048",
+    "name": "Tiny Blob Monster",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "tiny_blob_monster_s_mischievous_splash.png",
+    "packaged_filename": "assets/cards/final_48/037_Tiny_Blob_Monster.webp"
+  },
+  {
+    "card_number": "038/048",
+    "name": "Soft Fang Critter",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "soft_fang_critter_trading_card.png",
+    "packaged_filename": "assets/cards/final_48/038_Soft_Fang_Critter.webp"
+  },
+  {
+    "card_number": "039/048",
+    "name": "Sleepy Slime Pet",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "sleepy_slime_pet_card_illustration.png",
+    "packaged_filename": "assets/cards/final_48/039_Sleepy_Slime_Pet.webp"
+  },
+  {
+    "card_number": "040/048",
+    "name": "Round Eared Creature",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Common",
+    "source_filename": "squishy_creature_in_a_pastel_garden.png",
+    "packaged_filename": "assets/cards/final_48/040_Round_Eared_Creature.webp"
+  },
+  {
+    "card_number": "041/048",
+    "name": "Star-Eyed Bunny",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Rare",
+    "source_filename": "starry_eyed_bunny_s_magical_leap.png",
+    "packaged_filename": "assets/cards/final_48/041_Star_Eyed_Bunny.webp"
+  },
+  {
+    "card_number": "042/048",
+    "name": "Moon Bat Blob",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Rare",
+    "source_filename": "moon_bat_blob_collectible_card_design.png",
+    "packaged_filename": "assets/cards/final_48/042_Moon_Bat_Blob.webp"
+  },
+  {
+    "card_number": "043/048",
+    "name": "Glow Ghost Puff",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Rare",
+    "source_filename": "glow_ghost_puff_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/043_Glow_Ghost_Puff.webp"
+  },
+  {
+    "card_number": "044/048",
+    "name": "Candy Fang Creature",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Rare",
+    "source_filename": "candy_fang_creature_collectible_card.png",
+    "packaged_filename": "assets/cards/final_48/044_Candy_Fang_Creature.webp"
+  },
+  {
+    "card_number": "045/048",
+    "name": "Dream Eater Squish",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Epic",
+    "source_filename": "dreamy_squishy_cosmic_creature_card.png",
+    "packaged_filename": "assets/cards/final_48/045_Dream_Eater_Squish.webp"
+  },
+  {
+    "card_number": "046/048",
+    "name": "Arcane Wobble Kitty",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Epic",
+    "source_filename": "arcane_wobble_kitty_magic_card.png",
+    "packaged_filename": "assets/cards/final_48/046_Arcane_Wobble_Kitty.webp"
+  },
+  {
+    "card_number": "047/048",
+    "name": "Phantom Jelly Beast",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Epic",
+    "source_filename": "phantom_jelly_beast_trading_card_endoftext.png",
+    "packaged_filename": "assets/cards/final_48/047_Phantom_Jelly_Beast.webp"
+  },
+  {
+    "card_number": "048/048",
+    "name": "Mythic Plush Familiar",
+    "pack": "Creepy-Cute Creatures",
+    "rarity": "Legendary",
+    "source_filename": "mythic_plush_familiar_trading_card_design.png",
+    "packaged_filename": "assets/cards/final_48/048_Mythic_Plush_Familiar.webp"
+  }
+]

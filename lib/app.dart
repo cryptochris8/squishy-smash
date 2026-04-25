@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'core/routes.dart';
+
+/// Font family registered in pubspec.yaml under `flutter > fonts`.
+/// Bundled (not fetched at runtime) so the app's typography is locked
+/// in even on first launch with no network — critical for App Store
+/// review devices that run under restricted connectivity.
+const String _kBundledFontFamily = 'Fredoka';
 
 class SquishySmashApp extends StatelessWidget {
   const SquishySmashApp({super.key});
@@ -22,7 +27,11 @@ class SquishySmashApp extends StatelessWidget {
       title: 'Squishy Smash',
       debugShowCheckedModeBanner: false,
       theme: base.copyWith(
-        textTheme: GoogleFonts.fredokaTextTheme(base.textTheme),
+        // Use the bundled Fredoka TTF instead of GoogleFonts.fredokaTextTheme
+        // — same family name, but resolved from the asset bundle so no
+        // network fetch happens. Variable font handles weights 300–700
+        // automatically when TextStyle.fontWeight is set downstream.
+        textTheme: base.textTheme.apply(fontFamily: _kBundledFontFamily),
       ),
       initialRoute: AppRoutes.menu,
       routes: AppRoutes.table,

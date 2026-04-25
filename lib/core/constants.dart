@@ -1,5 +1,7 @@
 import 'package:flutter/painting.dart';
 
+import '../data/models/rarity.dart';
+
 class Tunables {
   Tunables._();
 
@@ -26,4 +28,24 @@ class Palette {
   static const Color cream = Color(0xFFFFD36E);
   static const Color jellyBlue = Color(0xFF7FE7FF);
   static const Color toxicLime = Color(0xFFB6FF5C);
+  static const Color lavender = Color(0xFFC98BFF);
+  static const Color rarityCommon = Color(0xFFB0B6C3);
+
+  /// Single source of truth for the per-rarity tint used everywhere
+  /// the UI signals "this is a rare/epic/legendary thing" — collection
+  /// album tiles, card detail pills, HUD combo styling, shop badges.
+  /// Adding a new rarity tier or recoloring an existing one is a
+  /// one-file change here; everywhere else just calls this function.
+  static Color rarityColor(Rarity r) {
+    switch (r) {
+      case Rarity.common:
+        return rarityCommon;
+      case Rarity.rare:
+        return jellyBlue;
+      case Rarity.epic:
+        return lavender;
+      case Rarity.mythic:
+        return cream;
+    }
+  }
 }

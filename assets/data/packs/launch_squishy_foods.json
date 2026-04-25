@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "packId": "launch_squishy_foods",
   "displayName": "Squishy Foods",
   "themeTag": "food_squish",
@@ -56,7 +56,8 @@
         "asmr",
         "satisfying",
         "food"
-      ]
+      ],
+      "cardNumber": "001/048"
     },
     {
       "id": "jelly_bun",
@@ -84,7 +85,8 @@
         "pop",
         "asmr",
         "satisfying"
-      ]
+      ],
+      "cardNumber": "002/048"
     },
     {
       "id": "peach_mochi",
@@ -109,7 +111,8 @@
         "mochi",
         "peach",
         "dessert"
-      ]
+      ],
+      "cardNumber": "003/048"
     },
     {
       "id": "syrup_cube",
@@ -134,7 +137,8 @@
         "syrup",
         "jelly",
         "cube"
-      ]
+      ],
+      "cardNumber": "004/048"
     },
     {
       "id": "cream_puff",
@@ -159,7 +163,8 @@
         "cream",
         "puff",
         "pastry"
-      ]
+      ],
+      "cardNumber": "005/048"
     },
     {
       "id": "rice_ball_squish",
@@ -184,7 +189,8 @@
         "rice",
         "onigiri",
         "food"
-      ]
+      ],
+      "cardNumber": "006/048"
     },
     {
       "id": "marshmallow_puff",
@@ -208,7 +214,8 @@
       "searchTags": [
         "marshmallow",
         "soft"
-      ]
+      ],
+      "cardNumber": "007/048"
     },
     {
       "id": "pudding_pop",
@@ -232,7 +239,8 @@
       "searchTags": [
         "pudding",
         "wobble"
-      ]
+      ],
+      "cardNumber": "008/048"
     },
     {
       "id": "rainbow_jelly_bun",
@@ -257,7 +265,8 @@
         "rainbow",
         "jelly",
         "rare"
-      ]
+      ],
+      "cardNumber": "010/048"
     },
     {
       "id": "sparkle_mochi",
@@ -282,7 +291,8 @@
         "sparkle",
         "mochi",
         "rare"
-      ]
+      ],
+      "cardNumber": "011/048"
     },
     {
       "id": "golden_syrup_cube",
@@ -307,7 +317,8 @@
         "gold",
         "syrup",
         "rare"
-      ]
+      ],
+      "cardNumber": "012/048"
     },
     {
       "id": "galaxy_dumpling",
@@ -332,7 +343,8 @@
         "galaxy",
         "dumpling",
         "epic"
-      ]
+      ],
+      "cardNumber": "013/048"
     },
     {
       "id": "crystal_mochi",
@@ -357,7 +369,8 @@
         "crystal",
         "mochi",
         "epic"
-      ]
+      ],
+      "cardNumber": "014/048"
     },
     {
       "id": "neon_dessert_blob",
@@ -382,7 +395,8 @@
         "neon",
         "jelly",
         "epic"
-      ]
+      ],
+      "cardNumber": "015/048"
     },
     {
       "id": "celestial_dumpling_core",
@@ -407,7 +421,8 @@
         "celestial",
         "legendary",
         "mythic"
-      ]
+      ],
+      "cardNumber": "016/048"
     },
     {
       "id": "strawberry_dumpling",
@@ -432,7 +447,8 @@
         "strawberry",
         "dumpling",
         "rare"
-      ]
+      ],
+      "cardNumber": "009/048"
     }
   ]
 }

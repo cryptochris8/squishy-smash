@@ -23,6 +23,9 @@ class PlayerProfile {
     this.starterBundleClaimed = false,
     Map<Rarity, int>? guaranteedRevealTokens,
     Set<String>? purchasedSkus,
+    Map<String, int>? cardBurstCounts,
+    Set<String>? cardsPurchased,
+    Set<String>? claimedAchievements,
   })  : guaranteedRevealTokens = guaranteedRevealTokens ?? <Rarity, int>{},
         purchasedSkus = purchasedSkus ?? <String>{},
         unlockedArenaKeys =
@@ -31,7 +34,10 @@ class PlayerProfile {
         totalBurstsByPack = totalBurstsByPack ?? <String, int>{},
         rareDryByPack = rareDryByPack ?? <String, int>{},
         epicDryByPack = epicDryByPack ?? <String, int>{},
-        legendaryDryByPack = legendaryDryByPack ?? <String, int>{};
+        legendaryDryByPack = legendaryDryByPack ?? <String, int>{},
+        cardBurstCounts = cardBurstCounts ?? <String, int>{},
+        cardsPurchased = cardsPurchased ?? <String>{},
+        claimedAchievements = claimedAchievements ?? <String>{};
 
   int coins;
   Set<String> unlockedPackIds;
@@ -112,6 +118,24 @@ class PlayerProfile {
   /// that have been used up — this is the "receipt history" set.
   Set<String> purchasedSkus;
 
+  /// Per-card burst counter, keyed by card_number (e.g., "001/048").
+  /// Drives the "play to earn" path: a card unlocks once its counter
+  /// crosses the rarity-specific threshold (Common 1, Rare 3, Epic 7,
+  /// Legendary 15 — see `CardUnlockThresholds.requiredBursts`). Bumped
+  /// in `ProgressionRepository.incrementBurstForCard` whenever a player
+  /// bursts a smashable that maps to this card.
+  Map<String, int> cardBurstCounts;
+
+  /// Card numbers the player has unlocked directly with coins. Independent
+  /// of `cardBurstCounts` and `claimedAchievements` — any single non-empty
+  /// path is enough to mark a card unlocked.
+  Set<String> cardsPurchased;
+
+  /// Achievement IDs the player has claimed (and received the reward for).
+  /// Used both to render the achievement progress shelf and to gate
+  /// achievement-rewarded cards in the unlock derivation.
+  Set<String> claimedAchievements;
+
   factory PlayerProfile.empty() => PlayerProfile(
         coins: 0,
         unlockedPackIds: <String>{'launch_squishy_foods'},
@@ -134,5 +158,8 @@ class PlayerProfile {
         starterBundleClaimed: false,
         guaranteedRevealTokens: <Rarity, int>{},
         purchasedSkus: <String>{},
+        cardBurstCounts: <String, int>{},
+        cardsPurchased: <String>{},
+        claimedAchievements: <String>{},
       );
 }

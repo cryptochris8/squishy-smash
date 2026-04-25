@@ -366,6 +366,100 @@ void main() {
     });
   });
 
+  group('RarityPitySelector dropWeight as relative multiplier', () {
+    /// Build a pack with two same-tier objects. `heavyMultiplier` is
+    /// applied to the second one via `dropWeight`; the first is left
+    /// unweighted so the per-object share is the natural 50/50.
+    ContentPack twoCommonPack({required int heavyMultiplier}) {
+      final light = _smashableJson('light_c', Rarity.common);
+      final heavy = _smashableJson('heavy_c', Rarity.common)
+        ..['dropWeight'] = heavyMultiplier;
+      return ContentPack.fromJson({
+        'packId': 'dropweight_test',
+        'displayName': 'dropweight_test',
+        'themeTag': 'test',
+        'releaseType': 'launch',
+        'palette': {
+          'primary': '#FF8FB8',
+          'secondary': '#FFD36E',
+          'accent': '#7FE7FF',
+        },
+        'arenaSuggestion': 'any',
+        'featuredAudioSet': 'any',
+        'unlockCost': 0,
+        'objects': [light, heavy],
+      });
+    }
+
+    test('dropWeight=1 behaves like no override (~50/50 split)', () {
+      final pool = _poolFor(twoCommonPack(heavyMultiplier: 1));
+      const selector = RarityPitySelector();
+      final rng = Random(7);
+      var heavy = 0;
+      const trials = 20000;
+      for (var i = 0; i < trials; i++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          rng: rng,
+        );
+        if (pick.id == 'heavy_c') heavy++;
+      }
+      expect(heavy / trials, closeTo(0.5, 0.03),
+          reason: 'dropWeight=1 should match an unweighted sibling');
+    });
+
+    test('dropWeight=3 makes the heavy object ~3x more likely', () {
+      final pool = _poolFor(twoCommonPack(heavyMultiplier: 3));
+      const selector = RarityPitySelector();
+      final rng = Random(11);
+      var heavy = 0;
+      var light = 0;
+      const trials = 20000;
+      for (var i = 0; i < trials; i++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          rng: rng,
+        );
+        if (pick.id == 'heavy_c') {
+          heavy++;
+        } else {
+          light++;
+        }
+      }
+      // Heavy should be ~3x light: 75% / 25% split. Wide band so
+      // RNG noise doesn't flake.
+      expect(heavy / trials, closeTo(0.75, 0.03));
+      expect(light / trials, closeTo(0.25, 0.03));
+      expect(heavy / light, closeTo(3.0, 0.4),
+          reason: 'dropWeight is a relative multiplier on tier share');
+    });
+
+    test('dropWeight=0 effectively disables the object', () {
+      final pool = _poolFor(twoCommonPack(heavyMultiplier: 0));
+      const selector = RarityPitySelector();
+      final rng = Random(13);
+      var heavy = 0;
+      for (var i = 0; i < 5000; i++) {
+        final pick = selector.pick(
+          pool: pool,
+          rareDryByPack: const {},
+          epicDryByPack: const {},
+          legendaryDryByPack: const {},
+          rng: rng,
+        );
+        if (pick.id == 'heavy_c') heavy++;
+      }
+      expect(heavy, 0,
+          reason: 'dropWeight=0 should never spawn (weight 0)');
+    });
+  });
+
   group('RarityPitySelector.advanceCountersForPack', () {
     const selector = RarityPitySelector();
 

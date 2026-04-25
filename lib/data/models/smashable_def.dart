@@ -25,6 +25,7 @@ class SmashableDef {
     this.rarity = Rarity.common,
     this.dropWeight,
     this.behaviorProfile,
+    this.cardNumber,
   });
 
   final String id;
@@ -59,6 +60,15 @@ class SmashableDef {
   /// Which material preset this object is based on. Null for objects
   /// that hand-tune every physics field without referencing a profile.
   final BehaviorProfile? behaviorProfile;
+
+  /// Optional link to a card in the 48-card collection. When set,
+  /// bursting this smashable in-game increments the per-card burst
+  /// counter (`ProgressionRepository.incrementBurstForCard`) and feeds
+  /// the "play to earn" unlock path. Format matches the manifest's
+  /// `card_number` field, e.g. "001/048". Null on smashables that
+  /// don't yet have a card mapping — those still play normally; they
+  /// just don't progress any card unlock.
+  final String? cardNumber;
 
   factory SmashableDef.fromJson(Map<String, dynamic> json) {
     final profile =
@@ -103,6 +113,7 @@ class SmashableDef {
           ? null
           : (json['dropWeight'] as num).toInt(),
       behaviorProfile: profile,
+      cardNumber: json['cardNumber'] as String?,
     );
   }
 }

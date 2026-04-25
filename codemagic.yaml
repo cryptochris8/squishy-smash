@@ -4,9 +4,13 @@ workflows:
     max_build_duration: 30
     instance_type: mac_mini_m2
     environment:
-      flutter: stable
-      xcode: latest
-      cocoapods: default
+      # Pinned versions — auto-tracking `stable` / `latest` lets a
+      # silent upstream change break the build between runs. Bump
+      # these deliberately when you've tested locally on the new
+      # versions; never let them float.
+      flutter: 3.32.5
+      xcode: 16.3
+      cocoapods: 1.16.2
     scripts:
       - name: Flutter packages
         script: flutter pub get
@@ -27,9 +31,13 @@ workflows:
     integrations:
       app_store_connect: Pregame
     environment:
-      flutter: stable
-      xcode: latest
-      cocoapods: default
+      # Pinned versions — auto-tracking `stable` / `latest` lets a
+      # silent upstream change break the build between runs. Bump
+      # these deliberately when you've tested locally on the new
+      # versions; never let them float.
+      flutter: 3.32.5
+      xcode: 16.3
+      cocoapods: 1.16.2
       groups:
         # Variable group in Codemagic dashboard. Must contain at least:
         #   - CERTIFICATE_PRIVATE_KEY (secure) — RSA key for App Store cert

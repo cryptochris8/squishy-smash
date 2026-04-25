@@ -1,0 +1,20 @@
+[
+  {
+    "card_number": "#042",
+    "name": "Eggy Ellie",
+    "source_filename": "eggy_ellie_withspaghetti_adventure.png",
+    "packaged_filename": "assets/cards/custom_family/Eggy_Ellie.webp"
+  },
+  {
+    "card_number": "#043",
+    "name": "Apple Addy",
+    "source_filename": "apple_addy_s_lasagna_adventure.png",
+    "packaged_filename": "assets/cards/custom_family/Apple_Addy.webp"
+  },
+  {
+    "card_number": "#044",
+    "name": "Hot Dog Heidi",
+    "source_filename": "hot_dog_heidi_s_cheeseburger_adventure.png",
+    "packaged_filename": "assets/cards/custom_family/Hot_Dog_Heidi.webp"
+  }
+]

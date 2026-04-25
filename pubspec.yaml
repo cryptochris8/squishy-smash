@@ -14,28 +14,44 @@ dependencies:
   flame: 1.35.1
   flame_audio: ^2.11.0
   shared_preferences: ^2.3.0
-  google_fonts: ^6.2.0
   collection: ^1.18.0
   path_provider: ^2.1.0
   share_plus: ^10.0.0
   in_app_purchase: ^3.2.0
   google_mobile_ads: ^5.2.0
   app_tracking_transparency: ^2.0.6
+  sentry_flutter: ^8.10.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  fake_async: ^1.3.1
+  yaml: ^3.1.2
 
 flutter:
   uses-material-design: true
 
+  fonts:
+    # Bundled to avoid the network fetch `google_fonts` would otherwise
+    # do on first launch — App Store review devices are commonly run
+    # under restricted networks where that fetch silently fails and
+    # the app falls back to a system font. Variable font: one TTF
+    # covers all weights (300–700) the UI uses.
+    - family: Fredoka
+      fonts:
+        - asset: assets/google_fonts/Fredoka.ttf
+
   assets:
     - assets/data/liveops_schedule.json
+    - assets/data/cards_manifest.json
+    - assets/data/custom_cards_manifest.json
     - assets/data/packs/launch_squishy_foods.json
     - assets/data/packs/goo_fidgets_drop_01.json
     - assets/data/packs/creepy_cute_pack_01.json
     - assets/data/packs/dumpling_squishy_drop_01.json
+    - assets/cards/final_48/
+    - assets/cards/custom_family/
     - assets/images/objects/
     - assets/images/thumbnails/
     - assets/images/decals/

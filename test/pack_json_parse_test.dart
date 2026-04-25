@@ -130,6 +130,115 @@ void main() {
     });
   });
 
+  group('Launch pack ↔ card-collection mapping', () {
+    // Every smashable in the three launch packs maps 1:1 to a card in
+    // `assets/data/cards_manifest.json`. Locks the burst-threshold
+    // unlock path against accidental drift.
+    const launchPackPaths = [
+      'assets/data/packs/launch_squishy_foods.json',
+      'assets/data/packs/goo_fidgets_drop_01.json',
+      'assets/data/packs/creepy_cute_pack_01.json',
+    ];
+
+    late final List<Map<String, dynamic>> manifest;
+    setUpAll(() {
+      manifest = (json.decode(
+              File('assets/data/cards_manifest.json').readAsStringSync())
+          as List)
+          .cast<Map<String, dynamic>>();
+    });
+
+    for (final path in launchPackPaths) {
+      test('$path: every smashable declares a cardNumber', () {
+        final pack = json.decode(File(path).readAsStringSync())
+            as Map<String, dynamic>;
+        final objects =
+            (pack['objects'] as List).cast<Map<String, dynamic>>();
+        for (final obj in objects) {
+          expect(obj.containsKey('cardNumber'), isTrue,
+              reason:
+                  '$path: object ${obj['id']} is missing cardNumber');
+          expect(
+            obj['cardNumber'] as String,
+            matches(RegExp(r'^\d{3}/048$')),
+            reason: '$path: ${obj['id']} cardNumber malformed',
+          );
+        }
+      });
+
+      test('$path: every cardNumber resolves to a real manifest entry',
+          () {
+        final pack = json.decode(File(path).readAsStringSync())
+            as Map<String, dynamic>;
+        final objects =
+            (pack['objects'] as List).cast<Map<String, dynamic>>();
+        final manifestNumbers =
+            manifest.map((m) => m['card_number'] as String).toSet();
+        for (final obj in objects) {
+          final cn = obj['cardNumber'] as String;
+          expect(manifestNumbers, contains(cn),
+              reason: '$path: ${obj['id']} maps to $cn which has no '
+                  'matching CardEntry in cards_manifest.json');
+        }
+      });
+
+      test('$path: smashable name + rarity match the mapped card', () {
+        // Catches "the cardNumber points at the wrong rarity tier"
+        // mistakes — e.g., a Common smashable accidentally pointing
+        // at a Legendary card. That would silently mis-tune the
+        // burst threshold (Common = 1 burst, Legendary = 15).
+        final pack = json.decode(File(path).readAsStringSync())
+            as Map<String, dynamic>;
+        final objects =
+            (pack['objects'] as List).cast<Map<String, dynamic>>();
+        const manifestRarityToToken = {
+          'Common': 'common',
+          'Rare': 'rare',
+          'Epic': 'epic',
+          'Legendary': 'mythic',
+        };
+        for (final obj in objects) {
+          final cn = obj['cardNumber'] as String;
+          final card = manifest.firstWhere(
+            (m) => m['card_number'] == cn,
+          );
+          expect(obj['name'], card['name'],
+              reason: '$path: ${obj['id']} name mismatch with $cn');
+          final smashableRarity =
+              (obj['rarity'] as String?) ?? 'common';
+          final cardToken =
+              manifestRarityToToken[card['rarity'] as String];
+          expect(smashableRarity, cardToken,
+              reason: '$path: ${obj['id']} rarity mismatch with $cn');
+        }
+      });
+    }
+
+    test('every Squishy Foods card has exactly one smashable mapped to it',
+        () {
+      // Reverse direction: catch missing mappings or duplicate
+      // mappings. If two smashables claim the same cardNumber, one of
+      // them never makes burst-threshold progress.
+      final all = <String>[];
+      for (final path in launchPackPaths) {
+        final pack = json.decode(File(path).readAsStringSync())
+            as Map<String, dynamic>;
+        final objects =
+            (pack['objects'] as List).cast<Map<String, dynamic>>();
+        for (final obj in objects) {
+          all.add(obj['cardNumber'] as String);
+        }
+      }
+      expect(all.toSet().length, all.length,
+          reason: 'Duplicate cardNumber across launch packs');
+      // 16 + 16 + 16 = 48
+      expect(all, hasLength(48));
+      expect(all.toSet(), {
+        for (final m in manifest) m['card_number'] as String,
+      });
+    });
+  });
+
   group('Launch pack rarity composition (8 / 4 / 3 / 1 lock)', () {
     // Locks the canonical 8C/4R/3E/1L shape for every doc-aligned launch
     // pack. If anyone strips per-object `rarity` fields from a pack JSON,

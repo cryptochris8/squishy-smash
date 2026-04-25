@@ -67,6 +67,14 @@ coverage/
 # Codemagic local cache
 .cm-cache/
 
+# Card-pack source archives + scratch space. The 48-card collection
+# is shipped via the compressed WebPs under `assets/cards/`; the source
+# zips and extracted PNGs are preserved locally as backups but kept
+# out of git so a repo clone doesn't pull ~130 MB of binaries that
+# duplicate already-tracked content.
+docs/Cards/_extracted/
+docs/Cards/*.zip
+
 # SECRETS — never commit
 *.p8
 *.p12

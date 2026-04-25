@@ -53,7 +53,7 @@ Identifiers already hardcoded (not secrets):
 
 ## What's wired
 
-- **Menu / Gameplay / Results / Shop / Settings** screens with named routes
+- **Menu / Gameplay / Results / Shop / Settings / Collection** screens with named routes
 - **Flame** game loop with tap-smash, drag-slam, and hold-to-crush input
 - Squash-and-stretch deformation via `ScaleEffect` chains (no real physics —
   fake juice on purpose, per `04_audio_vfx_plan.md`)
@@ -65,6 +65,65 @@ Identifiers already hardcoded (not secrets):
 - **LiveOps schedule** loader → pulls "Dumpling Squishy Week" banner onto menu
 - **Sound manager** scaffolded against `flame_audio` (silently no-ops until
   WAVs are dropped in)
+- **48-card collection album** with 3-path unlock system (burst threshold,
+  achievements, coin purchase) — see "Card Collection" below
+
+## Card Collection (3-path unlock system)
+
+The album in the Collection screen tracks **48 cards** (16 per pack × 3 packs,
+with the canonical 8 Common / 4 Rare / 3 Epic / 1 Legendary composition per
+pack) plus **3 separate "keepsake" custom family cards**. Source of truth:
+
+- `assets/cards/final_48/` — WebP card art (~14 MB total)
+- `assets/cards/custom_family/` — keepsake cards
+- `assets/data/cards_manifest.json` — `{ card_number, name, pack, rarity, packaged_filename }`
+- `assets/data/custom_cards_manifest.json` — separate manifest for the family set
+
+**Three concurrent unlock paths.** Any one path is enough to mark a card
+unlocked; players can mix paths freely:
+
+| Path | How | Where it's wired |
+|---|---|---|
+| **Burst threshold** | Burst the matching smashable N times (Common 1 / Rare 3 / Epic 7 / Legendary 15) | `lib/data/card_unlock.dart` `CardUnlockThresholds` |
+| **Achievement reward** | Claim an achievement carrying a `CardUnlockReward` | `lib/data/achievement_registry.dart` |
+| **Coin purchase** | Spend 50 / 200 / 750 / 2500 coins by rarity | `lib/data/card_unlock.dart` `CardCoinPrice` |
+
+**Wiring a smashable to a card.** Add `"cardNumber": "001/048"` to a smashable
+entry in any pack JSON. The game's burst handler calls
+`ProgressionRepository.incrementBurstForCard(cardNumber)` on every burst of
+that object. Smashables without a `cardNumber` play normally but don't progress
+any card — fill mappings in incrementally as content is finalized.
+
+**Achievements.** 8 starter achievements ship in `lib/data/achievement_registry.dart`:
+streak milestones (5/7/14 days), combo & score thresholds, lifetime burst count,
+first-ever Mythic discovery. Most reward coins or guaranteed-reveal tokens; one
+(`first_mythic_ever`) directly unlocks card 048 as the example pattern for
+"achievements that unlock cards." Detection runs at round end via
+`AchievementDetector` — pure, deterministic, idempotent.
+
+**Custom family cards** are loaded from a separate manifest and rendered in a
+clearly separated "Keepsakes" section at the bottom of the album. They are
+**not** counted toward the 48-card progress bar — the 48-card collection and
+the keepsake set are deliberately decoupled.
+
+### Notes for the website team
+
+The same manifest JSONs in `assets/data/` and the same WebPs in `assets/cards/`
+are intended for the marketing site's collection gallery. To keep the two
+surfaces in sync:
+
+- **Read-only contract** — the website should **load** these files (e.g., copy
+  them into the Netlify build, or fetch them at build time). Do not rewrite
+  them; the app's progression logic depends on the field shape.
+- **Filtering** — group by `pack` (3 packs) and filter by `rarity` (4 tiers).
+  Match the app's terminology: the JSON uses "Legendary" while the internal
+  Dart enum uses `mythic`. Surface "Legendary" to users.
+- **Custom family cards** — keep them in a separate "private" or "extras"
+  section if shown at all; the integration docs in
+  `docs/Cards/_extracted/docs_only/docs/website_integration_instructions.md`
+  describe the recommended structure.
+- **Performance** — the WebPs are already optimized (~140 KB each). Use
+  responsive `<picture>` + lazy loading for the grid.
 
 ## Folder Layout
 
@@ -74,18 +133,27 @@ lib/
 ├── app.dart                   # MaterialApp + theme
 ├── core/                      # constants, routes, service locator, analytics stub
 ├── data/
-│   ├── models/                # SmashableDef, ContentPack, LiveOpsSchedule, PlayerProfile
+│   ├── models/                # SmashableDef, ContentPack, LiveOpsSchedule,
+│   │                          # PlayerProfile, CardEntry, Achievement
 │   ├── repositories/          # PackRepository, ProgressionRepository
-│   ├── content_loader.dart    # bundled JSON loader
+│   ├── content_loader.dart    # bundled pack JSON loader
+│   ├── card_manifest_loader.dart  # 48-card + family manifests
+│   ├── card_unlock.dart       # 3-path unlock derivation + thresholds + prices
+│   ├── achievement_registry.dart  # 8 starter achievements
+│   ├── achievement_detector.dart  # eligibility scanner
 │   └── persistence.dart       # SharedPreferences wrapper
-├── ui/                        # menu / gameplay / results / shop / settings + widgets
+├── ui/                        # menu / gameplay / results / shop / settings /
+│   │                          # collection (album) + widgets
+│   └── widgets/               # card_album_widgets.dart (FilterPill, RarityPill, ...)
 └── game/
     ├── squishy_game.dart      # FlameGame root
     ├── world/arena_world.dart
     ├── components/            # smashable, particles, decals, hud, screen shake
     └── systems/               # score, combo, spawn, sound, haptics
 assets/
-├── data/                      # packs/*.json, liveops_schedule.json
+├── data/                      # packs/*.json, liveops_schedule.json,
+│                              # cards_manifest.json, custom_cards_manifest.json
+├── cards/{final_48,custom_family}/   # 48-card WebP album + keepsakes
 ├── images/{objects,thumbnails,decals,arenas,ui}/   # PLACEHOLDER folders
 └── audio/{food,goo,creature,ui}/                   # PLACEHOLDER folders
 ```
