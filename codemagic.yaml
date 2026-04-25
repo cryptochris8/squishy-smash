@@ -42,6 +42,12 @@ workflows:
         # Variable group in Codemagic dashboard. Must contain at least:
         #   - CERTIFICATE_PRIVATE_KEY (secure) — RSA key for App Store cert
         #   - APP_STORE_APPLE_ID (plain) — numeric app ID from ASC
+        #   - SENTRY_DSN (secure) — full DSN URL from Sentry for crash
+        #     reporting; gets passed to `flutter build ipa` via
+        #     `--dart-define=SENTRY_DSN=$SENTRY_DSN` so release builds
+        #     forward errors. Empty/missing is allowed (Sentry init
+        #     falls through silently when the DSN is empty), but real
+        #     TestFlight/App Store builds should always have it set.
         - smash
       vars:
         BUNDLE_ID: "com.athletedomains.squishySmash"
@@ -80,8 +86,12 @@ workflows:
           echo "Setting CFBundleVersion to $BUILD_NUMBER (previous TestFlight build: $LATEST)"
           agvtool new-version -all "$BUILD_NUMBER"
       - name: Flutter build ipa (signed)
+        # Forward the Sentry DSN at build time. The Dart-side init in
+        # main.dart only runs when SENTRY_DSN is non-empty, so this
+        # flag is what flips crash reporting on for the shipped IPA.
         script: |
           flutter build ipa --release \
+            --dart-define=SENTRY_DSN="$SENTRY_DSN" \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa

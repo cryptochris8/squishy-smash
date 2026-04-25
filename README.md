@@ -43,7 +43,15 @@ Before `ios-release` will work, in the Codemagic dashboard:
    placeholders), add **`APP_STORE_APPLE_ID`** with the numeric Apple ID of
    the app (visible in App Store Connect → App Info → Apple ID once the app
    listing exists). Leave it unencrypted — it's not a secret.
-5. Set the **`Internal Testers`** TestFlight group up in App Store Connect →
+5. **Sentry crash reporting**: in the same `smash` variable group, add
+   **`SENTRY_DSN`** (mark it secure) with the full DSN URL from your
+   Sentry project's Settings → Client Keys page. The `flutter build ipa`
+   step in `codemagic.yaml` already passes it through via
+   `--dart-define=SENTRY_DSN=$SENTRY_DSN` — without this var set, the
+   shipped IPA has crash reporting silently off. Empty/missing is
+   tolerated by the Dart-side init (no crash on launch), so this is
+   safe to add later, but real TestFlight builds should always have it.
+6. Set the **`Internal Testers`** TestFlight group up in App Store Connect →
    TestFlight → Internal Testing, or rename the `beta_groups` entry in
    `codemagic.yaml` to match an existing group.
 
