@@ -8,8 +8,13 @@ workflows:
       # silent upstream change break the build between runs. Bump
       # these deliberately when you've tested locally on the new
       # versions; never let them float.
+      #
+      # Xcode 26 (iOS 26 SDK) is required to upload to App Store
+      # Connect from 2026-04-28 onward (Apple ITMS-90725). If the
+      # build fails on missing-Xcode-version, check Codemagic's
+      # supported-versions list and pin the closest 26.x.x available.
       flutter: 3.32.5
-      xcode: 16.3
+      xcode: 26.0
       cocoapods: 1.16.2
     scripts:
       - name: Flutter packages
@@ -35,8 +40,13 @@ workflows:
       # silent upstream change break the build between runs. Bump
       # these deliberately when you've tested locally on the new
       # versions; never let them float.
+      #
+      # Xcode 26 (iOS 26 SDK) is required to upload to App Store
+      # Connect from 2026-04-28 onward (Apple ITMS-90725). If the
+      # build fails on missing-Xcode-version, check Codemagic's
+      # supported-versions list and pin the closest 26.x.x available.
       flutter: 3.32.5
-      xcode: 16.3
+      xcode: 26.0
       cocoapods: 1.16.2
       groups:
         # Variable group in Codemagic dashboard. Must contain at least:

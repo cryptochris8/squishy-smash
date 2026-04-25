@@ -47,6 +47,34 @@ void main() {
     });
   });
 
+  group('codemagic.yaml — Apple SDK floor (Xcode 26+)', () {
+    // Apple ITMS-90725: from 2026-04-28 onward, App Store Connect
+    // rejects uploads built with anything less than the iOS 26 SDK
+    // (which only ships in Xcode 26+). Pinning Xcode 26 as a floor
+    // here turns the "your build will be rejected" surprise into a
+    // local test failure long before CI runs.
+    //
+    // YAML may parse `xcode: 26.0` as a double or `xcode: "26.0"` as a
+    // string — coerce both shapes to a major-version int.
+    int xcodeMajor(Object? raw) {
+      if (raw is num) return raw.toInt();
+      final s = raw.toString();
+      return int.parse(s.split('.').first);
+    }
+
+    test('ios-debug uses Xcode 26+', () {
+      final env = workflow('ios-debug')['environment'] as YamlMap;
+      expect(xcodeMajor(env['xcode']), greaterThanOrEqualTo(26),
+          reason: 'iOS 26 SDK is required for App Store Connect '
+              'uploads from 2026-04-28 onward (ITMS-90725)');
+    });
+
+    test('ios-release uses Xcode 26+', () {
+      final env = workflow('ios-release')['environment'] as YamlMap;
+      expect(xcodeMajor(env['xcode']), greaterThanOrEqualTo(26));
+    });
+  });
+
   group('codemagic.yaml — Sentry DSN wiring', () {
     test('ios-release references the `smash` variable group', () {
       // The `smash` variable group is where SENTRY_DSN (and other
