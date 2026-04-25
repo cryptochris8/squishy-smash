@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/camera.dart';
@@ -29,6 +30,7 @@ import 'systems/flame_feedback_sink.dart';
 import 'systems/haptics_manager.dart';
 import 'systems/pack_progression_gate.dart';
 import 'systems/rarity_pity_selector.dart';
+import 'systems/reward_event.dart';
 import 'systems/score_controller.dart';
 import 'systems/spawn_manager.dart';
 import 'systems/voice_line_registry.dart';
@@ -113,6 +115,17 @@ class SquishyGame extends FlameGame {
   /// tick; record equality short-circuits redundant notifications.
   final ValueNotifier<HudSnapshot> hudNotifier =
       ValueNotifier<HudSnapshot>(_initialHudSnapshot);
+
+  /// Broadcast stream of celebratory reward events (duplicate coin
+  /// bonuses, pack-completion milestones). The gameplay screen
+  /// subscribes and renders each as a floating "+N coins · reason!"
+  /// toast. Broadcast so multiple listeners (e.g., test harness +
+  /// overlay) can attach without conflict.
+  final StreamController<RewardEvent> _rewardController =
+      StreamController<RewardEvent>.broadcast();
+  Stream<RewardEvent> get rewardEvents => _rewardController.stream;
+  int _nextRewardId = 0;
+  int _allocateRewardId() => _nextRewardId++;
 
   final Random _rng = Random();
   double _roundTimer = 60;
@@ -240,6 +253,12 @@ class SquishyGame extends FlameGame {
     );
     await add(spawner);
     spawner.requestSpawn(0);
+  }
+
+  @override
+  void onRemove() {
+    _rewardController.close();
+    super.onRemove();
   }
 
   @override
@@ -418,6 +437,16 @@ class SquishyGame extends FlameGame {
         rarity: outcome.rarity,
         coinsAwarded: outcome.duplicateCoinBonus,
       );
+      // Celebrate non-zero duplicate coin bonuses with a toast — kids
+      // need to SEE the reward land. Common dupes are 0 in v0.1.1
+      // (anti-spam) so silent there is correct; rare+ duplicates are
+      // worth the visual beat.
+      if (outcome.duplicateCoinBonus > 0) {
+        _rewardController.add(RewardEvent.duplicate(
+          id: _allocateRewardId(),
+          coinAmount: outcome.duplicateCoinBonus,
+        ));
+      }
     }
   }
 
@@ -457,10 +486,20 @@ class SquishyGame extends FlameGame {
         milestones: ServiceLocator.economy.packMilestones,
       );
       for (final milestone in crossings) {
-        ServiceLocator.progression.awardPackMilestone(
+        final landed = ServiceLocator.progression.awardPackMilestone(
           packId: owningPackId,
           milestone: milestone,
         );
+        if (landed) {
+          // Fire a celebratory toast so the kid sees the reward —
+          // without this, the only signal of a milestone crossing
+          // was the coin counter ticking up silently.
+          _rewardController.add(RewardEvent.milestone(
+            id: _allocateRewardId(),
+            coinAmount: milestone.coinReward,
+            percent: milestone.percent,
+          ));
+        }
       }
     }
     ServiceLocator.progression.noteBurstForPack(

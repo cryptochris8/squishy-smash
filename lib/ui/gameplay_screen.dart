@@ -8,6 +8,7 @@ import '../data/models/rarity.dart';
 import '../game/components/hud_overlay.dart';
 import '../game/share_capture.dart';
 import '../game/squishy_game.dart';
+import 'widgets/reward_toast_overlay.dart';
 import 'widgets/starter_bundle_popup.dart';
 
 class GameplayScreen extends StatefulWidget {
@@ -123,6 +124,7 @@ class _GameplayScreenState extends State<GameplayScreen> {
             child: GameWidget(game: _game),
           ),
           IgnorePointer(child: HudOverlay(game: _game)),
+          RewardToastOverlay(events: _game.rewardEvents),
           Positioned(
             top: 12,
             right: 12,
