@@ -12,6 +12,13 @@ export interface Squishy {
   packName: string;
   sprite: string;
   thumbnail: string;
+  /** Card-number string (e.g., '001/048') or null for un-mapped
+   *  smashables. Cards on the public 48-card grid always carry one. */
+  cardNumber: string | null;
+  /** Public path to the WebP card art (e.g., '/cards/001_Soft_Dumpling.webp'),
+   *  or null for un-mapped smashables. The Collection grid prefers this
+   *  over `thumbnail` when present. */
+  cardImage: string | null;
   themeTag: string;
   behaviorProfile?: string | null;
   searchTags: string[];
@@ -40,6 +47,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/round_eared_creature.png",
     "thumbnail": "/thumbnails/round_eared_creature_thumb.png",
+    "cardNumber": "040/048",
+    "cardImage": "/cards/040_Round_Eared_Creature.webp",
     "themeTag": "blind_box_vibe",
     "behaviorProfile": null,
     "searchTags": [
@@ -58,6 +67,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/candy_fang_creature.png",
     "thumbnail": "/thumbnails/candy_fang_creature_thumb.png",
+    "cardNumber": "044/048",
+    "cardImage": "/cards/044_Candy_Fang_Creature.webp",
     "themeTag": "snaggletooth",
     "behaviorProfile": null,
     "searchTags": [
@@ -76,6 +87,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/blushy_bun_bunny.png",
     "thumbnail": "/thumbnails/blushy_bun_bunny_thumb.png",
+    "cardNumber": "033/048",
+    "cardImage": "/cards/033_Blushy_Bun_Bunny.webp",
     "themeTag": "bunny",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -92,6 +105,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/squish_bat.png",
     "thumbnail": "/thumbnails/squish_bat_thumb.png",
+    "cardNumber": "034/048",
+    "cardImage": "/cards/034_Squish_Bat.webp",
     "themeTag": "bat",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -108,6 +123,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/puff_ghost.png",
     "thumbnail": "/thumbnails/puff_ghost_thumb.png",
+    "cardNumber": "035/048",
+    "cardImage": "/cards/035_Puff_Ghost.webp",
     "themeTag": "ghost",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -124,6 +141,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/wobble_kitty.png",
     "thumbnail": "/thumbnails/wobble_kitty_thumb.png",
+    "cardNumber": "036/048",
+    "cardImage": "/cards/036_Wobble_Kitty.webp",
     "themeTag": "cat",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -140,6 +159,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/tiny_blob_monster.png",
     "thumbnail": "/thumbnails/tiny_blob_monster_thumb.png",
+    "cardNumber": "037/048",
+    "cardImage": "/cards/037_Tiny_Blob_Monster.webp",
     "themeTag": "blob_monster",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -156,6 +177,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/soft_fang_critter.png",
     "thumbnail": "/thumbnails/soft_fang_critter_thumb.png",
+    "cardNumber": "038/048",
+    "cardImage": "/cards/038_Soft_Fang_Critter.webp",
     "themeTag": "fang",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -172,6 +195,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/sleepy_slime_pet.png",
     "thumbnail": "/thumbnails/sleepy_slime_pet_thumb.png",
+    "cardNumber": "039/048",
+    "cardImage": "/cards/039_Sleepy_Slime_Pet.webp",
     "themeTag": "slime_pet",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -188,6 +213,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/star_eyed_bunny.png",
     "thumbnail": "/thumbnails/star_eyed_bunny_thumb.png",
+    "cardNumber": "041/048",
+    "cardImage": "/cards/041_Star_Eyed_Bunny.webp",
     "themeTag": "star_bunny",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -205,6 +232,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/moon_bat_blob.png",
     "thumbnail": "/thumbnails/moon_bat_blob_thumb.png",
+    "cardNumber": "042/048",
+    "cardImage": "/cards/042_Moon_Bat_Blob.webp",
     "themeTag": "moon_bat",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -222,6 +251,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/glow_ghost_puff.png",
     "thumbnail": "/thumbnails/glow_ghost_puff_thumb.png",
+    "cardNumber": "043/048",
+    "cardImage": "/cards/043_Glow_Ghost_Puff.webp",
     "themeTag": "glow_ghost",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -239,6 +270,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/dream_eater_squish.png",
     "thumbnail": "/thumbnails/dream_eater_squish_thumb.png",
+    "cardNumber": "045/048",
+    "cardImage": "/cards/045_Dream_Eater_Squish.webp",
     "themeTag": "dream_eater",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -255,6 +288,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/arcane_wobble_kitty.png",
     "thumbnail": "/thumbnails/arcane_wobble_kitty_thumb.png",
+    "cardNumber": "046/048",
+    "cardImage": "/cards/046_Arcane_Wobble_Kitty.webp",
     "themeTag": "arcane_kitty",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -272,6 +307,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/mythic_plush_familiar.png",
     "thumbnail": "/thumbnails/mythic_plush_familiar_thumb.png",
+    "cardNumber": "048/048",
+    "cardImage": "/cards/048_Mythic_Plush_Familiar.webp",
     "themeTag": "legendary_familiar",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -289,6 +326,8 @@ export const squishies: Squishy[] = [
     "packName": "Creepy-Cute Creatures",
     "sprite": "/sprites/phantom_jelly_beast.png",
     "thumbnail": "/thumbnails/phantom_jelly_beast_thumb.png",
+    "cardNumber": "047/048",
+    "cardImage": "/cards/047_Phantom_Jelly_Beast.webp",
     "themeTag": "phantom_jelly",
     "behaviorProfile": "creature",
     "searchTags": [
@@ -306,6 +345,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/goo_ball.png",
     "thumbnail": "/thumbnails/goo_ball_thumb.png",
+    "cardNumber": "017/048",
+    "cardImage": "/cards/017_Goo_Ball.webp",
     "themeTag": "anti_stress",
     "behaviorProfile": null,
     "searchTags": [
@@ -324,6 +365,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/bubble_blob.png",
     "thumbnail": "/thumbnails/bubble_blob_thumb.png",
+    "cardNumber": "018/048",
+    "cardImage": "/cards/018_Bubble_Blob.webp",
     "themeTag": "bubble",
     "behaviorProfile": "goo_ball",
     "searchTags": [
@@ -340,6 +383,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/stretch_cube.png",
     "thumbnail": "/thumbnails/stretch_cube_thumb.png",
+    "cardNumber": "019/048",
+    "cardImage": "/cards/019_Stretch_Cube.webp",
     "themeTag": "stretch",
     "behaviorProfile": "stress_ball",
     "searchTags": [
@@ -357,6 +402,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/soft_stress_orb.png",
     "thumbnail": "/thumbnails/soft_stress_orb_thumb.png",
+    "cardNumber": "020/048",
+    "cardImage": "/cards/020_Soft_Stress_Orb.webp",
     "themeTag": "stress_ball",
     "behaviorProfile": "stress_ball",
     "searchTags": [
@@ -374,6 +421,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/jelly_pad.png",
     "thumbnail": "/thumbnails/jelly_pad_thumb.png",
+    "cardNumber": "021/048",
+    "cardImage": "/cards/021_Jelly_Pad.webp",
     "themeTag": "jelly_pad",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -390,6 +439,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/sticky_pop_ball.png",
     "thumbnail": "/thumbnails/sticky_pop_ball_thumb.png",
+    "cardNumber": "022/048",
+    "cardImage": "/cards/022_Sticky_Pop_Ball.webp",
     "themeTag": "sticky",
     "behaviorProfile": "goo_ball",
     "searchTags": [
@@ -407,6 +458,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/wobble_drop.png",
     "thumbnail": "/thumbnails/wobble_drop_thumb.png",
+    "cardNumber": "023/048",
+    "cardImage": "/cards/023_Wobble_Drop.webp",
     "themeTag": "wobble",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -423,6 +476,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/glitter_goo_ball.png",
     "thumbnail": "/thumbnails/glitter_goo_ball_thumb.png",
+    "cardNumber": "025/048",
+    "cardImage": "/cards/025_Glitter_Goo_Ball.webp",
     "themeTag": "glitter_goo",
     "behaviorProfile": "goo_ball",
     "searchTags": [
@@ -440,6 +495,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/shockwave_blob.png",
     "thumbnail": "/thumbnails/shockwave_blob_thumb.png",
+    "cardNumber": "026/048",
+    "cardImage": "/cards/026_Shockwave_Blob.webp",
     "themeTag": "shockwave",
     "behaviorProfile": "goo_ball",
     "searchTags": [
@@ -457,6 +514,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/frost_gel_cube.png",
     "thumbnail": "/thumbnails/frost_gel_cube_thumb.png",
+    "cardNumber": "027/048",
+    "cardImage": "/cards/027_Frost_Gel_Cube.webp",
     "themeTag": "frost",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -474,6 +533,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/plasma_goo_ball.png",
     "thumbnail": "/thumbnails/plasma_goo_ball_thumb.png",
+    "cardNumber": "029/048",
+    "cardImage": "/cards/029_Plasma_Goo_Ball.webp",
     "themeTag": "plasma",
     "behaviorProfile": "goo_ball",
     "searchTags": [
@@ -491,6 +552,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/aurora_stretch_cube.png",
     "thumbnail": "/thumbnails/aurora_stretch_cube_thumb.png",
+    "cardNumber": "030/048",
+    "cardImage": "/cards/030_Aurora_Stretch_Cube.webp",
     "themeTag": "aurora",
     "behaviorProfile": "stress_ball",
     "searchTags": [
@@ -508,6 +571,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/cosmic_jelly_pad.png",
     "thumbnail": "/thumbnails/cosmic_jelly_pad_thumb.png",
+    "cardNumber": "031/048",
+    "cardImage": "/cards/031_Cosmic_Jelly_Pad.webp",
     "themeTag": "cosmic",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -525,6 +590,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/singularity_goo_core.png",
     "thumbnail": "/thumbnails/singularity_goo_core_thumb.png",
+    "cardNumber": "032/048",
+    "cardImage": "/cards/032_Singularity_Goo_Core.webp",
     "themeTag": "singularity",
     "behaviorProfile": "goo_ball",
     "searchTags": [
@@ -542,6 +609,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/squish_capsule.png",
     "thumbnail": "/thumbnails/squish_capsule_thumb.png",
+    "cardNumber": "024/048",
+    "cardImage": "/cards/024_Squish_Capsule.webp",
     "themeTag": "squish_capsule",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -559,6 +628,8 @@ export const squishies: Squishy[] = [
     "packName": "Goo & Fidgets",
     "sprite": "/sprites/prism_stress_orb.png",
     "thumbnail": "/thumbnails/prism_stress_orb_thumb.png",
+    "cardNumber": "028/048",
+    "cardImage": "/cards/028_Prism_Stress_Orb.webp",
     "themeTag": "prism",
     "behaviorProfile": "stress_ball",
     "searchTags": [
@@ -576,6 +647,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/soft_dumpling.png",
     "thumbnail": "/thumbnails/soft_dumpling_thumb.png",
+    "cardNumber": "001/048",
+    "cardImage": "/cards/001_Soft_Dumpling.webp",
     "themeTag": "viral_food_energy",
     "behaviorProfile": null,
     "searchTags": [
@@ -595,6 +668,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/jelly_bun.png",
     "thumbnail": "/thumbnails/jelly_bun_thumb.png",
+    "cardNumber": "002/048",
+    "cardImage": "/cards/002_Jelly_Bun.webp",
     "themeTag": "jelly_cube",
     "behaviorProfile": null,
     "searchTags": [
@@ -613,6 +688,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/peach_mochi.png",
     "thumbnail": "/thumbnails/peach_mochi_thumb.png",
+    "cardNumber": "003/048",
+    "cardImage": "/cards/003_Peach_Mochi.webp",
     "themeTag": "mochi",
     "behaviorProfile": "mochi",
     "searchTags": [
@@ -630,6 +707,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/syrup_cube.png",
     "thumbnail": "/thumbnails/syrup_cube_thumb.png",
+    "cardNumber": "004/048",
+    "cardImage": "/cards/004_Syrup_Cube.webp",
     "themeTag": "jelly",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -647,6 +726,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/cream_puff.png",
     "thumbnail": "/thumbnails/cream_puff_thumb.png",
+    "cardNumber": "005/048",
+    "cardImage": "/cards/005_Cream_Puff.webp",
     "themeTag": "pastry",
     "behaviorProfile": "dumpling",
     "searchTags": [
@@ -664,6 +745,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/rice_ball_squish.png",
     "thumbnail": "/thumbnails/rice_ball_squish_thumb.png",
+    "cardNumber": "006/048",
+    "cardImage": "/cards/006_Rice_Ball_Squish.webp",
     "themeTag": "onigiri",
     "behaviorProfile": "dumpling",
     "searchTags": [
@@ -681,6 +764,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/marshmallow_puff.png",
     "thumbnail": "/thumbnails/marshmallow_puff_thumb.png",
+    "cardNumber": "007/048",
+    "cardImage": "/cards/007_Marshmallow_Puff.webp",
     "themeTag": "marshmallow",
     "behaviorProfile": "dumpling",
     "searchTags": [
@@ -697,6 +782,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/pudding_pop.png",
     "thumbnail": "/thumbnails/pudding_pop_thumb.png",
+    "cardNumber": "008/048",
+    "cardImage": "/cards/008_Pudding_Pop.webp",
     "themeTag": "pudding",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -713,6 +800,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/rainbow_jelly_bun.png",
     "thumbnail": "/thumbnails/rainbow_jelly_bun_thumb.png",
+    "cardNumber": "010/048",
+    "cardImage": "/cards/010_Rainbow_Jelly_Bun.webp",
     "themeTag": "jelly_bun",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -730,6 +819,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/sparkle_mochi.png",
     "thumbnail": "/thumbnails/sparkle_mochi_thumb.png",
+    "cardNumber": "011/048",
+    "cardImage": "/cards/011_Sparkle_Mochi.webp",
     "themeTag": "sparkle_mochi",
     "behaviorProfile": "mochi",
     "searchTags": [
@@ -747,6 +838,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/golden_syrup_cube.png",
     "thumbnail": "/thumbnails/golden_syrup_cube_thumb.png",
+    "cardNumber": "012/048",
+    "cardImage": "/cards/012_Golden_Syrup_Cube.webp",
     "themeTag": "gold_syrup",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -764,6 +857,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/galaxy_dumpling.png",
     "thumbnail": "/thumbnails/galaxy_dumpling_thumb.png",
+    "cardNumber": "013/048",
+    "cardImage": "/cards/013_Galaxy_Dumpling.webp",
     "themeTag": "galaxy",
     "behaviorProfile": "dumpling",
     "searchTags": [
@@ -781,6 +876,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/crystal_mochi.png",
     "thumbnail": "/thumbnails/crystal_mochi_thumb.png",
+    "cardNumber": "014/048",
+    "cardImage": "/cards/014_Crystal_Mochi.webp",
     "themeTag": "crystal",
     "behaviorProfile": "mochi",
     "searchTags": [
@@ -798,6 +895,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/neon_dessert_blob.png",
     "thumbnail": "/thumbnails/neon_dessert_blob_thumb.png",
+    "cardNumber": "015/048",
+    "cardImage": "/cards/015_Neon_Dessert_Blob.webp",
     "themeTag": "neon",
     "behaviorProfile": "jelly_cube",
     "searchTags": [
@@ -815,6 +914,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/celestial_dumpling_core.png",
     "thumbnail": "/thumbnails/celestial_dumpling_core_thumb.png",
+    "cardNumber": "016/048",
+    "cardImage": "/cards/016_Celestial_Dumpling_Core.webp",
     "themeTag": "celestial_legendary",
     "behaviorProfile": "dumpling",
     "searchTags": [
@@ -832,6 +933,8 @@ export const squishies: Squishy[] = [
     "packName": "Squishy Foods",
     "sprite": "/sprites/strawberry_dumpling.png",
     "thumbnail": "/thumbnails/strawberry_dumpling_thumb.png",
+    "cardNumber": "009/048",
+    "cardImage": "/cards/009_Strawberry_Dumpling.webp",
     "themeTag": "strawberry_dumpling",
     "behaviorProfile": "dumpling",
     "searchTags": [

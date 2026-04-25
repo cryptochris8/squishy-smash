@@ -32,12 +32,13 @@ export function Hero() {
           </h1>
 
           <p className="text-xl lg:text-2xl text-white/90 max-w-xl mb-3 animate-fade-in-up-delayed">
-            Tap. Squish. Pop. Repeat.
+            Tap. Squish. Pop. Collect.
           </p>
           <p className="text-base lg:text-lg text-white/75 max-w-xl mb-8 animate-fade-in-up-delayed">
-            A cozy kawaii tap game. <strong>48 collectible squishies</strong>{' '}
-            across three pastel packs. Satisfying combos, dreamy reveals, zero
-            scary stuff.
+            A cozy kawaii tap game. <strong>48 collectible cards</strong> across
+            three pastel packs. <strong>Three ways to unlock</strong> every
+            card — earn, save, or achieve. Satisfying combos, dreamy reveals,
+            zero scary stuff.
           </p>
 
           <div className="flex flex-wrap gap-3 items-center animate-fade-in-up-delayed">
@@ -51,11 +52,11 @@ export function Hero() {
           </div>
 
           <div className="mt-10 flex items-center gap-5 text-sm text-white/70">
-            <Stat number="48" label="squishies" />
+            <Stat number="48" label="cards" />
             <span className="h-8 w-px bg-white/20" />
             <Stat number="3" label="packs" />
             <span className="h-8 w-px bg-white/20" />
-            <Stat number="4" label="rarity tiers" />
+            <Stat number="3" label="unlock paths" />
           </div>
         </div>
 

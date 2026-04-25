@@ -19,6 +19,12 @@ const STEPS = [
     body: 'Rare bursts swap the skybox and flash a bloom overlay. Epics push it harder. Legendaries freeze-frame with a held glow — worth waiting for.',
     accent: 'from-lavender-300 to-jelly-300',
   },
+  {
+    icon: '🎴',
+    title: 'Collect',
+    body: 'Every burst progresses a card in the 48-card album. Play to earn it, save coins to buy it, or unlock it via achievements. The pack-completion meter rewards milestones along the way.',
+    accent: 'from-jelly-300 to-cream-300',
+  },
 ]
 
 export function CoreLoop() {
@@ -31,10 +37,10 @@ export function CoreLoop() {
       >
         <SectionHeading
           kicker="The core loop"
-          title="Three beats. Endless replay."
-          body="Every session is the same satisfying shape: feel the squish, build the rhythm, chase the reveal."
+          title="Four beats. Endless replay."
+          body="Every session is the same satisfying shape: feel the squish, build the rhythm, chase the reveal, fill the album."
         />
-        <div className="mt-12 grid md:grid-cols-3 gap-6">
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {STEPS.map((step, i) => (
             <div
               key={step.title}

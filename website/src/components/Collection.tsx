@@ -18,7 +18,12 @@ export function Collection() {
       .filter((s) => (pack === 'all' ? true : s.packSlug === pack))
       .filter((s) => (rarity === 'all' ? true : s.rarity === rarity))
       .sort((a, b) => {
-        // Rarity descending, then name
+        // Sort by card_number when available (gives the canonical
+        // 001 → 048 order), else fall back to rarity-then-name so
+        // un-mapped entries still group nicely.
+        if (a.cardNumber && b.cardNumber) {
+          return a.cardNumber.localeCompare(b.cardNumber)
+        }
         const rd =
           RARITY_ORDER.indexOf(b.rarity) - RARITY_ORDER.indexOf(a.rarity)
         if (rd !== 0) return rd
@@ -34,8 +39,8 @@ export function Collection() {
       >
         <SectionHeading
           kicker="The collection"
-          title="48 squishies to discover"
-          body="Eight commons, four rares, three epics, and a single legendary per pack. Higher tiers unlock as you play — nothing is locked behind a paywall."
+          title="48 cards. Three ways to unlock."
+          body="Eight commons, four rares, three epics, and a single legendary per pack. Earn each card through play, save coins to buy it, or unlock it through achievement rewards. Whichever fits your style — the album fills."
         />
 
         {/* Filter chips */}
@@ -70,14 +75,19 @@ export function Collection() {
           ))}
         </div>
 
-        <div className="mt-4 text-center text-sm text-white/60">
+        <div
+          className="mt-4 text-center text-sm text-white/60"
+          aria-live="polite"
+        >
           Showing {filtered.length} of {squishies.length}
         </div>
 
-        {/* Grid */}
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {/* Grid — taller, card-shaped tiles to honor the 3:4 aspect of
+            the WebP card art. Fewer columns at small breakpoints so the
+            art doesn't scrunch. */}
+        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
           {filtered.map((s) => (
-            <SquishyTile key={s.id} squishy={s} />
+            <CardTile key={s.id} squishy={s} />
           ))}
         </div>
       </div>
@@ -96,9 +106,12 @@ function Chip({
   onClick: () => void
   accent?: string
 }) {
+  // ARIA: announce filter state so screen-reader users know which
+  // chip is currently active without inspecting visual styling.
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-display text-sm font-semibold transition-all ${
         active
           ? 'bg-white text-bg-deep shadow-lg scale-105'
@@ -115,31 +128,54 @@ function Chip({
   )
 }
 
-function SquishyTile({ squishy }: { squishy: Squishy }) {
+function CardTile({ squishy }: { squishy: Squishy }) {
+  const accent = rarityAccent(squishy.rarity)
+  // Prefer the full card WebP (richer art shipped in v0.1.1); fall
+  // back to the in-game thumbnail for any squishy without a card
+  // mapping. Both code paths render at the same 3:4 aspect.
+  const imageSrc = squishy.cardImage ?? squishy.thumbnail
+  const usingCardArt = squishy.cardImage !== null
   return (
     <div
-      className={`group glass-card p-4 flex flex-col items-center justify-between text-center rarity-${squishy.rarity} border-2`}
+      className={`group glass-card flex flex-col rarity-${squishy.rarity} border-2 overflow-hidden`}
+      style={{
+        borderColor: accent + '60',
+        boxShadow: `0 8px 32px -10px ${accent}40`,
+      }}
     >
-      <div className="relative w-full aspect-square mb-2 flex items-center justify-center">
+      <div className="relative aspect-[3/4] w-full bg-black/20">
         <img
-          src={squishy.thumbnail}
+          src={imageSrc}
           alt={squishy.name}
-          className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-2"
           loading="lazy"
+          className={`absolute inset-0 w-full h-full transition-transform duration-300 group-hover:scale-105 ${
+            usingCardArt ? 'object-cover' : 'object-contain p-3'
+          }`}
         />
+        {/* Card number floats top-right when present — quick visual
+            cue for "this is part of the 48-card collection." */}
+        {squishy.cardNumber && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 text-[10px] font-display font-bold tracking-wider rounded-full bg-black/60 text-white/80 backdrop-blur-sm">
+            {squishy.cardNumber}
+          </div>
+        )}
       </div>
-      <div
-        className="rarity-pill mb-1"
-        style={{
-          backgroundColor: `${rarityAccent(squishy.rarity)}30`,
-          color: rarityAccent(squishy.rarity),
-          border: `1px solid ${rarityAccent(squishy.rarity)}`,
-        }}
-      >
-        {squishy.rarity === 'legendary' ? '★ Legendary' : capitalize(squishy.rarity)}
-      </div>
-      <div className="font-display font-bold text-sm leading-tight">
-        {squishy.name}
+      <div className="p-3 flex flex-col items-center text-center gap-1">
+        <div
+          className="rarity-pill"
+          style={{
+            backgroundColor: accent + '30',
+            color: accent,
+            border: `1px solid ${accent}`,
+          }}
+        >
+          {squishy.rarity === 'legendary'
+            ? '★ Legendary'
+            : capitalize(squishy.rarity)}
+        </div>
+        <div className="font-display font-bold text-sm leading-tight">
+          {squishy.name}
+        </div>
       </div>
     </div>
   )

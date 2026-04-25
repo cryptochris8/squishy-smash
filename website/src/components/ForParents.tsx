@@ -4,15 +4,15 @@ import { SectionHeading } from './CoreLoop'
 const PILLARS = [
   {
     icon: '\u{1F49D}',
-    title: 'No ads, no IAP',
+    title: 'No ads in the core loop',
     body:
-      'Every squishy is earnable through play. No paywalls, no "watch 3 ads to continue," no dark patterns aimed at kids.',
+      'Every card is earnable through play. No paywalls in the album, no "watch 3 ads to continue," no dark patterns aimed at kids.',
   },
   {
     icon: '\u{1F6E1}️',
     title: 'Privacy-first',
     body:
-      'No personalized tracking. Apple App Tracking Transparency respected. Kid-safe analytics only — no social login, no friend-graph harvesting.',
+      'No accounts, no logins, no friend-graph harvesting. Progress is saved locally on the device. Optional crash reporting carries no personal data.',
   },
   {
     icon: '\u{1F60C}',
@@ -21,10 +21,22 @@ const PILLARS = [
       'Soft pastel palette, close-mic squish sounds, no jump-scares. Designed to feel like a fidget toy in your pocket, not a slot machine.',
   },
   {
-    icon: '⛰️',
-    title: 'Earned rarity',
+    icon: '\u{1F36C}',
+    title: 'Spam-tap-resistant',
     body:
-      'Legendaries require real engagement — roughly 20+ reveals per pack before they can even spawn. Pity logic guarantees committed players eventually get them.',
+      'Hammering the same squishy still pops and crunches — it just stops earning extra coins. Varied play feels normal; pure spam loses economic value silently.',
+  },
+  {
+    icon: '⛰️',
+    title: 'Three ways forward',
+    body:
+      'Each card unlocks via play (burst the matching squishy), achievements (streaks, combos, milestones), or coins (save and buy). Whichever fits the kid.',
+  },
+  {
+    icon: '\u{1F4DD}',
+    title: 'Built-in diagnostics',
+    body:
+      'Settings → Diagnostics shows recent in-app errors so a parent can copy-paste a clear bug report instead of "the screen looked weird that one time."',
   },
 ]
 
