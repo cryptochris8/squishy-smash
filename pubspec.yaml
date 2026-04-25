@@ -46,6 +46,7 @@ flutter:
     - assets/data/liveops_schedule.json
     - assets/data/cards_manifest.json
     - assets/data/custom_cards_manifest.json
+    - assets/data/economy.json
     - assets/data/packs/launch_squishy_foods.json
     - assets/data/packs/goo_fidgets_drop_01.json
     - assets/data/packs/creepy_cute_pack_01.json

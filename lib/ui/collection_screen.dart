@@ -40,6 +40,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
       claimedIds: profile.claimedAchievements,
     );
 
+    final economy = ServiceLocator.economy;
     int unlockedTotal = 0;
     for (final c in cards) {
       if (isCardUnlocked(
@@ -47,6 +48,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
         cardBurstCounts: profile.cardBurstCounts,
         cardsPurchased: profile.cardsPurchased,
         unlockedFromAchievements: unlockedFromAch,
+        grandfatheredCards: profile.grandfatheredCards,
+        config: economy,
       )) {
         unlockedTotal++;
       }
@@ -264,6 +267,8 @@ class _CardGrid extends StatelessWidget {
           cardBurstCounts: profile.cardBurstCounts,
           cardsPurchased: profile.cardsPurchased,
           unlockedFromAchievements: unlockedFromAch,
+          grandfatheredCards: profile.grandfatheredCards,
+          config: ServiceLocator.economy,
         );
         return _CardTile(
           card: card,
@@ -406,16 +411,20 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
   Widget build(BuildContext context) {
     final card = widget.card;
     final profile = ServiceLocator.progression.profile;
+    final economy = ServiceLocator.economy;
     final source = resolveCardUnlock(
       card: card,
       cardBurstCounts: profile.cardBurstCounts,
       cardsPurchased: profile.cardsPurchased,
       unlockedFromAchievements: widget.unlockedFromAch,
+      grandfatheredCards: profile.grandfatheredCards,
+      config: economy,
     );
     final unlocked = source != CardUnlockSource.locked;
     final bursts = profile.cardBurstCounts[card.cardNumber] ?? 0;
-    final required = CardUnlockThresholds.requiredBursts(card.rarity);
-    final price = CardCoinPrice.coinsFor(card.rarity);
+    final required =
+        CardUnlockThresholds.requiredBursts(card.rarity, config: economy);
+    final price = CardCoinPrice.coinsFor(card.rarity, config: economy);
     final canAffordPrice = profile.coins >= price;
     final rarityColor = cardRarityColor(card.rarity);
 

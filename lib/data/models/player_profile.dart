@@ -26,6 +26,8 @@ class PlayerProfile {
     Map<String, int>? cardBurstCounts,
     Set<String>? cardsPurchased,
     Set<String>? claimedAchievements,
+    Set<String>? grandfatheredCards,
+    Set<String>? packMilestonesClaimed,
   })  : guaranteedRevealTokens = guaranteedRevealTokens ?? <Rarity, int>{},
         purchasedSkus = purchasedSkus ?? <String>{},
         unlockedArenaKeys =
@@ -37,7 +39,9 @@ class PlayerProfile {
         legendaryDryByPack = legendaryDryByPack ?? <String, int>{},
         cardBurstCounts = cardBurstCounts ?? <String, int>{},
         cardsPurchased = cardsPurchased ?? <String>{},
-        claimedAchievements = claimedAchievements ?? <String>{};
+        claimedAchievements = claimedAchievements ?? <String>{},
+        grandfatheredCards = grandfatheredCards ?? <String>{},
+        packMilestonesClaimed = packMilestonesClaimed ?? <String>{};
 
   int coins;
   Set<String> unlockedPackIds;
@@ -136,6 +140,20 @@ class PlayerProfile {
   /// achievement-rewarded cards in the unlock derivation.
   Set<String> claimedAchievements;
 
+  /// Card numbers that were unlocked under a previous economy config
+  /// and should stay unlocked even if a re-tightened threshold would
+  /// otherwise lock them. Populated on the v3 → v4 migration: any card
+  /// already meeting its (old) burst threshold gets snapshotted here
+  /// so a player who completed 80% of the album under v0.1.0 doesn't
+  /// see those cards re-lock when v0.1.1 raises the bar. Once-unlocked-
+  /// always-unlocked is the contract.
+  Set<String> grandfatheredCards;
+
+  /// Composite keys "packId:percent" for pack-completion milestones
+  /// the player has already crossed and been rewarded for. Idempotent —
+  /// a milestone fires exactly once per pack.
+  Set<String> packMilestonesClaimed;
+
   factory PlayerProfile.empty() => PlayerProfile(
         coins: 0,
         unlockedPackIds: <String>{'launch_squishy_foods'},
@@ -161,5 +179,7 @@ class PlayerProfile {
         cardBurstCounts: <String, int>{},
         cardsPurchased: <String>{},
         claimedAchievements: <String>{},
+        grandfatheredCards: <String>{},
+        packMilestonesClaimed: <String>{},
       );
 }

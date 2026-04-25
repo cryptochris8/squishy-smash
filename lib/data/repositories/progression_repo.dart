@@ -2,19 +2,30 @@ import '../../game/systems/arena_registry.dart';
 import '../card_unlock.dart';
 import '../models/achievement.dart';
 import '../models/card_entry.dart';
+import '../models/economy_config.dart';
 import '../models/player_profile.dart';
 import '../models/rarity.dart';
+import '../pack_milestones.dart';
 import '../persistence.dart';
 import '../streak_calculator.dart';
 import 'pack_repository.dart';
 
 class ProgressionRepository {
-  ProgressionRepository(this._persistence, this._packs)
-      : profile = _persistence.loadProfile();
+  ProgressionRepository(
+    this._persistence,
+    this._packs, {
+    EconomyConfig? economy,
+  })  : _economy = economy ?? const EconomyConfig(),
+        profile = _persistence.loadProfile();
 
   final Persistence _persistence;
   final PackRepository _packs;
+  final EconomyConfig _economy;
   PlayerProfile profile;
+
+  /// Read-only accessor so callers can pull the same config the repo
+  /// itself uses (e.g., the album UI's price display + unlock checks).
+  EconomyConfig get economy => _economy;
 
   bool isUnlocked(String packId) => profile.unlockedPackIds.contains(packId);
 
@@ -293,13 +304,12 @@ class ProgressionRepository {
       profile.cardsPurchased.contains(cardNumber);
 
   /// Convenience: purchase [card] at the canonical rarity-tuned price
-  /// from [CardCoinPrice]. Equivalent to calling [tryPurchaseCard]
-  /// with the manually-looked-up cost — keeps the pricing decision in
-  /// one place so the shop UI doesn't drift.
+  /// from [CardCoinPrice]. Reads the price through this repo's
+  /// [EconomyConfig] so a JSON tweak is the single source of truth.
   Future<bool> tryPurchaseCardAtRarityPrice(CardEntry card) =>
       tryPurchaseCard(
         cardNumber: card.cardNumber,
-        costCoins: CardCoinPrice.coinsFor(card.rarity),
+        costCoins: CardCoinPrice.coinsFor(card.rarity, config: _economy),
       );
 
   /// Mark an achievement as claimed. Idempotent. Caller is responsible
@@ -313,6 +323,24 @@ class ProgressionRepository {
 
   bool hasClaimedAchievement(String achievementId) =>
       profile.claimedAchievements.contains(achievementId);
+
+  /// Atomically claim a pack milestone + award its coins. Idempotent —
+  /// a milestone can fire only once per pack across the lifetime of
+  /// the profile. Returns true if the claim landed (newly crossed),
+  /// false if the player had already claimed this milestone.
+  bool awardPackMilestone({
+    required String packId,
+    required PackMilestone milestone,
+  }) {
+    final key = packMilestoneClaimKey(
+      packId: packId,
+      percent: milestone.percent,
+    );
+    if (!profile.packMilestonesClaimed.add(key)) return false;
+    profile.coins += milestone.coinReward;
+    _persistence.scheduleSave(profile);
+    return true;
+  }
 
   /// Atomic claim + reward. Returns the reward that was applied, or
   /// null if the achievement was already claimed (idempotent — no

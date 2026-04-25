@@ -1,7 +1,10 @@
 import 'dart:io' show Platform;
 
 import '../data/card_manifest_loader.dart';
+import '../data/card_unlock.dart';
 import '../data/content_loader.dart';
+import '../data/economy_config_loader.dart';
+import '../data/models/economy_config.dart';
 import '../data/persistence.dart';
 import '../data/repositories/pack_repository.dart';
 import '../data/repositories/progression_repo.dart';
@@ -33,6 +36,11 @@ class ServiceLocator {
   static late final PackRepository packs;
   static late final ProgressionRepository progression;
   static late final LoadedCardManifest cards;
+  /// Tunable economy values (burst thresholds, coin prices, dupe
+  /// bonuses, anti-spam, milestones). Loaded from assets/data/
+  /// economy.json — edit that file to rebalance without recompiling
+  /// any Dart code. See `EconomyConfig` for the field set.
+  static late final EconomyConfig economy;
   static late final SoundManager sounds;
   static late final UiSounds ui;
   static late final Analytics analytics;
@@ -47,11 +55,32 @@ class ServiceLocator {
     final loader = ContentLoader();
     final loaded = await loader.loadAll();
     packs = PackRepository(loaded.packs, loaded.schedule);
-    progression = ProgressionRepository(persistence, packs);
+    // Economy config loads BEFORE the progression repo so the repo's
+    // pricing/threshold accessors can use the JSON-driven values
+    // throughout its lifetime. Defensive fallback to const default
+    // means a missing/malformed JSON is non-fatal.
+    economy = await EconomyConfigLoader().load();
+    progression = ProgressionRepository(persistence, packs, economy: economy);
     // Card manifests load defensively — a missing manifest yields an
     // empty cards list, so the album just shows nothing rather than
     // crashing bootstrap.
     cards = await CardManifestLoader().loadAll();
+    // One-shot v3 → v4 grandfather migration. Players coming from
+    // v0.1.0 (where Common unlocked at 1 burst, etc.) get their
+    // already-unlocked cards snapshotted into `grandfatheredCards`
+    // before any tightened threshold takes effect — protects them
+    // from "I had 80% of the album, now I see them locked again."
+    if (persistence.profileVersion < 4 && cards.cards.isNotEmpty) {
+      grandfatherUnlocksFromBaseline(
+        cards: cards.cards,
+        cardBurstCounts: progression.profile.cardBurstCounts,
+        grandfatheredOut: progression.profile.grandfatheredCards,
+      );
+      // Persist the migration immediately so the snapshot is durable
+      // — if the app crashes after this point, the next launch sees
+      // a v4 blob and skips re-migration.
+      await persistence.saveProfile(progression.profile);
+    }
     sounds = SoundManager();
     await sounds.warm(<String>[
       ...packs.allObjectSoundPaths(),

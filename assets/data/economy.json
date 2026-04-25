@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "_comment": "Single source of truth for tunable economy values. To revert any rebalance, edit values here and ship a new build — no Dart changes needed. Player profile state (coins/unlocks) is unaffected by config edits, and existing unlocks are protected by grandfatheredCards on the profile.",
+
+  "_rationale_thresholds": "Playtest with 8/8/6 yr olds finished ~80% of the album in 1-2 sessions under the v0.1.0 baseline (1/3/7/15). New values aim for 3-5x stretch: kids still see early wins on Commons (3 bursts feels easy at 1 burst/sec), Rares take a couple of focused minutes, Epics stretch across sessions, Legendaries become a long-term goal.",
+  "burstThresholds": {
+    "common": 3,
+    "rare": 8,
+    "epic": 20,
+    "legendary": 40
+  },
+
+  "_rationale_prices": "Anchored to ~450 coins/session at current pack reward rates. Common = ~1/4 session, Rare = ~1 session, Epic = ~3-4 sessions, Legendary = a real saving goal. Half of the game-dev agent's most-aggressive proposal — conservative until playtest data lands.",
+  "coinPrices": {
+    "common": 100,
+    "rare": 400,
+    "epic": 1500,
+    "legendary": 5000
+  },
+
+  "_rationale_dupe": "Common dupes drop to 0 coins to break the spam-tap economy inflation loop (commons spawn 68% of the time and kids tap them fast — 2 coins x 40 spawns = 80 coins/session of pure spam reward). Higher rarities still feel rewarding when you hit a duplicate.",
+  "duplicateCoinBonus": {
+    "common": 0,
+    "rare": 15,
+    "epic": 40,
+    "legendary": 100
+  },
+
+  "_rationale_anti_spam": "1 second per-smashable cooldown. Bursts on the same id within the window play full ASMR feedback (sounds, particles) but grant zero coins/burst-credit. Silent throttle — never visible to the player. Catches kids who hammer the same object; doesn't affect normal varied play.",
+  "antiSpamCooldownMs": {
+    "value": 1000
+  },
+
+  "_rationale_milestones": "Pack-completion coin drips. Crossing 25/50/75/100% in a pack fires the matching reward once. Gives kids a 'something happened' beat between rare drops so progress feels tangible even on a dry session.",
+  "packMilestones": {
+    "thresholds": [
+      {"percent": 25, "coinReward": 50},
+      {"percent": 50, "coinReward": 100},
+      {"percent": 75, "coinReward": 200},
+      {"percent": 100, "coinReward": 500}
+    ]
+  }
+}

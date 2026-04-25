@@ -13,12 +13,14 @@ import '../data/achievement_registry.dart';
 import '../data/models/player_profile.dart';
 import '../data/models/rarity.dart';
 import '../data/models/smashable_def.dart';
+import '../data/pack_milestones.dart';
 import 'components/decal_manager.dart';
 import 'components/particle_manager.dart';
 import 'components/reveal_bloom.dart';
 import 'components/screen_shake.dart';
 import 'components/skybox_component.dart';
 import 'components/smashable_component.dart';
+import 'systems/anti_spam_cooldown.dart';
 import 'systems/arena_registry.dart';
 import 'systems/burst_resolver.dart';
 import 'systems/combo_controller.dart';
@@ -100,6 +102,11 @@ class SquishyGame extends FlameGame {
   late final PackProgressionGate packGate;
   late final List<GatedObject> _pool;
   final Map<String, String> _defIdToPackId = <String, String>{};
+
+  /// Per-smashable economy throttle. Initialized in onLoad with the
+  /// cooldown from the loaded EconomyConfig — 0 (disabled) at
+  /// v0.1.0 baseline, 1000ms at v0.1.1 rebalance.
+  late final AntiSpamCooldown _antiSpam;
 
   /// Reactive HUD state. Initialized at construction so the HUD widget
   /// can listen to it before `onLoad` has run. Updated each `update(dt)`
@@ -224,6 +231,9 @@ class SquishyGame extends FlameGame {
     }
     pitySelector = const RarityPitySelector();
     packGate = const PackProgressionGate();
+    _antiSpam = AntiSpamCooldown(
+      cooldownMs: ServiceLocator.economy.antiSpamCooldownMs,
+    );
     spawner = SpawnManager(
       selectNext: _selectNextSmashable,
       onSpawn: _spawnNext,
@@ -334,8 +344,27 @@ class SquishyGame extends FlameGame {
       profile: profile,
       comboMultiplier: combo.multiplier,
       firstRareAlreadyFiredThisRound: _hasFiredFirstRareReveal,
+      economy: ServiceLocator.economy,
     );
     final owningPackId = _defIdToPackId[c.def.id] ?? _activePackId;
+
+    // Anti-spam throttle: if the same smashable was credited within
+    // the cooldown window, play full ASMR feedback but skip the
+    // economy + persistence side effects. Silent throttle — visually
+    // identical from the player's perspective.
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    final suppressed = _antiSpam.shouldSuppress(
+      smashableId: c.def.id,
+      nowMs: nowMs,
+    );
+    if (suppressed) {
+      feedback.dispatch(outcome.feedbackTier, c.def);
+      _applyVisualEffects(outcome, c.position);
+      c.removeFromParent();
+      spawner.requestSpawn(0.4);
+      return;
+    }
+    _antiSpam.markCredited(smashableId: c.def.id, nowMs: nowMs);
 
     _applyScoreAndCoins(outcome);
     _applyCollectionUpdate(outcome, owningPackId);
@@ -394,7 +423,10 @@ class SquishyGame extends FlameGame {
 
   /// Pack-progress analytics + per-pack burst counter (drives unlock
   /// gates and pity streaks). Both fire on every burst, including
-  /// duplicates and commons.
+  /// duplicates and commons. Also evaluates pack-completion
+  /// milestones — crossing 25/50/75/100% (config-driven) awards coins
+  /// once per pack, giving the player a "something happened" beat
+  /// between rare drops.
   void _applyPackProgress(
     BurstOutcome outcome,
     PlayerProfile profile,
@@ -411,6 +443,25 @@ class SquishyGame extends FlameGame {
         discovered: discoveredInPack,
         total: owningPack.objects.length,
       );
+
+      // Evaluate config-driven completion milestones. The helper is
+      // pure — it returns the milestones that were just crossed but
+      // not yet claimed; the repo's awardPackMilestone is idempotent
+      // belt-and-suspenders so a re-evaluation in the same frame
+      // can't double-grant.
+      final crossings = evaluatePackMilestoneCrossings(
+        packId: owningPackId,
+        discoveredCount: discoveredInPack,
+        totalInPack: owningPack.objects.length,
+        alreadyClaimedKeys: profile.packMilestonesClaimed,
+        milestones: ServiceLocator.economy.packMilestones,
+      );
+      for (final milestone in crossings) {
+        ServiceLocator.progression.awardPackMilestone(
+          packId: owningPackId,
+          milestone: milestone,
+        );
+      }
     }
     ServiceLocator.progression.noteBurstForPack(
       packId: owningPackId,

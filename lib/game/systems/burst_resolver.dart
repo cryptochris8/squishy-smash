@@ -1,3 +1,4 @@
+import '../../data/models/economy_config.dart';
 import '../../data/models/player_profile.dart';
 import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
@@ -99,16 +100,22 @@ class BurstResolver {
   /// All inputs are read-only — the resolver does not mutate the
   /// profile or any other state. The caller is responsible for applying
   /// the outcome's side effects in the order it sees fit.
+  ///
+  /// [economy] supplies tunable values (currently the duplicate coin
+  /// bonus per rarity). Defaults to the const baseline so the resolver
+  /// stays trivially testable without wiring config in every call site.
   BurstOutcome resolve({
     required SmashableDef def,
     required PlayerProfile profile,
     required int comboMultiplier,
     required bool firstRareAlreadyFiredThisRound,
+    EconomyConfig economy = const EconomyConfig(),
   }) {
     final rarity = def.rarity;
     final burstScoreBonus = _scoreBonusFor(def);
     final isFirstBurst = !profile.discoveredSmashableIds.contains(def.id);
-    final duplicateBonus = isFirstBurst ? 0 : rarity.duplicateCoinBonus;
+    final duplicateBonus =
+        isFirstBurst ? 0 : economy.duplicateCoinBonusFor(rarity);
     final feedbackTier = _feedbackTierFor(rarity, comboMultiplier);
     final triggersReveal = rarity.triggersReveal;
     final isMythic = rarity == Rarity.mythic;

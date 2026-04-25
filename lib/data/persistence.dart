@@ -40,7 +40,13 @@ class Persistence {
   ///        claimedAchievements). Additive only.
   ///   v3 — single-blob format. Profile lives under one JSON key,
   ///        making each save effectively atomic.
-  static const int currentProfileVersion = 3;
+  ///   v4 — added grandfatheredCards + packMilestonesClaimed. Migrate
+  ///        from v3 by snapshotting any already-burst-unlocked cards
+  ///        into the grandfathered set so a future threshold tightening
+  ///        cannot retroactively re-lock them. Additive on the JSON
+  ///        side, so older v3 readers still parse v4 blobs (they just
+  ///        ignore the new fields).
+  static const int currentProfileVersion = 4;
 
   /// The single key all v3+ profile state lives under. Storing the
   /// whole profile here means a save is one platform call and either
@@ -185,6 +191,8 @@ class Persistence {
   Map<String, dynamic> _profileToBlob(PlayerProfile p) {
     return <String, dynamic>{
       'schemaVersion': currentProfileVersion,
+      'grandfatheredCards': p.grandfatheredCards.toList(),
+      'packMilestonesClaimed': p.packMilestonesClaimed.toList(),
       'coins': p.coins,
       'unlockedPackIds': p.unlockedPackIds.toList(),
       'bestScore': p.bestScore,
@@ -251,6 +259,10 @@ class Persistence {
       cardsPurchased: _strSet(blob['cardsPurchased']) ?? <String>{},
       claimedAchievements:
           _strSet(blob['claimedAchievements']) ?? <String>{},
+      grandfatheredCards:
+          _strSet(blob['grandfatheredCards']) ?? <String>{},
+      packMilestonesClaimed:
+          _strSet(blob['packMilestonesClaimed']) ?? <String>{},
     );
   }
 

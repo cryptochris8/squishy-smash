@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squishy_smash/data/models/player_profile.dart';
@@ -451,6 +453,67 @@ void main() {
       expect(profile.coins, 333,
           reason: 'corrupted blob must fall back to legacy keys, '
               'not silently reset to defaults');
+    });
+
+    test('grandfatheredCards + packMilestonesClaimed round-trip via blob',
+        () async {
+      final p = await Persistence.open();
+      final profile = PlayerProfile(
+        coins: 0,
+        unlockedPackIds: const {'launch_squishy_foods'},
+        bestScore: 0,
+        bestCombo: 0,
+        grandfatheredCards: const {'001/048', '016/048', '048/048'},
+        packMilestonesClaimed: const {
+          'launch_squishy_foods:50',
+          'goo_fidgets_drop_01:25',
+        },
+      );
+      await p.saveProfile(profile);
+
+      final p2 = await Persistence.open();
+      final reloaded = p2.loadProfile();
+      expect(reloaded.grandfatheredCards,
+          {'001/048', '016/048', '048/048'});
+      expect(reloaded.packMilestonesClaimed, {
+        'launch_squishy_foods:50',
+        'goo_fidgets_drop_01:25',
+      });
+    });
+
+    test('currentProfileVersion is at least 4 (v3 → v4 grandfather migration)',
+        () {
+      // v4 added grandfatheredCards + packMilestonesClaimed. Pinning
+      // the floor here means future bumps need migration code AND a
+      // matching version increase — easy to forget one.
+      expect(Persistence.currentProfileVersion,
+          greaterThanOrEqualTo(4));
+    });
+
+    test('a v3 blob loads cleanly under v4 (additive upgrade)',
+        () async {
+      // Simulate a v3 install: blob present, but no grandfathered or
+      // milestone fields. The v4 reader must default them to empty
+      // and not crash.
+      final v3Blob = <String, dynamic>{
+        'schemaVersion': 3,
+        'coins': 250,
+        'unlockedPackIds': <String>['launch_squishy_foods'],
+        'bestScore': 100,
+        'bestCombo': 5,
+        'cardBurstCounts': <String, int>{'001/048': 1, '016/048': 0},
+      };
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        'profile.blob_v3': jsonEncode(v3Blob),
+      });
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.coins, 250);
+      expect(profile.cardBurstCounts['001/048'], 1);
+      expect(profile.grandfatheredCards, isEmpty,
+          reason: 'v3 blob has no grandfathered field — defaults '
+              'to empty until ServiceLocator.bootstrap migration runs');
+      expect(profile.packMilestonesClaimed, isEmpty);
     });
 
     test('atomicity: a single setString call carries the whole profile',
