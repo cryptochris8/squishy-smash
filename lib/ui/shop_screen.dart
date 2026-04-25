@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../analytics/events.dart';
+import '../core/feature_flags.dart';
 import '../core/service_locator.dart';
 import '../data/models/content_pack.dart';
 import '../game/systems/arena_registry.dart';
@@ -32,6 +33,9 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Future<void> _loadPrices() async {
+    // Skip the App Store query entirely when IAPs are flag-disabled —
+    // no reason to hit the network for a UI section we won't render.
+    if (!FeatureFlags.iapsEnabled) return;
     final prices = await ServiceLocator.iap.loadProducts(
       ProductIds.launchLoaded,
     );
@@ -63,34 +67,43 @@ class _ShopScreenState extends State<ShopScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const _SectionHeader('Offers'),
-          const SizedBox(height: 8),
-          for (final product in ProductCatalog.launch) ...[
-            IapProductCard(
-              product: product,
-              livePrice: _livePrices[product.sku]?.formattedPrice,
-              owned: _isOwned(product.sku),
-              purchasing: _purchasingSkus.contains(product.sku),
-              onPurchase: () => _buy(product),
+          // IAP "Offers" section is gated behind FeatureFlags.iapsEnabled.
+          // App Store Connect has no IAPs configured for v0.1.1, so
+          // rendering broken purchase buttons would fail App Review
+          // (guideline 2.3.1: "Apps must be fully functional"). When
+          // products are configured + sandbox-tested + reviewed, ship
+          // a build with --dart-define=IAPS_ENABLED=true to light it
+          // back up.
+          if (FeatureFlags.iapsEnabled) ...[
+            const _SectionHeader('Offers'),
+            const SizedBox(height: 8),
+            for (final product in ProductCatalog.launch) ...[
+              IapProductCard(
+                product: product,
+                livePrice: _livePrices[product.sku]?.formattedPrice,
+                owned: _isOwned(product.sku),
+                purchasing: _purchasingSkus.contains(product.sku),
+                onPurchase: () => _buy(product),
+              ),
+              const SizedBox(height: 12),
+            ],
+            TextButton.icon(
+              onPressed: _restoring ? null : _restore,
+              icon: _restoring
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.restore, size: 18),
+              label: Text(
+                _restoring ? 'Restoring...' : 'Restore purchases',
+                style: const TextStyle(fontSize: 13),
+              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.white70),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
           ],
-          TextButton.icon(
-            onPressed: _restoring ? null : _restore,
-            icon: _restoring
-                ? const SizedBox(
-                    width: 14,
-                    height: 14,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.restore, size: 18),
-            label: Text(
-              _restoring ? 'Restoring...' : 'Restore purchases',
-              style: const TextStyle(fontSize: 13),
-            ),
-            style: TextButton.styleFrom(foregroundColor: Colors.white70),
-          ),
-          const SizedBox(height: 20),
           const _SectionHeader('Object Packs'),
           const SizedBox(height: 8),
           for (final pack in packs) ...[

@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import '../core/feature_flags.dart';
 import '../core/routes.dart';
 import '../core/service_locator.dart';
 import '../analytics/events.dart';
@@ -37,6 +38,13 @@ class _GameplayScreenState extends State<GameplayScreen> {
   }
 
   void _handleFirstRareReveal() {
+    // Hard-gate: with IAPs disabled at build time (v0.1.1 ships with
+    // FeatureFlags.iapsEnabled == false because no products are
+    // configured in App Store Connect), DON'T show a paywall popup
+    // whose Buy button would fail. Apple guideline 2.3.1 — every
+    // visible purchase surface must work or the build gets rejected.
+    if (!FeatureFlags.iapsEnabled) return;
+
     // Fires on the Flame tick when the player's very first rare+ burst
     // resolves. Defer to the next frame so the popup doesn't try to
     // build during a Flame update.
