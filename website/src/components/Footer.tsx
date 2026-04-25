@@ -26,15 +26,18 @@ export function Footer() {
 
         <FooterColumn title="About">
           <FooterLink href="#parents">For parents</FooterLink>
-          <FooterLink href="mailto:hello@athletedomains.com">Contact</FooterLink>
-          <FooterLink href="/privacy.html">Privacy</FooterLink>
-          <FooterLink href="/support.html">Support</FooterLink>
+          <FooterLink href="mailto:support@squishysmash.com">Contact</FooterLink>
+          <FooterLink href="/privacy">Privacy</FooterLink>
+          <FooterLink href="/support">Support</FooterLink>
         </FooterColumn>
 
         <FooterColumn title="Follow">
-          <FooterLink href="https://tiktok.com/@squishysmash">TikTok</FooterLink>
-          <FooterLink href="https://instagram.com/squishysmash">Instagram</FooterLink>
-          <FooterLink href="https://youtube.com/@squishysmash">YouTube</FooterLink>
+          <FooterLink
+            href="https://x.com/squishy_smash"
+            external
+          >
+            X / @squishy_smash
+          </FooterLink>
         </FooterColumn>
       </div>
       <div className="max-w-6xl mx-auto mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/50">
@@ -69,14 +72,21 @@ function FooterColumn({
 function FooterLink({
   href,
   children,
+  external = false,
 }: {
   href: string
   children: React.ReactNode
+  /** When true, opens in a new tab with safe `rel` attributes —
+   *  used for off-site links (X, GitHub) where we don't want
+   *  the user to lose their place on squishysmash.com. */
+  external?: boolean
 }) {
   return (
     <li>
       <a
         href={href}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
         className="text-white/75 hover:text-cream-300 transition-colors"
       >
         {children}
