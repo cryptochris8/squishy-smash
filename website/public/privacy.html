@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index,follow" />
+  <title>Privacy Policy — Squishy Smash</title>
+  <meta
+    name="description"
+    content="Squishy Smash privacy policy. We don't collect personal data. Game progress is saved locally on your device."
+  />
+  <!-- Inline styles so this page renders correctly without the SPA's
+       Tailwind bundle. Mirrors the brand palette (deep purple/black bg,
+       pink/cream accents, Fredoka headings). -->
+  <style>
+    :root {
+      --bg-deep:    #120B17;
+      --bg-surface: #1A1320;
+      --pink:       #FF8FB8;
+      --cream:      #FFD36E;
+      --jelly:      #7FE7FF;
+      --lavender:   #C98BFF;
+      --text:       #F5F0FA;
+      --text-mute:  rgba(245, 240, 250, 0.72);
+      --text-soft:  rgba(245, 240, 250, 0.55);
+      --border:     rgba(255, 255, 255, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at top left, rgba(255, 143, 184, 0.08), transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(201, 139, 255, 0.06), transparent 60%),
+        var(--bg-deep);
+    }
+    a { color: var(--cream); text-decoration: none; }
+    a:hover, a:focus-visible { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+
+    header.page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .brand {
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      color: var(--text);
+    }
+    .brand .accent { color: var(--pink); }
+
+    .back-link {
+      font-size: 14px;
+      color: var(--text-mute);
+    }
+
+    h1 {
+      font-size: 40px;
+      line-height: 1.1;
+      margin: 0 0 8px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .last-updated {
+      font-size: 13px;
+      color: var(--text-soft);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin: 40px 0 12px;
+      font-weight: 800;
+      color: var(--cream);
+      letter-spacing: -0.2px;
+    }
+    h2 .num {
+      display: inline-block;
+      font-size: 13px;
+      color: var(--text-soft);
+      font-weight: 700;
+      margin-right: 10px;
+      letter-spacing: 1px;
+    }
+
+    p { margin: 0 0 14px; color: var(--text-mute); }
+    p strong { color: var(--text); font-weight: 700; }
+
+    ul {
+      padding-left: 22px;
+      margin: 0 0 14px;
+      color: var(--text-mute);
+    }
+    li { margin-bottom: 6px; }
+
+    .callout {
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      margin: 24px 0;
+    }
+    .callout strong { color: var(--cream); }
+
+    code {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+
+    footer.page-footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="page-header">
+      <a href="/" class="brand"
+        ><span class="accent">Squishy</span> Smash</a
+      >
+      <a href="/" class="back-link">← Back to home</a>
+    </header>
+
+    <h1>Privacy Policy</h1>
+    <p class="last-updated">Last updated: April 25, 2026</p>
+
+    <p>
+      Squishy Smash is a single-player, offline-first iOS game. We are
+      committed to keeping the player's experience private by design. This
+      policy describes what data the app does — and does not — handle.
+    </p>
+
+    <div class="callout">
+      <strong>Short version:</strong> we do not collect any personally
+      identifiable information. Game progress is saved on your device and
+      never leaves it. Optional crash reports may be sent to a third-party
+      service to help us fix bugs; these reports never include personal
+      data.
+    </div>
+
+    <h2><span class="num">01</span>What we don't do</h2>
+    <ul>
+      <li>We do <strong>not</strong> require an account to play.</li>
+      <li>We do <strong>not</strong> collect names, email addresses,
+          phone numbers, or any contact information through the app.</li>
+      <li>We do <strong>not</strong> track location.</li>
+      <li>We do <strong>not</strong> access your contacts, photos,
+          microphone, or camera.</li>
+      <li>We do <strong>not</strong> share, sell, or rent any data
+          to third parties for advertising or marketing purposes.</li>
+      <li>We do <strong>not</strong> serve in-game advertisements.</li>
+      <li>We do <strong>not</strong> use third-party analytics SDKs
+          (no Firebase Analytics, no Amplitude, no Mixpanel).</li>
+    </ul>
+
+    <h2><span class="num">02</span>What is stored on your device</h2>
+    <p>
+      Your gameplay progress — coins, unlocked cards, achievement claims,
+      settings, and similar state — is saved locally on the device using
+      Apple's secure on-device storage (<code>SharedPreferences</code> /
+      <code>NSUserDefaults</code>). This information stays on your device
+      and is never transmitted to us or any third party. Deleting the
+      app removes it permanently.
+    </p>
+
+    <h2><span class="num">03</span>Optional crash reporting</h2>
+    <p>
+      To help us identify and fix bugs in production builds, the app may
+      send anonymous crash and error reports through
+      <a href="https://sentry.io" target="_blank" rel="noopener noreferrer"
+        >Sentry</a
+      >. When enabled, these reports include:
+    </p>
+    <ul>
+      <li>Error type, message, and stack trace</li>
+      <li>Device model, operating system version, and app version</li>
+      <li>A timestamp</li>
+    </ul>
+    <p>
+      Crash reports do <strong>not</strong> include any personal
+      identifiers, account information, location data, or contents of
+      the game state. Performance tracing and session replay features
+      are <strong>not</strong> enabled. Sentry's own privacy and data-
+      retention practices are documented at
+      <a
+        href="https://sentry.io/privacy/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >sentry.io/privacy</a
+      >.
+    </p>
+
+    <h2><span class="num">04</span>Apple App Tracking Transparency</h2>
+    <p>
+      Squishy Smash respects Apple's App Tracking Transparency framework.
+      The app does not perform any cross-app tracking, so the iOS
+      tracking-permission prompt does not appear.
+    </p>
+
+    <h2><span class="num">05</span>In-app purchases</h2>
+    <p>
+      The current release scaffolds Apple's StoreKit framework but does
+      not enable any purchases for end users. If purchases are activated
+      in a future release, all transactions will be processed by Apple;
+      we will not receive your payment details (Apple shares only an
+      anonymous transaction receipt and product identifier).
+    </p>
+
+    <h2><span class="num">06</span>Children's privacy</h2>
+    <p>
+      Squishy Smash is rated 4+ and is intended to be enjoyed by
+      audiences of all ages, including children. The app does not collect
+      personal information from any user, including children. There is
+      no chat, no user-generated content, no friend system, and no
+      external links from within the gameplay.
+    </p>
+
+    <h2><span class="num">07</span>Changes to this policy</h2>
+    <p>
+      If we change this privacy policy, we will update the "Last updated"
+      date at the top of this page. Material changes (for example, if we
+      ever begin collecting any personal data) will be announced in the
+      app's release notes on the App Store.
+    </p>
+
+    <h2><span class="num">08</span>Contact</h2>
+    <p>
+      Questions about this policy? Reach the developer through the
+      <a href="/support.html">support page</a>.
+    </p>
+
+    <footer class="page-footer">
+      <span>© 2026 Squishy Smash</span>
+      <span>
+        <a href="/">Home</a>
+        &nbsp;·&nbsp;
+        <a href="/support.html">Support</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>

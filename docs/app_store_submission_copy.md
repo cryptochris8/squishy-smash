@@ -163,42 +163,46 @@ Result: **4+**
 ## Support URL
 
 ```
-[FILL IN — e.g. https://squishysmash.app/support  or a GitHub Issues page]
+https://[YOUR-NETLIFY-DOMAIN]/support
 ```
 
-Apple requires a working URL. Easiest options:
-- A simple page on your existing domain (if you have one)
-- A GitHub Issues page on the public repo
-- A Notion / Linktree page with an email contact
+The website now ships a `/support` page (`website/public/support.html`)
+that's served on the same Netlify deploy as the marketing site. Once
+you've connected the Netlify deploy to a custom domain, replace the
+bracketed placeholder with the real domain.
+
+**Before paste:** open `support.html` in your editor and replace the
+two `[FILL IN]` placeholders inside it (support email + GitHub Issues
+URL) so the page actually has working contact paths.
 
 ---
 
 ## Marketing URL (optional but recommended)
 
 ```
-[FILL IN — e.g. https://squishysmash.app]
+https://[YOUR-NETLIFY-DOMAIN]
 ```
 
-Point this at the marketing website I'm enhancing in parallel.
+Points at the marketing website root.
 
 ---
 
 ## Privacy Policy URL (REQUIRED)
 
 ```
-[FILL IN — must be a working URL]
+https://[YOUR-NETLIFY-DOMAIN]/privacy
 ```
 
-Apple requires this even for offline games. Quick path: a single-page
-privacy policy hosted on Netlify or your domain. Suggested content:
+Apple requires this even for offline games. We ship one — see
+`website/public/privacy.html`. It's served at `/privacy` on the same
+Netlify deploy as the marketing site. The content matches the data
+practices we documented (no PII collection, local-only saves,
+optional Sentry crash reports with no personal info), so this URL
+satisfies Apple's review requirement out of the box.
 
-> Squishy Smash does not collect, store, or transmit any personally
-> identifiable information. Game progress and settings are saved
-> locally on your device and never leave it. Optional crash reports
-> may be sent via Sentry to help us fix bugs; these reports include
-> error stack traces and device model but no personal data.
-
-Save that as `privacy.html`, host on Netlify, paste the URL.
+If you don't have a custom domain wired to Netlify yet, the default
+Netlify subdomain (e.g., `your-site-name.netlify.app/privacy`)
+works just as well — Apple accepts any HTTPS URL that loads.
 
 ---
 

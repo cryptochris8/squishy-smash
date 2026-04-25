@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index,follow" />
+  <title>Support — Squishy Smash</title>
+  <meta
+    name="description"
+    content="How to get help with Squishy Smash, report bugs, or request features."
+  />
+  <style>
+    :root {
+      --bg-deep:    #120B17;
+      --pink:       #FF8FB8;
+      --cream:      #FFD36E;
+      --text:       #F5F0FA;
+      --text-mute:  rgba(245, 240, 250, 0.72);
+      --text-soft:  rgba(245, 240, 250, 0.55);
+      --border:     rgba(255, 255, 255, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg-deep); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at top left, rgba(255, 143, 184, 0.08), transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(201, 139, 255, 0.06), transparent 60%),
+        var(--bg-deep);
+    }
+    a { color: var(--cream); text-decoration: none; }
+    a:hover, a:focus-visible { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+
+    header.page-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 16px; flex-wrap: wrap;
+      padding-bottom: 24px; border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .brand { font-weight: 900; font-size: 18px; letter-spacing: 0.5px; color: var(--text); }
+    .brand .accent { color: var(--pink); }
+    .back-link { font-size: 14px; color: var(--text-mute); }
+
+    h1 { font-size: 40px; line-height: 1.1; margin: 0 0 8px; font-weight: 800; letter-spacing: -0.5px; }
+    .last-updated { font-size: 13px; color: var(--text-soft); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 32px; }
+
+    h2 { font-size: 22px; margin: 40px 0 12px; font-weight: 800; color: var(--cream); letter-spacing: -0.2px; }
+    p { margin: 0 0 14px; color: var(--text-mute); }
+    ul { padding-left: 22px; margin: 0 0 14px; color: var(--text-mute); }
+    li { margin-bottom: 6px; }
+
+    .card-list {
+      display: grid;
+      gap: 14px;
+      margin: 16px 0 24px;
+    }
+    .help-card {
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .help-card .label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+    .help-card .lede {
+      color: var(--text);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    footer.page-footer {
+      margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--text-soft);
+      display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="page-header">
+      <a href="/" class="brand"><span class="accent">Squishy</span> Smash</a>
+      <a href="/" class="back-link">← Back to home</a>
+    </header>
+
+    <h1>Support</h1>
+    <p class="last-updated">Last updated: April 25, 2026</p>
+
+    <p>
+      Thanks for playing Squishy Smash. We read every message that comes
+      in and we're a small team — please be patient if it takes a day or
+      two to reply.
+    </p>
+
+    <h2>Before you write</h2>
+    <p>
+      Most issues can be diagnosed quickly with a peek at the in-app
+      diagnostics screen:
+    </p>
+    <ul>
+      <li>Open the app</li>
+      <li>Tap <strong>Settings</strong> from the main menu</li>
+      <li>Scroll down and tap <strong>Diagnostics</strong></li>
+      <li>If you see any errors, tap the <strong>copy</strong> icon in
+          the top-right and paste the buffer into your message</li>
+    </ul>
+    <p>
+      That gives us the fastest path to a fix. Diagnostics include only
+      error stack traces and timestamps — no personal information. See
+      the <a href="/privacy.html">privacy policy</a> for details.
+    </p>
+
+    <h2>Get in touch</h2>
+
+    <div class="card-list">
+      <div class="help-card">
+        <div class="label">Email</div>
+        <div class="lede">Direct email to the developer</div>
+        <p>
+          Replace this with your contact email before publishing —
+          something like
+          <code>[FILL IN: your support email]</code>.
+        </p>
+      </div>
+
+      <div class="help-card">
+        <div class="label">GitHub</div>
+        <div class="lede">Bug reports + feature ideas</div>
+        <p>
+          If you'd rather file an issue publicly, use the project's
+          GitHub Issues page:
+          <code>[FILL IN: your GitHub Issues URL]</code>.
+        </p>
+      </div>
+    </div>
+
+    <h2>Common questions</h2>
+
+    <h3 style="font-size: 18px; margin-top: 24px;">Can I move my progress to a new phone?</h3>
+    <p>
+      Not yet. Squishy Smash currently saves locally only — there's no
+      cloud sync. Reinstalling the app on a new device starts a fresh
+      collection. Cloud save is on the roadmap.
+    </p>
+
+    <h3 style="font-size: 18px; margin-top: 24px;">A card I had unlocked is now locked again. Why?</h3>
+    <p>
+      It shouldn't be — once a card is unlocked under any path it stays
+      unlocked, even if we tighten the thresholds in a later update.
+      If you're seeing this, please send a diagnostics dump and the
+      version number from <strong>Settings → About</strong> so we can
+      investigate.
+    </p>
+
+    <h3 style="font-size: 18px; margin-top: 24px;">Can I delete my data?</h3>
+    <p>
+      Yes — uninstalling the app removes everything. We don't store any
+      data on our end, so there's nothing else for us to delete on your
+      behalf.
+    </p>
+
+    <footer class="page-footer">
+      <span>© 2026 Squishy Smash</span>
+      <span>
+        <a href="/">Home</a>
+        &nbsp;·&nbsp;
+        <a href="/privacy.html">Privacy</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>
