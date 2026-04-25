@@ -13,6 +13,7 @@ Source: derived from the plain-English pitch in memory (`plain_english_pitch.md`
 Pick one — A/B test in promo creative if unsure:
 
 - **Tap. Squish. Pop. Repeat.** _(25)_  ← recommended primary
+- Satisfying ASMR pops & splats _(29)_  ← from kickoff brief, strong "satisfying" search alignment
 - ASMR for your fingers _(22)_
 - Squish, pop, splat, share. _(26)_
 - 60 seconds of satisfying. _(26)_
@@ -47,13 +48,15 @@ WHY IT FEELS SO GOOD
   the arena flashes, a voice goes "oooooh," and you can save the clip
   to share
 
-WHAT'S IN THE BOX (v0.2)
-• 17 squishables across 4 themed packs — squishy foods, goo fidgets,
-  creepy-cute creatures, dumplings
+WHAT'S IN THE BOX
+• 48 squishables across 3 themed launch packs (squishy foods, goo &
+  fidgets, creepy-cute creatures) plus the Dumpling Squishy Drop
+  weekly event pack
 • 8 unique arena skyboxes that crossfade on rare reveals
-• 4 rarity tiers (common, rare, epic, mythic) including the mythic
-  Gold Dumplio
-• Earn coins to unlock new packs — no real-money in-app purchases
+• 4 rarity tiers (common, rare, epic, legendary) — every pack ends
+  with one prestige legendary
+• Earn most squishies by playing. Optional starter bundle unlocks a
+  guaranteed rare for new players who want a quick start.
 
 WHO IT'S FOR
 Anyone who watches slime videos, soap-cutting clips, or kinetic-sand
@@ -78,6 +81,32 @@ asmr,squish,smash,satisfying,slime,pop,fidget,relax,stress,oddlysatisfying,one t
 ```
 
 _(94 chars including commas — leaves a little room. "oddlysatisfying" is the actual searched compound term, not "oddly satisfying")_
+
+## Screenshot copy
+
+Five-screenshot strategy adopted from the kickoff ASO brief. Each shot
+pairs a one-line headline with a clear visual hero — keep text large
+and readable on a 6.5" preview thumbnail.
+
+| # | Headline (≤ 32 chars) | Visual direction |
+|---|---|---|
+| 1 | **SMASH THE SQUISHIEST OBJECTS** | Giant burst moment with bright pastel particles |
+| 2 | **POPS, SPLATS, AND ASMR CHAOS** | Close-up of a goo burst with wall decals lingering |
+| 3 | **UNLOCK WEIRD NEW PACKS** | Three pack cards (foods, goo, creepy-cute) side by side |
+| 4 | **BUILD HUGE COMBOS FAST** | Combo meter at mega tier (lime green) with rapid burst sequence |
+| 5 | **SATISFYING INSTANT GAMEPLAY** | Finger interacting with a squishy mid-deform |
+
+Per Apple's spec we need these at 6.7", 6.5", and 5.5" iPhone
+resolutions (5 each = 15 total). The overlay copy is the same across
+sizes; just re-render at the target resolution.
+
+## App preview video direction
+
+5–15 seconds max. Open with the **biggest burst and best sound** in
+the first 0.5 seconds. Do not waste the first 2 seconds on menus or
+the logo — App Store auto-plays previews silent and players bail
+fast if nothing visual lands. End on a clean burst with a half-beat
+of silence (lets the audio breathe in the App Preview audio mix).
 
 ## What's New (release notes for v0.2.x)
 
@@ -169,9 +198,30 @@ Host that as a static page at the Privacy Policy URL above and you're submission
 
 ---
 
+## Live-ops update note strategy
+
+App Store update notes are one of the few free organic surfaces — use
+them to telegraph freshness. Each release note should lead with a
+new-content hook (not a bug-fix list).
+
+Recurring slots to surface:
+
+- New squishies in the rotation (which pack, which tier)
+- New themed event modifier ("Goo Storm Weekend", "Mythic Hour", etc.)
+- New arena skybox or background palette
+- New audio/voice/sound packs as they ship
+- Performance / haptics improvements when they're player-felt
+  ("smoother bursts, snappier combos") — never as the lede
+
+Trending search terms (e.g., a TikTok meme spike) are best surfaced
+in update notes + screenshot text, NOT in the static metadata, since
+they cool off faster than ASO indexing reacts.
+
+---
+
 ## Open questions to resolve before paste-into-ASC
 
-1. **Real support URL + privacy policy URL** — neither domain page exists yet. ~30 min to set up two static landing pages on athletedomains.com.
-2. **Subtitle pick** — "Tap. Squish. Pop. Repeat." is the recommendation; confirm.
+1. **Real support URL + privacy policy URL** — squishysmash.com is now live (Netlify). Need static `/support` and `/privacy` routes. Privacy policy template lives below — copy into a `web/` page or host on Netlify directly.
+2. **Subtitle pick** — "Tap. Squish. Pop. Repeat." remains the recommendation; "Satisfying ASMR pops & splats" is the alt for an ad-creative A/B test.
 3. **Made for Kids: yes/no** — recommendation: **no** (avoids COPPA review burden; content is still kid-safe regardless).
-4. **In-app purchases** — currently zero; revenue model is "earn coins by playing." Confirm that's the launch position (vs. adding a pack-unlock IAP for $0.99).
+4. **In-app purchases** — _superseded by v0.7.0+:_ Remove Ads ($2.99) + Starter Bundle ($1.99) are now scaffolded in code. Need to create those products in App Store Connect before submission. Privacy nutrition label needs updating to reflect ad SDK presence (AdMob added in v0.8.0 — non-personalized ads with UMP consent).

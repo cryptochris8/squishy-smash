@@ -216,3 +216,38 @@ All `.mp3` files live under `assets/audio/ui/`. These are tiny — keep them sna
 3. **Normalize to roughly the same loudness** as the existing real files (the bursts are -3 dBFS peak; impacts should sit -6 to -4 dBFS so bursts still punch through).
 4. **Smoke-test on real iPhone speaker**, not headphones — phone speakers blur the low end, so any sub-bass thump won't translate. Tune to mids.
 5. **After dropping all 41 files**, run `flutter test test/pack_json_parse_test.dart` — its size assertion (`>1 KB`) will fail if any file is still a stub.
+
+---
+
+## Marketing / Trailer VO
+
+These lines are for **trailer voiceover, App Store preview audio, and social ad hooks** — not in-game playback. Keep voice usage in active gameplay rare per the existing in-game rules; these are for marketing surfaces where the player has consented to audio.
+
+Generate via ElevenLabs voice cloning or a stock playful-female voice with clean compression and minimal reverb (think modern toy ad, not radio drama).
+
+### Sample lines
+
+| Line | Best tone |
+|---|---|
+| "Squish it. Smash it. Pop it." | Playful hype — opener for App Preview |
+| "That one popped hard." | Dry funny — overlay on a mythic burst clip |
+| "New goo unlocked." | Cute chaos — pack-reveal stinger |
+| "Too squishy. Smash again." | Dry funny — hook for "I dare you" social hook |
+| "This should not be this satisfying." | Dry funny — closer for satisfying-burst clips |
+| "Messy combo!" | Cute chaos — combo-streak overlay |
+| "You made a terrible mess. Great job." | Cute chaos — round-end voiceover |
+
+### Tone directions
+
+- **Playful Hype** — excited, clean, funny, modern. Best for openers and pack-reveals.
+- **Dry Funny** — deadpan, slightly absurd, meme-aware. Best for "this game is weird" social clips.
+- **Cute Chaos** — animated, energetic, silly, over-the-top. Best for goofy social hooks and the "great job" closer.
+
+### Performance notes
+
+- Keep every line under 2 seconds of speech.
+- Generate three takes per line (one per tone) so editors can pick to fit the clip.
+- Don't add reverb or delay — App Store preview compresses heavily and effects turn into mush.
+- Output: 48 kHz / mono / -3 dBFS peak, same loudness target as the in-game burst files.
+- File naming: `vo_marketing_<slug>_<tone>.mp3` — e.g. `vo_marketing_squish_pop_playful.mp3`. Stash under `assets/audio/marketing/` (not bundled into the app — these are for trailer + ASO use).
+

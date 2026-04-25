@@ -1,0 +1,82 @@
+{
+  "packId": "launch_squishy_foods",
+  "displayName": "Squishy Foods",
+  "themeTag": "food_squish",
+  "releaseType": "launch",
+  "palette": {
+    "primary": "#FF8FB8",
+    "secondary": "#FFD36E",
+    "accent": "#7FE7FF"
+  },
+  "arenaSuggestion": "slime_kitchen",
+  "featuredAudioSet": "soft_pop_food_pack",
+  "objects": [
+    {
+      "id": "gloop_dumpling",
+      "name": "Gloop Dumpling",
+      "category": "squishy_food",
+      "themeTag": "viral_food_energy",
+      "sprite": "assets/objects/gloop_dumpling.png",
+      "thumbnail": "assets/thumbnails/gloop_dumpling_thumb.png",
+      "deformability": 0.88,
+      "elasticity": 0.62,
+      "burstThreshold": 0.79,
+      "gooLevel": 0.83,
+      "impactSounds": [
+        "audio/food/light_squish_01.wav",
+        "audio/food/light_squish_02.wav",
+        "audio/food/light_squish_03.wav"
+      ],
+      "burstSound": "audio/food/burst_pop_01.wav",
+      "particlePreset": "pink_soup_burst",
+      "decalPreset": "soft_peach_splat",
+      "coinReward": 8,
+      "unlockTier": 1,
+      "searchTags": ["squishy", "dumpling", "asmr", "satisfying", "food"]
+    },
+    {
+      "id": "jelly_brick",
+      "name": "Jelly Brick",
+      "category": "squishy_food",
+      "themeTag": "jelly_cube",
+      "sprite": "assets/objects/jelly_brick.png",
+      "thumbnail": "assets/thumbnails/jelly_brick_thumb.png",
+      "deformability": 0.74,
+      "elasticity": 0.71,
+      "burstThreshold": 0.68,
+      "gooLevel": 0.57,
+      "impactSounds": [
+        "audio/jelly/jelly_hit_01.wav",
+        "audio/jelly/jelly_hit_02.wav"
+      ],
+      "burstSound": "audio/jelly/jelly_pop_01.wav",
+      "particlePreset": "blue_jelly_burst",
+      "decalPreset": "cool_blue_smear",
+      "coinReward": 10,
+      "unlockTier": 1,
+      "searchTags": ["jelly", "pop", "asmr", "satisfying"]
+    },
+    {
+      "id": "puff_mochi",
+      "name": "Puff Mochi",
+      "category": "squishy_food",
+      "themeTag": "soft_dessert",
+      "sprite": "assets/objects/puff_mochi.png",
+      "thumbnail": "assets/thumbnails/puff_mochi_thumb.png",
+      "deformability": 0.91,
+      "elasticity": 0.52,
+      "burstThreshold": 0.84,
+      "gooLevel": 0.69,
+      "impactSounds": [
+        "audio/mochi/mochi_hit_01.wav",
+        "audio/mochi/mochi_hit_02.wav"
+      ],
+      "burstSound": "audio/mochi/mochi_burst_01.wav",
+      "particlePreset": "cream_puff_burst",
+      "decalPreset": "cream_smudge",
+      "coinReward": 12,
+      "unlockTier": 2,
+      "searchTags": ["mochi", "squish", "relaxing", "food"]
+    }
+  ]
+}

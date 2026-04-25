@@ -1,0 +1,22 @@
+{
+  "featuredRotation": [
+    {
+      "weekOf": "2026-04-20",
+      "featuredPack": "launch_squishy_foods",
+      "eventModifier": "double_food_burst_coins",
+      "promoLabel": "Messy Food Week"
+    },
+    {
+      "weekOf": "2026-04-27",
+      "featuredPack": "goo_fidgets_drop_01",
+      "eventModifier": "extra_goo_decals",
+      "promoLabel": "Maximum Goo Weekend"
+    },
+    {
+      "weekOf": "2026-05-04",
+      "featuredPack": "creepy_cute_pack_01",
+      "eventModifier": "monster_combo_bonus",
+      "promoLabel": "Weird Cute Drop"
+    }
+  ]
+}

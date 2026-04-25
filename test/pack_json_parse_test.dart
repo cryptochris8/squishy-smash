@@ -97,6 +97,86 @@ void main() {
                 '${obj.impactSounds.length} impact sound variants');
       }
     });
+
+    test('packProgression is tuned for the actual rarity composition', () {
+      // Tuning rationale: 5C / 2R / 0E / 1M means the default epic
+      // gates/pity (which assume epics exist) would create dead
+      // progression states. The pack's own packProgression block
+      // disables the epic tier and lowers the legendary unlock to
+      // match the smaller object pool.
+      final prog = pack.progression;
+
+      // Base odds redistribute the unused epic share to commons + mythic.
+      expect(prog.baseOdds.common, closeTo(0.70, 0.001));
+      expect(prog.baseOdds.rare, closeTo(0.25, 0.001));
+      expect(prog.baseOdds.epic, closeTo(0.00, 0.001),
+          reason: 'no epics in pack — share must be 0');
+      expect(prog.baseOdds.legendary, closeTo(0.05, 0.001));
+
+      // Epic gate is effectively disabled (>= object count). The
+      // legendary gate is lowered to match the 8-object pool size.
+      expect(prog.unlockGates.rare, 3);
+      expect(prog.unlockGates.epic, greaterThanOrEqualTo(pack.objects.length),
+          reason: 'no epics — gate must be unreachable so it never blocks');
+      expect(prog.unlockGates.legendary, 8);
+
+      // Pity floors are tightened for the smaller pack.
+      expect(prog.pity.rareSoft, 4);
+      expect(prog.pity.rareHard, 6);
+      expect(prog.pity.epicSoft, greaterThanOrEqualTo(prog.unlockGates.epic),
+          reason: 'epic pity inert when there are no epics');
+      expect(prog.pity.legendarySoft, 15);
+      expect(prog.pity.legendaryHard, 25);
+    });
+  });
+
+  group('Launch pack rarity composition (8 / 4 / 3 / 1 lock)', () {
+    // Locks the canonical 8C/4R/3E/1L shape for every doc-aligned launch
+    // pack. If anyone strips per-object `rarity` fields from a pack JSON,
+    // SmashableDef.fromJson silently defaults to common — these counts
+    // would then collapse to 16/0/0/0 and the test fires. Same guardrail
+    // as the warning in docs/archive/claude_pack_kickoff/ARCHIVE_NOTES.md.
+    const launchPackPaths = [
+      'assets/data/packs/launch_squishy_foods.json',
+      'assets/data/packs/goo_fidgets_drop_01.json',
+      'assets/data/packs/creepy_cute_pack_01.json',
+    ];
+
+    for (final path in launchPackPaths) {
+      test('$path: 8 common / 4 rare / 3 epic / 1 legendary', () {
+        final raw = File(path).readAsStringSync();
+        final pack = ContentPack.fromJson(
+          json.decode(raw) as Map<String, dynamic>,
+        );
+        final counts = <Rarity, int>{for (final r in Rarity.values) r: 0};
+        for (final obj in pack.objects) {
+          counts[obj.rarity] = counts[obj.rarity]! + 1;
+        }
+        expect(pack.objects.length, 16,
+            reason: '$path total object count');
+        expect(counts[Rarity.common], 8, reason: '$path commons');
+        expect(counts[Rarity.rare], 4, reason: '$path rares');
+        expect(counts[Rarity.epic], 3, reason: '$path epics');
+        expect(counts[Rarity.mythic], 1,
+            reason: '$path legendaries (Rarity.mythic enum variant)');
+      });
+
+      test('$path: every object declares an explicit rarity field', () {
+        // The fromJson path defaults to common when rarity is absent. We
+        // want the JSON file itself to carry the field — a missing field
+        // would still parse but downstream tier balancing would silently
+        // collapse to 16-commons. This catches the *string presence*,
+        // not just the parsed enum value.
+        final raw = File(path).readAsStringSync();
+        final map = json.decode(raw) as Map<String, dynamic>;
+        final objects = (map['objects'] as List)
+            .cast<Map<String, dynamic>>();
+        for (final obj in objects) {
+          expect(obj.containsKey('rarity'), isTrue,
+              reason: '$path: object ${obj['id']} is missing rarity');
+        }
+      });
+    }
   });
 
   group('LiveOps schedule reflects Dumpling Squishy Drop', () {
