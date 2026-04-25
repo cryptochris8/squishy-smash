@@ -75,6 +75,11 @@ coverage/
 docs/Cards/_extracted/
 docs/Cards/*.zip
 
+# Book build artifacts (generated print PDFs + Python venv)
+book/build/out/
+book/build/.venv/
+book/build/__pycache__/
+
 # SECRETS — never commit
 *.p8
 *.p12
