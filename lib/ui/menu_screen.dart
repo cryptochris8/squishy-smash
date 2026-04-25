@@ -4,6 +4,14 @@ import '../core/routes.dart';
 import '../core/service_locator.dart';
 import 'widgets/big_button.dart';
 import 'widgets/coin_badge.dart';
+import 'widgets/floating_mascot.dart';
+
+/// Hero image shown idling on the menu's dead space. Picked from the
+/// launch pack's Legendary tier — splashy art that signals "rare
+/// goodness lives here" the moment the app opens. Swapping to a
+/// different card later is a one-line change.
+const String _kMenuMascotAsset =
+    'assets/cards/final_48/016_Celestial_Dumpling_Core.webp';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -59,7 +67,14 @@ class MenuScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              const Spacer(),
+              const Expanded(
+                child: Center(
+                  child: FloatingMascot(
+                    assetPath: _kMenuMascotAsset,
+                    width: 200,
+                  ),
+                ),
+              ),
               BigButton(
                 label: 'PLAY',
                 color: const Color(0xFFFF8FB8),
