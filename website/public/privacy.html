@@ -9,145 +9,20 @@
     name="description"
     content="Squishy Smash privacy policy. We don't collect personal data. Game progress is saved locally on your device."
   />
-  <!-- Inline styles so this page renders correctly without the SPA's
-       Tailwind bundle. Mirrors the brand palette (deep purple/black bg,
-       pink/cream accents, Fredoka headings). -->
-  <style>
-    :root {
-      --bg-deep:    #120B17;
-      --bg-surface: #1A1320;
-      --pink:       #FF8FB8;
-      --cream:      #FFD36E;
-      --jelly:      #7FE7FF;
-      --lavender:   #C98BFF;
-      --text:       #F5F0FA;
-      --text-mute:  rgba(245, 240, 250, 0.72);
-      --text-soft:  rgba(245, 240, 250, 0.55);
-      --border:     rgba(255, 255, 255, 0.12);
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg-deep);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      line-height: 1.6;
-    }
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(ellipse at top left, rgba(255, 143, 184, 0.08), transparent 55%),
-        radial-gradient(ellipse at bottom right, rgba(201, 139, 255, 0.06), transparent 60%),
-        var(--bg-deep);
-    }
-    a { color: var(--cream); text-decoration: none; }
-    a:hover, a:focus-visible { text-decoration: underline; }
-    a:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
-
-    .wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
-
-    header.page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 40px;
-    }
-
-    .brand {
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: 0.5px;
-      color: var(--text);
-    }
-    .brand .accent { color: var(--pink); }
-
-    .back-link {
-      font-size: 14px;
-      color: var(--text-mute);
-    }
-
-    h1 {
-      font-size: 40px;
-      line-height: 1.1;
-      margin: 0 0 8px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-    .last-updated {
-      font-size: 13px;
-      color: var(--text-soft);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-
-    h2 {
-      font-size: 22px;
-      margin: 40px 0 12px;
-      font-weight: 800;
-      color: var(--cream);
-      letter-spacing: -0.2px;
-    }
-    h2 .num {
-      display: inline-block;
-      font-size: 13px;
-      color: var(--text-soft);
-      font-weight: 700;
-      margin-right: 10px;
-      letter-spacing: 1px;
-    }
-
-    p { margin: 0 0 14px; color: var(--text-mute); }
-    p strong { color: var(--text); font-weight: 700; }
-
-    ul {
-      padding-left: 22px;
-      margin: 0 0 14px;
-      color: var(--text-mute);
-    }
-    li { margin-bottom: 6px; }
-
-    .callout {
-      padding: 18px 20px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.03);
-      margin: 24px 0;
-    }
-    .callout strong { color: var(--cream); }
-
-    code {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border);
-      padding: 1px 6px;
-      border-radius: 6px;
-      font-size: 0.9em;
-    }
-
-    footer.page-footer {
-      margin-top: 64px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      font-size: 13px;
-      color: var(--text-soft);
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-  </style>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <!-- Shared static-page styles (font, palette, layout). Owns the
+       @font-face for Fredoka so the brand bar + headings match the
+       SPA visually. Self-contained — no SPA bundle required. -->
+  <link rel="stylesheet" href="/static-page.css" />
+  <link rel="preload" href="/fonts/Fredoka.ttf" as="font" type="font/ttf" crossorigin />
 </head>
 <body>
   <div class="wrap">
     <header class="page-header">
-      <a href="/" class="brand"
-        ><span class="accent">Squishy</span> Smash</a
-      >
+      <a href="/" class="brand">
+        <img src="/branding/squishy_smash_icon_bunny_v1.png" alt="" />
+        <span><span class="accent">Squishy</span> Smash</span>
+      </a>
       <a href="/" class="back-link">← Back to home</a>
     </header>
 
@@ -256,7 +131,10 @@
     <h2><span class="num">08</span>Contact</h2>
     <p>
       Questions about this policy? Reach the developer through the
-      <a href="/support.html">support page</a>.
+      <a href="/support">support page</a> or email
+      <a href="mailto:support@squishysmash.com"
+        >support@squishysmash.com</a
+      >.
     </p>
 
     <footer class="page-footer">
@@ -264,7 +142,9 @@
       <span>
         <a href="/">Home</a>
         &nbsp;·&nbsp;
-        <a href="/support.html">Support</a>
+        <a href="/support">Support</a>
+        &nbsp;·&nbsp;
+        <a href="https://x.com/squishy_smash" target="_blank" rel="noopener noreferrer">X</a>
       </span>
     </footer>
   </div>

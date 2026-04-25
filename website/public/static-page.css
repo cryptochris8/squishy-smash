@@ -1,0 +1,264 @@
+/*
+ * Shared styles for the static legal/info pages (privacy.html,
+ * support.html). Self-contained — does not depend on the SPA's
+ * Tailwind bundle, so these pages render instantly even if the
+ * React app ever fails to load. Mirrors the brand palette so the
+ * visual hop from the marketing site to a legal page feels minimal.
+ */
+
+@font-face {
+  font-family: 'Fredoka';
+  src: url('/fonts/Fredoka.ttf') format('truetype-variations'),
+       url('/fonts/Fredoka.ttf') format('truetype');
+  /* Variable font weight axis covers 300..700 — same range used by
+     the marketing site and the iOS app. */
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-deep:    #120B17;
+  --bg-surface: #1A1320;
+  --pink:       #FF8FB8;
+  --cream:      #FFD36E;
+  --jelly:      #7FE7FF;
+  --lavender:   #C98BFF;
+  --lime:       #B6FF5C;
+  --text:       #F5F0FA;
+  --text-mute:  rgba(245, 240, 250, 0.78);
+  --text-soft:  rgba(245, 240, 250, 0.55);
+  --border:     rgba(255, 255, 255, 0.12);
+
+  /* Display font (Fredoka) for headings + brand mark; system stack
+     for body so paragraphs stay highly legible at small sizes
+     even before the variable font finishes loading. */
+  --font-display: 'Fredoka', -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top left, rgba(255, 143, 184, 0.10), transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(201, 139, 255, 0.08), transparent 60%),
+    var(--bg-deep);
+}
+
+a {
+  color: var(--cream);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+a:hover { color: var(--pink); text-decoration: underline; }
+a:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---- Layout ----------------------------------------------------- */
+
+.wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+
+/* ---- Brand bar (mirrors the SPA's Nav vibe at smaller scale) ---- */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.2px;
+  color: var(--text);
+}
+.brand:hover { color: var(--text); text-decoration: none; }
+.brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: block;
+}
+.brand .accent { color: var(--pink); }
+
+.back-link {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-mute);
+  letter-spacing: 0.2px;
+}
+.back-link:hover { color: var(--cream); }
+
+/* ---- Headings + body -------------------------------------------- */
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1.05;
+  margin: 0 0 8px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  background: linear-gradient(
+    120deg, var(--pink), var(--cream), var(--lavender)
+  );
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+          color: transparent;
+}
+
+.last-updated {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--text-soft);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  font-weight: 700;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  margin: 44px 0 12px;
+  font-weight: 800;
+  color: var(--cream);
+  letter-spacing: -0.3px;
+}
+h2 .num {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 700;
+  margin-right: 10px;
+  letter-spacing: 1.5px;
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  margin: 28px 0 8px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+p { margin: 0 0 14px; color: var(--text-mute); }
+p strong { color: var(--text); font-weight: 700; }
+
+ul {
+  padding-left: 22px;
+  margin: 0 0 14px;
+  color: var(--text-mute);
+}
+li { margin-bottom: 6px; }
+
+code {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ---- Cards / callouts ------------------------------------------- */
+
+.callout {
+  padding: 18px 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  margin: 28px 0;
+  position: relative;
+}
+.callout strong { color: var(--cream); }
+
+.card-list {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0 24px;
+}
+.help-card {
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.help-card:hover {
+  border-color: rgba(255, 211, 110, 0.45);
+}
+.help-card .label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+.help-card .lede {
+  font-family: var(--font-display);
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+.help-card p { margin: 0; }
+
+/* ---- Footer ----------------------------------------------------- */
+
+.page-footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-soft);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-footer a {
+  color: var(--text-mute);
+}
+.page-footer a:hover { color: var(--cream); }
+
+/* ---- Reduced-motion respect ------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
