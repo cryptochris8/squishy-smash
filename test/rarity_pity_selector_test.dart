@@ -529,7 +529,7 @@ void main() {
     /// Drives `iterations` picks and returns counts per tier. Pity
     /// counters advance between picks via the resetting rules so soft
     /// and hard pity work the way they do in production.
-    Map<Rarity, int> _runDistribution({
+    Map<Rarity, int> runDistribution({
       required int iterations,
       required int comboMultiplier,
       required int seedBase,
@@ -575,7 +575,7 @@ void main() {
       // Across 10k picks we expect plenty of hard-pity hits, but
       // the rate should still feel rare — not "every couple
       // sessions you see one." Cap at 1/30 = ~333 in 10k.
-      final tally = _runDistribution(
+      final tally = runDistribution(
         iterations: 10000,
         comboMultiplier: 1,
         seedBase: 1,
@@ -593,7 +593,7 @@ void main() {
       // At combo 8 (game cap) the comboBoost adds (8-1)*0.2 = +1.4
       // to the legendary weight. Combined with soft + hard pity
       // this is the worst case in production. Pin a sanity ceiling.
-      final tally = _runDistribution(
+      final tally = runDistribution(
         iterations: 10000,
         comboMultiplier: 8,
         seedBase: 7,
@@ -608,7 +608,7 @@ void main() {
       // Sanity guard: the bulk of session picks should always be
       // commons regardless of pity / combo. If this ever fails,
       // someone over-tuned a boost.
-      final tally = _runDistribution(
+      final tally = runDistribution(
         iterations: 10000,
         comboMultiplier: 1,
         seedBase: 13,

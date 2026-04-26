@@ -56,7 +56,25 @@ class _FloatingMascotState extends State<FloatingMascot>
     _controller = AnimationController(
       vsync: this,
       duration: widget.bobDuration,
-    )..repeat();
+    );
+    // Defer the .repeat() to didChangeDependencies so we can read the
+    // ambient MediaQuery and respect the system-level "reduce motion"
+    // setting (P1.10). When that's on, the controller stays at its
+    // initial value (0) so the mascot is centered and still — same
+    // visual real estate, no perpetual animation.
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations
+        ?? false;
+    if (reduceMotion) {
+      _controller.stop();
+      _controller.value = 0;
+    } else if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
   }
 
   @override
@@ -70,7 +88,12 @@ class _FloatingMascotState extends State<FloatingMascot>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Battery sanity: stop the animation when the app is hidden, then
     // resume on return. A paused AnimationController draws no frames.
-    if (state == AppLifecycleState.resumed) {
+    // Honors reduce-motion on resume so toggling the system setting
+    // mid-session takes effect on the next foreground.
+    final reduceMotion = mounted
+        ? (MediaQuery.maybeOf(context)?.disableAnimations ?? false)
+        : false;
+    if (state == AppLifecycleState.resumed && !reduceMotion) {
       if (!_controller.isAnimating) _controller.repeat();
     } else {
       _controller.stop();

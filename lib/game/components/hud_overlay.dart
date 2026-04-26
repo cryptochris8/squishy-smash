@@ -115,25 +115,39 @@ class HudOverlay extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${data.score}',
-                  style: const TextStyle(
-                    fontSize: 44,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                // P1.12 — VoiceOver announces score updates via this
+                // live region. Pre-fix the score number was read as a
+                // bare digit with no context; with liveRegion set,
+                // assistive tech re-announces on each value change.
+                Semantics(
+                  label: 'Score: ${data.score}',
+                  liveRegion: true,
+                  excludeSemantics: true,
+                  child: Text(
+                    '${data.score}',
+                    style: const TextStyle(
+                      fontSize: 44,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 140),
-                      style: TextStyle(
-                        fontSize: multStyle.fontSize,
-                        fontWeight: multStyle.weight,
-                        color: multStyle.color,
+                    Semantics(
+                      label: 'Combo multiplier x${data.mult}',
+                      liveRegion: true,
+                      excludeSemantics: true,
+                      child: AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 140),
+                        style: TextStyle(
+                          fontSize: multStyle.fontSize,
+                          fontWeight: multStyle.weight,
+                          color: multStyle.color,
+                        ),
+                        child: Text('x${data.mult}'),
                       ),
-                      child: Text('x${data.mult}'),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
