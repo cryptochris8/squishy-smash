@@ -18,9 +18,9 @@
     "legendary": 5000
   },
 
-  "_rationale_dupe": "Common dupes drop to 0 coins to break the spam-tap economy inflation loop (commons spawn 68% of the time and kids tap them fast — 2 coins x 40 spawns = 80 coins/session of pure spam reward). Higher rarities still feel rewarding when you hit a duplicate.",
+  "_rationale_dupe": "Common dupes give 1 coin (not 0) so the wallet ticks visibly when a player taps a known character — the anti-spam cooldown handles inflation, but a 0-coin pop with no toast and no sound was indistinguishable from a bug to playtesters (P1.8). 1 coin x ~40 spawns = ~40 coins/session of dupe drip, well under the milestone rewards. Higher rarities still feel rewarding when you hit a duplicate.",
   "duplicateCoinBonus": {
-    "common": 0,
+    "common": 1,
     "rare": 15,
     "epic": 40,
     "legendary": 100

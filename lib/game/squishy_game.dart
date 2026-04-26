@@ -306,6 +306,11 @@ class SquishyGame extends FlameGame {
       if (_activePackId != null) {
         events.boostUsed(packId: _activePackId!);
       }
+      // Surface the consumption so the player can SEE the token
+      // being applied. Pre-fix (P1.7) the auto-arm was silent — a
+      // streak-milestone reward token vanished into the first spawn
+      // with no UI feedback at all.
+      _rewardController.add(RewardEvent.boostUsed(id: _allocateRewardId()));
     }
 
     // Forced-tier reveal tokens (e.g. Starter Bundle's guaranteed rare).
@@ -438,9 +443,11 @@ class SquishyGame extends FlameGame {
         coinsAwarded: outcome.duplicateCoinBonus,
       );
       // Celebrate non-zero duplicate coin bonuses with a toast — kids
-      // need to SEE the reward land. Common dupes are 0 in v0.1.1
-      // (anti-spam) so silent there is correct; rare+ duplicates are
-      // worth the visual beat.
+      // need to SEE the reward land. Per P1.8 fix, common dupes pay
+      // 1 coin (was 0) so the toast fires and the wallet ticks
+      // visibly even on familiar characters; the anti-spam cooldown
+      // still throttles same-id repeats so spam-tap inflation is
+      // contained.
       if (outcome.duplicateCoinBonus > 0) {
         _rewardController.add(RewardEvent.duplicate(
           id: _allocateRewardId(),

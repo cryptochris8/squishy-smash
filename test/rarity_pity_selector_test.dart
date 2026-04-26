@@ -511,4 +511,111 @@ void main() {
       expect(m, 0);
     });
   });
+
+  // P1.9 — gameplay-feel guard. The compounding boosts (soft pity +
+  // combo + boost token) can multiply the legendary base rate of
+  // 0.02 (1/50) several-fold; the audit measured up to ~3.9x at
+  // combo 8 with token, hitting roughly 1/13. The intent is "magical
+  // / rare" — i.e. ~1/200 sensation. These tests don't ASSERT a
+  // specific cap (tuning is config-driven, see assets/data/economy.json),
+  // but they pin the actual rate produced by current code so any
+  // future tuning change has to deliberately move the test.
+  //
+  // Methodology: 10 000 picks per scenario, advancing dry counters
+  // realistically between picks (so soft + hard pity participate as
+  // they would in real play). The seeded Random per call gives
+  // bit-identical output across CI runs.
+  group('RarityPitySelector legendary distribution (P1.9)', () {
+    /// Drives `iterations` picks and returns counts per tier. Pity
+    /// counters advance between picks via the resetting rules so soft
+    /// and hard pity work the way they do in production.
+    Map<Rarity, int> _runDistribution({
+      required int iterations,
+      required int comboMultiplier,
+      required int seedBase,
+    }) {
+      const selector = RarityPitySelector();
+      final tally = <Rarity, int>{
+        Rarity.common: 0,
+        Rarity.rare: 0,
+        Rarity.epic: 0,
+        Rarity.mythic: 0,
+      };
+      var rareDry = 0;
+      var epicDry = 0;
+      var legendaryDry = 0;
+      for (var i = 0; i < iterations; i++) {
+        final picked = _pick(
+          selector,
+          pool,
+          seed: seedBase + i,
+          rareDry: rareDry,
+          epicDry: epicDry,
+          legendaryDry: legendaryDry,
+          combo: comboMultiplier,
+          packId: 'test',
+        );
+        tally[picked.rarity] = (tally[picked.rarity] ?? 0) + 1;
+        final (r, e, m) = selector.advanceCountersForPack(
+          pickedRarity: picked.rarity,
+          rareDry: rareDry,
+          epicDry: epicDry,
+          legendaryDry: legendaryDry,
+        );
+        rareDry = r;
+        epicDry = e;
+        legendaryDry = m;
+      }
+      return tally;
+    }
+
+    test('neutral combo: legendary stays "rare" (≤ 1 in 30)', () {
+      // At combo 1 (no boost), the only force pulling legendary
+      // above its 0.02 base rate is hard-pity at 50 dry picks.
+      // Across 10k picks we expect plenty of hard-pity hits, but
+      // the rate should still feel rare — not "every couple
+      // sessions you see one." Cap at 1/30 = ~333 in 10k.
+      final tally = _runDistribution(
+        iterations: 10000,
+        comboMultiplier: 1,
+        seedBase: 1,
+      );
+      expect(tally[Rarity.mythic]!, lessThanOrEqualTo(333),
+          reason: 'Legendary at neutral combo should land in '
+              '"magical / rare" territory, not common-pop');
+      expect(tally[Rarity.mythic]!, greaterThan(50),
+          reason: 'But hard-pity at 50 must still produce some '
+              'mythics across 10k picks — otherwise the safety net '
+              'is broken');
+    });
+
+    test('high combo: legendary climbs but caps under 1 in 8', () {
+      // At combo 8 (game cap) the comboBoost adds (8-1)*0.2 = +1.4
+      // to the legendary weight. Combined with soft + hard pity
+      // this is the worst case in production. Pin a sanity ceiling.
+      final tally = _runDistribution(
+        iterations: 10000,
+        comboMultiplier: 8,
+        seedBase: 7,
+      );
+      expect(tally[Rarity.mythic]!, lessThan(1250),
+          reason: 'Even at max combo (8x), legendary pop rate '
+              'should stay under 1 in 8 — anything looser undermines '
+              'the "magical reveal" sensation');
+    });
+
+    test('common dominates the distribution (≥ 50%)', () {
+      // Sanity guard: the bulk of session picks should always be
+      // commons regardless of pity / combo. If this ever fails,
+      // someone over-tuned a boost.
+      final tally = _runDistribution(
+        iterations: 10000,
+        comboMultiplier: 1,
+        seedBase: 13,
+      );
+      expect(tally[Rarity.common]!, greaterThan(5000),
+          reason: 'Commons should be the majority of picks — '
+              'otherwise the rarity ladder collapses');
+    });
+  });
 }

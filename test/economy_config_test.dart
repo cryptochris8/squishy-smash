@@ -207,10 +207,16 @@ void main() {
       expect(shipped.coinPriceFor(Rarity.mythic), 5000);
     });
 
-    test('shipped duplicate bonuses kill the common-dupe spam loop', () {
-      expect(shipped.duplicateCoinBonusFor(Rarity.common), 0,
-          reason: 'common dupes pay 0 coins so spam-tap volume cannot '
-              'inflate the economy');
+    test('shipped duplicate bonuses tick visibly without inflating', () {
+      // P1.8 lift: common dupes pay 1 coin (was 0). The wallet now
+      // ticks visibly when a player taps a known character — pre-fix
+      // a 0-coin pop with no toast and no sound felt like a bug to
+      // playtesters. The anti-spam cooldown still throttles same-id
+      // repeats so spam-tap inflation stays contained.
+      expect(shipped.duplicateCoinBonusFor(Rarity.common), 1,
+          reason: 'common dupes pay 1 coin — non-zero so the toast '
+              'fires, low enough that the anti-spam cooldown caps '
+              'inflation');
       expect(shipped.duplicateCoinBonusFor(Rarity.rare), 15);
       expect(shipped.duplicateCoinBonusFor(Rarity.epic), 40);
       expect(shipped.duplicateCoinBonusFor(Rarity.mythic), 100);

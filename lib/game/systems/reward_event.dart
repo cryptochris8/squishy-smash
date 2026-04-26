@@ -42,6 +42,11 @@ class RewardEvent {
   /// "achievement" energy).
   static const int _kMilestoneTint = 0xFFB6FF5C;
 
+  /// Jelly-blue — used for the "boost token applied" notice so the
+  /// player can SEE the token being spent rather than have it vanish
+  /// into the first spawn (P1.7).
+  static const int _kBoostTint = 0xFF7FE7FF;
+
   const RewardEvent.duplicate({
     required this.id,
     required this.coinAmount,
@@ -58,4 +63,13 @@ class RewardEvent {
     required int percent,
   })  : label = 'Pack $percent%!',
         tint = _kMilestoneTint;
+
+  /// Boost token consumed announcement. Zero coins (it's a status
+  /// callout, not a reward) but reuses the toast channel so the
+  /// player gets visible feedback that their token was spent.
+  const RewardEvent.boostUsed({
+    required this.id,
+  })  : coinAmount = 0,
+        label = 'Boost ready!',
+        tint = _kBoostTint;
 }

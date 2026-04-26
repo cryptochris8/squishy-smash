@@ -113,12 +113,18 @@ class _GameplayScreenState extends State<GameplayScreen>
     messenger.clearSnackBars();
     messenger.showSnackBar(
       SnackBar(
-        duration: const Duration(seconds: 6),
+        // P1.4 — extended from 6 s to 10 s. Six seconds was too
+        // short for a 5-year-old to read "Mythic! Save this clip?"
+        // and react. Snackbar is also user-dismissible (showCloseIcon)
+        // so a parent can swipe it away if they're mid-round.
+        duration: const Duration(seconds: 10),
         behavior: SnackBarBehavior.floating,
         backgroundColor: const Color(0xFF3B2F4F),
+        showCloseIcon: true,
+        closeIconColor: Colors.white70,
         content: const Row(
           children: <Widget>[
-            Icon(Icons.auto_awesome, color: Color(0xFFFFD15C)),
+            Icon(Icons.auto_awesome, color: Color(0xFFFFD36E)),
             SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -133,11 +139,61 @@ class _GameplayScreenState extends State<GameplayScreen>
         ),
         action: SnackBarAction(
           label: 'SHARE',
-          textColor: const Color(0xFFFFD15C),
+          textColor: const Color(0xFFFFD36E),
           onPressed: () => _shareNow(Rarity.mythic),
         ),
       ),
     );
+  }
+
+  /// Confirm-before-quit dialog for the gameplay close X. Pre-fix
+  /// (P1.5) tapping the corner X dropped the run silently — a kid
+  /// who fat-fingered it lost their score with no warning. Returns
+  /// true if the player confirmed; false otherwise.
+  Future<bool> _confirmQuitRound() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1320),
+        title: const Text(
+          'Quit this round?',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          "You'll keep coins and discoveries you've already earned, "
+          'but your score and combo for this round will reset.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text(
+              'Keep playing',
+              style: TextStyle(color: Color(0xFFFFD36E)),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text(
+              'Quit',
+              style: TextStyle(color: Color(0xFFFF8FB8)),
+            ),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  Future<void> _handleClosePressed() async {
+    final confirmed = await _confirmQuitRound();
+    if (!confirmed) return;
+    if (!mounted) return;
+    // Finalize so coins / discoveries / best-score from this partial
+    // session land in profile before navigating away.
+    await _game.finalizeRoundIfActive();
+    if (!mounted) return;
+    Navigator.pop(context);
   }
 
   Future<void> _shareNow(Rarity tier) async {
@@ -170,17 +226,29 @@ class _GameplayScreenState extends State<GameplayScreen>
             top: 12,
             right: 12,
             child: SafeArea(
+              // P1.6 — bumped iconSize 24 → 32 and added 12 px padding
+              // (each IconButton is now 56x56 hit area). Pre-fix the
+              // default icon at white70 against a busy gameplay
+              // background was effectively invisible and easy to
+              // miss-tap.
               child: Row(
                 children: <Widget>[
                   IconButton(
-                    icon: const Icon(Icons.ios_share,
-                        color: Colors.white70),
+                    icon: const Icon(Icons.ios_share),
+                    iconSize: 32,
+                    color: Colors.white,
                     tooltip: 'Share this moment',
+                    padding: const EdgeInsets.all(12),
                     onPressed: () => _shareNow(Rarity.common),
                   ),
+                  const SizedBox(width: 16),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white70),
-                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                    iconSize: 32,
+                    color: Colors.white,
+                    tooltip: 'Close this round',
+                    padding: const EdgeInsets.all(12),
+                    onPressed: _handleClosePressed,
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'dart:math';
 import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
 import 'sound_variant_picker.dart';
+import 'ui_sound_registry.dart';
 
 /// Tiered feedback events that map to layered SFX + haptics + (optionally)
 /// a reveal-moment skybox swap. Keyed by severity so pack authors don't
@@ -100,6 +101,13 @@ class FeedbackDispatcher {
 
   void _fireRevealBurst(SmashableDef def) {
     sink.playOneShot(def.burstSound);
+    // Layer the UI reveal stinger for epic+ so the rarity tier is
+    // audibly distinct from a common burst. Pre-fix (P1.3) the
+    // stinger asset existed but was orphaned — the first mythic
+    // sounded like a louder common.
+    if (def.rarity == Rarity.epic || def.rarity == Rarity.mythic) {
+      sink.playOneShot(UiSoundRegistry.revealStinger);
+    }
     sink.hapticHeavy();
     sink.screenShake(duration: 0.22, intensity: 10);
 
