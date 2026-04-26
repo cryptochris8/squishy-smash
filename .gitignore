@@ -80,6 +80,9 @@ book/build/out/
 book/build/.venv/
 book/build/__pycache__/
 
+# Screenshot pipeline build cache
+screenshots/build/__pycache__/
+
 # SECRETS — never commit
 *.p8
 *.p12
