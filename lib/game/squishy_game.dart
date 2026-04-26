@@ -565,6 +565,18 @@ class SquishyGame extends FlameGame {
     }
   }
 
+  /// Public hook for the screen-level lifecycle observer (P1.2). If
+  /// the player backgrounds / force-quits mid-round, this finalizes
+  /// the round exactly as if the timer had run out — best-score and
+  /// best-combo for the partial session land in profile, the
+  /// progression repo flushes pending writes, and analytics fires
+  /// level_end. Idempotent: re-calling after the round ended is a
+  /// no-op.
+  Future<void> finalizeRoundIfActive() async {
+    if (_ended) return;
+    await _endRound();
+  }
+
   Future<void> _endRound() async {
     _ended = true;
     // Flush any buffered hot-path writes (per-burst coin/discovery/

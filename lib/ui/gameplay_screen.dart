@@ -19,7 +19,8 @@ class GameplayScreen extends StatefulWidget {
   State<GameplayScreen> createState() => _GameplayScreenState();
 }
 
-class _GameplayScreenState extends State<GameplayScreen> {
+class _GameplayScreenState extends State<GameplayScreen>
+    with WidgetsBindingObserver {
   late final SquishyGame _game;
   final GlobalKey _captureKey = GlobalKey();
   late final ShareCaptureService _share;
@@ -35,6 +36,38 @@ class _GameplayScreenState extends State<GameplayScreen> {
       onMythicReveal: _handleMythicReveal,
       onFirstRareReveal: _handleFirstRareReveal,
     );
+    // Observe iOS lifecycle so a force-quit / Cmd-swipe / OS-kill
+    // mid-round doesn't drop the in-flight progression. Pre-fix
+    // (P1.2): debounced 400 ms saves on bursts could be lost on
+    // termination, and best-score / best-combo for the round were
+    // only persisted via _endRound() — never reached on backgrounding.
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // On iOS the system may give us only ~5 seconds after a
+    // background transition before suspending the app, so flush
+    // synchronously rather than relying on a debounced save firing.
+    // We also force-finalize any in-flight round so best-score /
+    // best-combo for that session lands even if the player never
+    // returns.
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive) {
+      _game.finalizeRoundIfActive();
+      // Fire-and-forget: persistence.flushPending awaits its own
+      // setString, but we cannot await across a lifecycle callback.
+      // Best-effort is acceptable — at worst we lose the same data
+      // we'd have lost without the observer.
+      ServiceLocator.persistence.flushPending();
+    }
   }
 
   void _handleFirstRareReveal() {

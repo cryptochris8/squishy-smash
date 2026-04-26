@@ -84,11 +84,22 @@ class ServiceLocator {
       await persistence.saveProfile(progression.profile);
     }
     sounds = SoundManager();
-    await sounds.warm(<String>[
+    // Apply the persisted mute setting at construction so a player
+    // who muted in a previous session doesn't hear full-volume audio
+    // for the half-second between bootstrap and the first Settings
+    // toggle. Pre-fix: SoundManager.muted started false regardless
+    // of disk state and only synced on Settings interaction (P1.1).
+    sounds.muted = persistence.muted;
+    // Warm the audio cache asynchronously rather than blocking
+    // bootstrap on ~200 mp3 decode passes. The play() path is
+    // already lenient about cache misses — tapping faster than the
+    // warm completes just falls through to a normal load. Pre-fix
+    // this added 1-2 s to startup time (P1.15).
+    unawaited(sounds.warm(<String>[
       ...packs.allObjectSoundPaths(),
       ...VoiceLineRegistry.allPaths,
       ...UiSoundRegistry.allPaths,
-    ]);
+    ]));
     ui = UiSounds(sounds);
     analytics = const NoOpAnalytics();
 
