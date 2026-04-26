@@ -329,10 +329,13 @@ void main() {
   });
 
   group('Pack sprite assets exist on disk', () {
-    // FLUX-generated 1024x1024 character sprites run ~200-400 KB.
-    // 256x256 thumbnails compress to ~30-45 KB. We set separate
-    // floors to catch stubs without false-flagging real thumbnails.
-    const int kSpriteMinBytes = 100 * 1024;
+    // After P1.16 downsample 1024->512, real sprites compress to
+    // ~50-150 KB depending on art complexity (a few simple shapes
+    // can dip into the 80s). 256x256 thumbnails are ~30-45 KB. The
+    // floor's job is to catch stubs / accidental empty PNGs, not
+    // pin a specific byte count — 30 KB is well above any
+    // reasonable empty-stub size.
+    const int kSpriteMinBytes = 30 * 1024;
     const int kThumbMinBytes = 10 * 1024;
 
     for (final path in ContentLoader.bundledPackPaths) {
