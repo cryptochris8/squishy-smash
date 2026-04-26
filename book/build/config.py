@@ -99,6 +99,14 @@ class Character:
     flavor: str
     rarity: str = "common"  # common | rare | epic | mythic
 
+    # Phase-1 schema additions for the Squishkeeper field-guide voice.
+    # Populated only for the 21 Featured characters; gallery cards leave
+    # these as None and render as plain thumbnails on page 31.
+    location: str | None = None       # e.g. "the Pudding Hills"
+    signature_squish: str | None = None  # one-line "what it does" + sound
+    pack_mate: str | None = None      # one named friend for the social graph
+    keeper_says: str | None = None    # narrator-voice line (italic in layout)
+
     @property
     def card_path(self) -> Path:
         # Filename pattern: 001_Soft_Dumpling.webp
@@ -106,20 +114,45 @@ class Character:
         return CARDS_DIR / f"{self.num:03d}_{slug}.webp"
 
 
+# Featured-21: the characters that get hero treatment on pages 7-30.
+# The other 27 fill the back-matter gallery on page 31. See
+# book/ELEVATION_PLAN.md and book/manuscript/02_manuscript_v2.md.
+FEATURED_NUMS: tuple[int, ...] = (
+    # Squishy Foods (7)
+    1, 2, 3, 5, 11, 13, 16,
+    # Goo & Fidgets (7)
+    17, 18, 19, 20, 25, 30, 32,
+    # Creepy-Cute Creatures (7)
+    33, 34, 35, 39, 41, 43, 48,
+)
+
+
 def _foods() -> list[Character]:
     return [
         Character(1, "Soft Dumpling", "Squishy Foods",
                   "A cozy little friend who loves gentle bouncing and warm, happy moments.",
                   ("Calm and comforting", "Puffy and playful"),
-                  "Wherever Soft Dumpling goes, a soft puff of joy follows."),
+                  "Wherever Soft Dumpling goes, a soft puff of joy follows.",
+                  location="Dumpling Dell, just past sunrise.",
+                  signature_squish="a slow, gentle puff-and-settle. *pmf.*",
+                  pack_mate="Jelly Bun",
+                  keeper_says="Round. Warm. Soft on top, soft underneath, soft all the way through."),
         Character(2, "Jelly Bun", "Squishy Foods",
                   "Glossy, wiggly, and always ready to bounce into a sweet adventure.",
                   ("Cheerful and energetic", "Wobbly and fun"),
-                  "One happy wobble can turn any day into dessert time."),
+                  "One happy wobble can turn any day into dessert time.",
+                  location="the riverbank, near Syrup River.",
+                  signature_squish="wobble in, wobble out. *wibble-wobble.*",
+                  pack_mate="Soft Dumpling",
+                  keeper_says="Have you met Jelly Bun yet? *Wibble.* Now you have."),
         Character(3, "Peach Mochi", "Squishy Foods",
                   "Dreamy, gentle, and full of soft peachy sparkle.",
                   ("Sweet and peaceful", "Soft as a cloud"),
-                  "Peach Mochi floats through the world with a blush of gentle magic."),
+                  "Peach Mochi floats through the world with a blush of gentle magic.",
+                  location="the Mochi Meadows, where the grass is soft.",
+                  signature_squish="a quiet pink press. *poof.*",
+                  pack_mate="Cream Puff",
+                  keeper_says="Give Peach Mochi a poke. See that little puff of pink? That is a sigh of joy."),
         Character(4, "Syrup Cube", "Squishy Foods",
                   "Leaves a shiny trail wherever it slides, stretches, and splats.",
                   ("Sticky and silly", "Tiny but bold"),
@@ -127,7 +160,11 @@ def _foods() -> list[Character]:
         Character(5, "Cream Puff", "Squishy Foods",
                   "Light, fluffy, and always bursting with swirly fun.",
                   ("Airy and bright", "Extra bouncy"),
-                  "Every pop of Cream Puff feels like a whipped little celebration."),
+                  "Every pop of Cream Puff feels like a whipped little celebration.",
+                  location="the Sprinkle Cliffs, mid-afternoon.",
+                  signature_squish="a swirl, a hop, a happy burst. *POOF!*",
+                  pack_mate="Peach Mochi",
+                  keeper_says="*POOF!* That was Cream Puff saying hello."),
         Character(6, "Rice Ball Squish", "Squishy Foods",
                   "Simple, squishy, and secretly one of the most satisfying friends around.",
                   ("Cozy and steady", "Soft with a dense bounce"),
@@ -154,7 +191,11 @@ def _foods() -> list[Character]:
                   "Glitters with every hop and twinkles with every puff.",
                   ("Shimmery and soft", "Gentle and bright"),
                   "Sparkle Mochi carries a little bit of glittery joy everywhere it goes.",
-                  rarity="rare"),
+                  rarity="rare",
+                  location="dawn at the Sprinkle Cliffs.",
+                  signature_squish="a glittery little jump. *tink-tink-tink.*",
+                  pack_mate="Peach Mochi",
+                  keeper_says="Tink. Tink. Sparkle Mochi leaves glitter where it hops, and the floor twinkles for a second."),
         Character(12, "Golden Syrup Cube", "Squishy Foods",
                   "Shines like sweet treasure in the dessert world.",
                   ("Rich and radiant", "Sticky and glowing"),
@@ -164,7 +205,11 @@ def _foods() -> list[Character]:
                   "Filled with tiny stars and endless squish-space wonder.",
                   ("Cosmic and curious", "Dreamy and brave"),
                   "When Galaxy Dumpling bounces, the stars seem to bounce too.",
-                  rarity="epic"),
+                  rarity="epic",
+                  location="Mochi Meadows, after sundown.",
+                  signature_squish="a slow cosmic puff. *whoosh.*",
+                  pack_mate="Sparkle Mochi",
+                  keeper_says="Have you ever bounced among stars? Galaxy Dumpling has. It does it every single night."),
         Character(14, "Crystal Mochi", "Squishy Foods",
                   "Glows from the inside out with rare, prismatic light.",
                   ("Clear and magical", "Bright and delicate"),
@@ -179,7 +224,11 @@ def _foods() -> list[Character]:
                   "A legendary squishy said to hold the softest light in the snack universe.",
                   ("Mythic and radiant", "Powerful and kind"),
                   "Some say the stars learned to glow by watching Celestial Dumpling Core.",
-                  rarity="mythic"),
+                  rarity="mythic",
+                  location="the highest cloud above the Pudding Hills.",
+                  signature_squish="a hush, then a glow. *...*",
+                  pack_mate="Galaxy Dumpling",
+                  keeper_says="Long ago, before the stars knew how to glow, they watched a tiny dumpling shine in the dark. That is how they learned."),
     ]
 
 
@@ -188,19 +237,35 @@ def _goo() -> list[Character]:
         Character(17, "Goo Ball", "Goo & Fidgets",
                   "A classic glossy squishy that never bounces the same way twice.",
                   ("Stretchy and silly", "Smooth and shiny"),
-                  "Every wobble from Goo Ball is a brand-new surprise."),
+                  "Every wobble from Goo Ball is a brand-new surprise.",
+                  location="Bubble Bay, where the waves slow down.",
+                  signature_squish="a glossy, splatty rebound. *sploink.*",
+                  pack_mate="Stretch Cube",
+                  keeper_says="*Sploink!* That is the official noise of Goo Ball saying hi."),
         Character(18, "Bubble Blob", "Goo & Fidgets",
                   "Loves popping shiny bubbles with every happy bounce.",
                   ("Round and cheerful", "Bouncy and playful"),
-                  "Bubble Blob can turn one little hop into a whole burst of bubbles."),
+                  "Bubble Blob can turn one little hop into a whole burst of bubbles.",
+                  location="Bubble Bay, near the lily pads.",
+                  signature_squish="a hop and a pop. *bloop.*",
+                  pack_mate="Goo Ball",
+                  keeper_says="Watch the bubbles. Every hop pops a new one."),
         Character(19, "Stretch Cube", "Goo & Fidgets",
                   "Pulls, wobbles, and springs back into shape with elastic fun.",
                   ("Flexible and funny", "Snappy and bright"),
-                  "No matter how far it stretches, Stretch Cube always bounces back smiling."),
+                  "No matter how far it stretches, Stretch Cube always bounces back smiling.",
+                  location="Stretch Tide, exactly at low tide.",
+                  signature_squish="a pull, a twang, a snap. *boing.*",
+                  pack_mate="Goo Ball",
+                  keeper_says="Stretch. Stretch some more. Snap right back. Stretch some more."),
         Character(20, "Soft Stress Orb", "Goo & Fidgets",
                   "A soothing friend made for perfect rhythmic squishes.",
                   ("Calm and steady", "Firm and comforting"),
-                  "Soft Stress Orb makes every squeeze feel just right."),
+                  "Soft Stress Orb makes every squeeze feel just right.",
+                  location="the quiet end of Stretch Tide.",
+                  signature_squish="a steady, soothing press. *one. two. three.*",
+                  pack_mate="Stretch Cube",
+                  keeper_says="Squeeze. Wait. Squeeze. Soft Stress Orb likes a good rhythm."),
         Character(21, "Jelly Pad", "Goo & Fidgets",
                   "Ripples from edge to edge with glossy gel motion.",
                   ("Smooth and wiggly", "Flat and fun"),
@@ -221,7 +286,11 @@ def _goo() -> list[Character]:
                   "Flashes with sparkling flecks every time it bursts.",
                   ("Shiny and cheerful", "Stretchy and bright"),
                   "Glitter Goo Ball turns splats into sparkle shows.",
-                  rarity="rare"),
+                  rarity="rare",
+                  location="Plasma Shore, just after sunset.",
+                  signature_squish="a sparkly slow-motion splat. *shhhh-tink.*",
+                  pack_mate="Goo Ball",
+                  keeper_says="Have you ever splatted in slow motion? Glitter Goo Ball does. The flecks land last."),
         Character(26, "Shockwave Blob", "Goo & Fidgets",
                   "Sends satisfying rings of energy through the goo world.",
                   ("Powerful and playful", "Bouncy and bold"),
@@ -246,7 +315,11 @@ def _goo() -> list[Character]:
                   "Shimmers with sky-colored ribbons as it twists and bounces.",
                   ("Elegant and elastic", "Glowing and rare"),
                   "Aurora Stretch Cube carries the colors of the sky in every stretch.",
-                  rarity="epic"),
+                  rarity="epic",
+                  location="Aurora Reef, when the sky turns green.",
+                  signature_squish="a sky-colored stretch. *shimmer-pull.*",
+                  pack_mate="Stretch Cube",
+                  keeper_says="*Shimmer-pull.* That is the only word for what Aurora Stretch Cube does."),
         Character(31, "Cosmic Jelly Pad", "Goo & Fidgets",
                   "Wobbles with tiny tides of space and orbiting sparkles.",
                   ("Dreamy and mysterious", "Smooth and magical"),
@@ -256,7 +329,11 @@ def _goo() -> list[Character]:
                   "A legendary goo with impossible density and a pull all its own.",
                   ("Mythic and powerful", "Strange and dazzling"),
                   "Legends say even gravity likes to wobble around Singularity Goo Core.",
-                  rarity="mythic"),
+                  rarity="mythic",
+                  location="the deepest tide pool on the Goo Coast.",
+                  signature_squish="a hush. then a pull. *...*",
+                  pack_mate="Aurora Stretch Cube",
+                  keeper_says="So heavy the air bends around it. So strange that gravity tips its hat as it walks by."),
     ]
 
 
@@ -265,15 +342,27 @@ def _creatures() -> list[Character]:
         Character(33, "Blushy Bun Bunny", "Creepy-Cute Creatures",
                   "Sweet, rosy, and always ready to hop into a cuddle-filled adventure.",
                   ("Gentle and happy", "Hoppy and warm"),
-                  "Tiny paws and rosy cheeks make Blushy Bun Bunny impossible not to love."),
+                  "Tiny paws and rosy cheeks make Blushy Bun Bunny impossible not to love.",
+                  location="Cuddle Glade, between two tall flowers.",
+                  signature_squish="a tiny hop and a softer landing. *thup.*",
+                  pack_mate="Puff Ghost",
+                  keeper_says="Look closer. Those rosy cheeks get rosier when you say hello."),
         Character(34, "Squish Bat", "Creepy-Cute Creatures",
                   "Flutters through the sky with soft spooky-cute charm.",
                   ("Flappy and funny", "Light and lively"),
-                  "Squish Bat is more cuddly than creepy and more silly than spooky."),
+                  "Squish Bat is more cuddly than creepy and more silly than spooky.",
+                  location="Crescent Cave, late evening.",
+                  signature_squish="flap, flap, flop. *fwip.*",
+                  pack_mate="Puff Ghost",
+                  keeper_says="Have you ever flapped? Just two little wings, very gentle. Now you are a Squish Bat."),
         Character(35, "Puff Ghost", "Creepy-Cute Creatures",
                   "Floats in on a swirl of mist and the cutest little cloud.",
                   ("Glowy and sweet", "Soft and floaty"),
-                  "Puff Ghost can make even moonlight feel extra cozy."),
+                  "Puff Ghost can make even moonlight feel extra cozy.",
+                  location="Whisper Woods, around midnight.",
+                  signature_squish="a swirl of mist, then a soft poof. *whisper-poof.*",
+                  pack_mate="Blushy Bun Bunny",
+                  keeper_says="*Boo-boo-boop!* Puff Ghost is more cloud than spook."),
         Character(36, "Wobble Kitty", "Creepy-Cute Creatures",
                   "Wobbles first, thinks later, and charms everyone along the way.",
                   ("Curious and silly", "Round and playful"),
@@ -289,16 +378,24 @@ def _creatures() -> list[Character]:
         Character(39, "Sleepy Slime Pet", "Creepy-Cute Creatures",
                   "Always drowsy, always adorable, always ready for a dreamy bounce.",
                   ("Sleepy and soft", "Gooey and calm"),
-                  "Sleepy Slime Pet turns bedtime into squish time."),
+                  "Sleepy Slime Pet turns bedtime into squish time.",
+                  location="Cuddle Glade, every single nap.",
+                  signature_squish="a slow, gooey settle. *gloop.*",
+                  pack_mate="Blushy Bun Bunny",
+                  keeper_says="Sleepy. Sleepy. Slimy. Sleepy. That is the whole story."),
         Character(40, "Round Eared Creature", "Creepy-Cute Creatures",
                   "Perks up its ears right before the perfect pop.",
                   ("Curious and bright", "Soft and springy"),
                   "Its round ears seem to hear every tiny sparkle in the air."),
-        Character(41, "Star Eyed Bunny", "Creepy-Cute Creatures",
+        Character(41, "Star-Eyed Bunny", "Creepy-Cute Creatures",
                   "Hops through the night with tiny wishes glowing in its eyes.",
                   ("Dreamy and magical", "Bright and hopeful"),
                   "Every landing from Star-Eyed Bunny feels like a wish come true.",
-                  rarity="rare"),
+                  rarity="rare",
+                  location="Star Pond, during a full moon.",
+                  signature_squish="a leap, a sparkle, a soft landing. *plink.*",
+                  pack_mate="Blushy Bun Bunny",
+                  keeper_says="Hop. Wish. Hop again. Star-Eyed Bunny carries a tiny wish in each eye."),
         Character(42, "Moon Bat Blob", "Creepy-Cute Creatures",
                   "Glides on pale moonlight with soft nighttime sparkle.",
                   ("Gentle and mysterious", "Floaty and cool"),
@@ -308,7 +405,11 @@ def _creatures() -> list[Character]:
                   "Shines brighter with every happy bounce.",
                   ("Radiant and sweet", "Glowy and light"),
                   "Glow Ghost Puff can brighten even the sleepiest corner of the world.",
-                  rarity="rare"),
+                  rarity="rare",
+                  location="Whisper Woods, where the dark is darkest.",
+                  signature_squish="a gentle bloom of light. *hmmm.*",
+                  pack_mate="Puff Ghost",
+                  keeper_says="Light a corner of your room. Now it is brighter. That is what Glow Ghost Puff does to the world."),
         Character(44, "Candy Fang Creature", "Creepy-Cute Creatures",
                   "Sugary chaos wrapped in a grin and tiny fangs.",
                   ("Mischievous and bright", "Sweet and wild"),
@@ -333,7 +434,11 @@ def _creatures() -> list[Character]:
                   "A legendary guardian said to watch over every lost squishy.",
                   ("Protective and kind", "Mythic and radiant"),
                   "When hope feels far away, Mythic Plush Familiar is never far behind.",
-                  rarity="mythic"),
+                  rarity="mythic",
+                  location="wherever a squishy gets lost.",
+                  signature_squish="a soft pawprint, then another. *...*",
+                  pack_mate="Glow Ghost Puff",
+                  keeper_says="When a squishy gets lost, a soft pawprint shows up in the dust. Then another. Then another. Someone is always coming back for them."),
     ]
 
 
@@ -343,3 +448,15 @@ def all_characters() -> list[Character]:
 
 def by_num() -> dict[int, Character]:
     return {c.num: c for c in all_characters()}
+
+
+def featured_characters() -> list[Character]:
+    """The 21 hero-treated characters from FEATURED_NUMS, in book order."""
+    lookup = by_num()
+    return [lookup[n] for n in FEATURED_NUMS]
+
+
+def gallery_characters() -> list[Character]:
+    """The 27 back-matter gallery characters (page 31 thumbnail grid)."""
+    featured = set(FEATURED_NUMS)
+    return [c for c in all_characters() if c.num not in featured]

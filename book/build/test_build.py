@@ -26,8 +26,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_cover  # noqa: E402
 import build_interior  # noqa: E402
 from config import (  # noqa: E402
-    COVER_H, COVER_W, INCH, OUT_DIR, PAGE_H, PAGE_W, SPINE_W_IN, TRIM_IN,
-    all_characters,
+    COVER_H, COVER_W, FEATURED_NUMS, INCH, OUT_DIR, PAGE_H, PAGE_W, SPINE_W_IN,
+    TRIM_IN, all_characters, by_num, featured_characters, gallery_characters,
 )
 
 
@@ -132,6 +132,104 @@ class CharacterAssetTests(unittest.TestCase):
             "Goo & Fidgets": 16,
             "Creepy-Cute Creatures": 16,
         })
+
+
+class FeaturedScheduleTests(unittest.TestCase):
+    """Phase-1 schema: every Featured-21 character must have the full
+    Squishkeeper field-guide schema populated. Page 31 gallery characters
+    do NOT have the new fields (they render as plain thumbnails)."""
+
+    def test_featured_count_is_21(self) -> None:
+        self.assertEqual(len(FEATURED_NUMS), 21,
+                         "Featured-21 hero count is locked")
+        self.assertEqual(len(set(FEATURED_NUMS)), 21,
+                         "FEATURED_NUMS must contain unique character ids")
+
+    def test_seven_featured_per_pack(self) -> None:
+        chars = featured_characters()
+        per_pack: dict[str, int] = {}
+        for c in chars:
+            per_pack[c.pack] = per_pack.get(c.pack, 0) + 1
+        self.assertEqual(per_pack, {
+            "Squishy Foods": 7,
+            "Goo & Fidgets": 7,
+            "Creepy-Cute Creatures": 7,
+        })
+
+    def test_each_featured_has_full_schema(self) -> None:
+        for c in featured_characters():
+            with self.subTest(char=c.name):
+                self.assertIsNotNone(c.location,
+                                     f"{c.name}: missing location")
+                self.assertIsNotNone(c.signature_squish,
+                                     f"{c.name}: missing signature_squish")
+                self.assertIsNotNone(c.pack_mate,
+                                     f"{c.name}: missing pack_mate")
+                self.assertIsNotNone(c.keeper_says,
+                                     f"{c.name}: missing keeper_says")
+                # Sanity: keeper_says is non-trivial
+                self.assertGreater(len(c.keeper_says or ""), 10,
+                                   f"{c.name}: keeper_says too short")
+
+    def test_pack_mates_reference_real_characters(self) -> None:
+        names = {c.name for c in all_characters()}
+        for c in featured_characters():
+            self.assertIn(c.pack_mate, names,
+                          f"{c.name}: pack_mate '{c.pack_mate}' is not a real character")
+
+    def test_gallery_count_is_27(self) -> None:
+        gallery = gallery_characters()
+        self.assertEqual(len(gallery), 27)
+        # Featured + gallery covers all 48 with no overlap
+        featured_ids = {c.num for c in featured_characters()}
+        gallery_ids = {c.num for c in gallery}
+        self.assertEqual(featured_ids & gallery_ids, set())
+        self.assertEqual(featured_ids | gallery_ids,
+                         set(range(1, 49)))
+
+    def test_three_mythics_all_featured(self) -> None:
+        """The 3 mythic-rarity characters (Celestial Dumpling Core,
+        Singularity Goo Core, Mythic Plush Familiar) must all be in
+        Featured-21 since each gets a dedicated tier-finale page."""
+        mythics = [c for c in all_characters() if c.rarity == "mythic"]
+        self.assertEqual(len(mythics), 3, "Locked at 3 mythics, not 4")
+        for m in mythics:
+            self.assertIn(m.num, FEATURED_NUMS,
+                          f"Mythic {m.name} must be hero-treated")
+
+
+class ManuscriptV2Tests(unittest.TestCase):
+    """Phase-1 deliverable: the v2 manuscript exists, references the
+    Squishkeeper voice, includes the Featured-21 by name, and stays inside
+    the per-page word budgets the elevation plan locked."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.manuscript = (Path(__file__).resolve().parents[1]
+                          / "manuscript" / "02_manuscript_v2.md")
+
+    def test_manuscript_v2_exists(self) -> None:
+        self.assertTrue(self.manuscript.exists(),
+                        f"Missing {self.manuscript}")
+
+    def test_manuscript_mentions_squishkeeper(self) -> None:
+        text = self.manuscript.read_text(encoding="utf-8")
+        self.assertIn("Squishkeeper", text,
+                      "Manuscript must use the Squishkeeper narrator voice")
+
+    def test_manuscript_includes_all_featured_characters(self) -> None:
+        text = self.manuscript.read_text(encoding="utf-8")
+        for c in featured_characters():
+            with self.subTest(char=c.name):
+                self.assertIn(c.name, text,
+                              f"Featured character {c.name} missing from manuscript")
+
+    def test_manuscript_includes_map_regions(self) -> None:
+        """Page 4 establishes three named regions used as 'first spotted at'
+        anchors throughout the book. Lock the names."""
+        text = self.manuscript.read_text(encoding="utf-8")
+        for region in ("Pudding Hills", "Goo Coast", "Moonlit Hollow"):
+            self.assertIn(region, text)
 
 
 if __name__ == "__main__":
