@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../core/service_locator.dart';
 import 'models/content_pack.dart';
 import 'models/liveops_schedule.dart';
 
@@ -56,7 +56,15 @@ class ContentLoader {
         _assertSchemaVersion(path, map);
         packs.add(ContentPack.fromJson(map));
       } catch (e, st) {
-        debugPrint('ContentLoader: failed to load pack "$path": $e\n$st');
+        // Bundle-load failures used to debugPrint, which doesn't
+        // reach Sentry in release builds (P1.23). Now they route
+        // through diagnostics so a broken pack JSON shows up in
+        // crash reporting AND in the in-app diagnostics overlay.
+        ServiceLocator.diagnostics.record(
+          source: 'content',
+          error: 'pack load "$path" failed: $e',
+          stack: st,
+        );
       }
     }
     LiveOpsSchedule schedule = const LiveOpsSchedule(featuredRotation: []);
@@ -66,7 +74,11 @@ class ContentLoader {
       _assertSchemaVersion(schedulePath, scheduleMap);
       schedule = LiveOpsSchedule.fromJson(scheduleMap);
     } catch (e, st) {
-      debugPrint('ContentLoader: failed to load schedule: $e\n$st');
+      ServiceLocator.diagnostics.record(
+        source: 'content',
+        error: 'schedule load failed: $e',
+        stack: st,
+      );
     }
     return LoadedContent(packs: packs, schedule: schedule);
   }

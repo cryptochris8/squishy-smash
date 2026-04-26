@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../core/service_locator.dart';
 import 'content_loader.dart' show AssetReader;
 import 'models/card_entry.dart';
 
@@ -42,7 +42,12 @@ class CardManifestLoader {
           .map(CardEntry.fromJson)
           .toList(growable: false);
     } catch (e, st) {
-      debugPrint('CardManifestLoader: failed to load main manifest: $e\n$st');
+      // P1.23: route to diagnostics so Sentry sees a broken bundle.
+      ServiceLocator.diagnostics.record(
+        source: 'card_manifest',
+        error: 'main manifest load failed: $e',
+        stack: st,
+      );
       return const <CardEntry>[];
     }
   }
@@ -56,7 +61,11 @@ class CardManifestLoader {
           .map(CustomCardEntry.fromJson)
           .toList(growable: false);
     } catch (e, st) {
-      debugPrint('CardManifestLoader: failed to load custom manifest: $e\n$st');
+      ServiceLocator.diagnostics.record(
+        source: 'card_manifest',
+        error: 'custom manifest load failed: $e',
+        stack: st,
+      );
       return const <CustomCardEntry>[];
     }
   }

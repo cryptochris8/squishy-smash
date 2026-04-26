@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
+
+import '../../core/service_locator.dart';
 
 class SoundManager {
   SoundManager();
@@ -26,9 +28,17 @@ class SoundManager {
     if (cleaned.isEmpty) return;
     try {
       await FlameAudio.audioCache.loadAll(cleaned);
-      debugPrint('SoundManager: warmed ${cleaned.length} audio assets');
+      // P1.23: success log only in debug — release builds shouldn't
+      // ship per-boot info-level chatter to device stdout.
+      if (kDebugMode) {
+        debugPrint('SoundManager: warmed ${cleaned.length} audio assets');
+      }
     } catch (e, st) {
-      debugPrint('SoundManager: warm FAILED — $e\n$st');
+      ServiceLocator.diagnostics.record(
+        source: 'audio',
+        error: 'warm failed: $e',
+        stack: st,
+      );
     }
   }
 
@@ -37,8 +47,12 @@ class SoundManager {
     final normalized = _normalize(assetPath);
     try {
       await FlameAudio.play(normalized, volume: 0.9);
-    } catch (e) {
-      debugPrint('SoundManager: play("$normalized") FAILED — $e');
+    } catch (e, st) {
+      ServiceLocator.diagnostics.record(
+        source: 'audio',
+        error: 'play("$normalized") failed: $e',
+        stack: st,
+      );
     }
   }
 

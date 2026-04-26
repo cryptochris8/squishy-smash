@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../core/service_locator.dart';
 import 'content_loader.dart' show AssetReader;
 import 'models/economy_config.dart';
 
@@ -29,7 +29,14 @@ class EconomyConfigLoader {
       _assertSchemaVersion(map);
       return EconomyConfig.fromJson(map);
     } catch (e, st) {
-      debugPrint('EconomyConfigLoader: falling back to defaults: $e\n$st');
+      // P1.23: route to diagnostics so Sentry sees a broken
+      // economy.json. Fallback to defaults still happens — we just
+      // also notify so we know the live config wasn't applied.
+      ServiceLocator.diagnostics.record(
+        source: 'economy_config',
+        error: 'load failed; falling back to defaults: $e',
+        stack: st,
+      );
       return const EconomyConfig();
     }
   }
