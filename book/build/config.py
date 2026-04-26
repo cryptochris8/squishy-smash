@@ -66,6 +66,7 @@ BARCODE_INSET = 0.25 * INCH
 # ---------------------------------------------------------------------------
 
 PALETTE = {
+    # Phase-1 base palette (matches in-app + website + screenshot pipe).
     "bg": "#120B17",
     "ink": "#1B1322",
     "pink": "#FF8FB8",
@@ -75,12 +76,78 @@ PALETTE = {
     "lime": "#B6FF5C",
     "white": "#FFFFFF",
     "soft_white": "#FFF6EE",
+
+    # Phase-2 visual-system extensions (per book/ELEVATION_PLAN.md).
+    # See ELEVATION_PLAN §"Visual system extension" for the role of
+    # each token. Added here rather than scattered through layout
+    # code so a future palette tweak is a one-file change.
+    "deep_plum":    "#0A0610",   # darker than `bg` — vignette / spine
+    "velvet":       "#2A1838",   # premium-page base under mythic frames
+    "parchment":    "#FFF4DD",   # cream variant for body-type backgrounds
+    "rose_dust":    "#F2B0CC",   # soft pink decorative rules
+    "gold":         "#E8B860",   # mythic foil edge
+    "gold_hi":      "#FFE8A6",   # mythic highlight glow
+    "shadow_warm":  "#3A1A2E",   # warm shadow under foods/creatures cards
+    "shadow_cool":  "#0F2536",   # cool shadow under goo cards
 }
 
 PACK_TINTS = {
     "Squishy Foods": PALETTE["lime"],
     "Goo & Fidgets": PALETTE["jelly_blue"],
     "Creepy-Cute Creatures": PALETTE["lavender"],
+}
+
+# (top, bottom) hex pairs for the per-pack background gradient.
+# Phase 3 will use these to render the pack-portal + scene spreads
+# (T5/T6 templates) so each pack reads as its own visual world.
+PACK_BG_GRADIENT = {
+    "Squishy Foods":          ("#1A0F1E", "#2B1A20"),  # warm plum -> cocoa
+    "Goo & Fidgets":          ("#0F1726", "#0A1F2E"),  # midnight teal
+    "Creepy-Cute Creatures":  ("#1A0F26", "#221033"),  # haunted lavender
+}
+
+# Rarity-ring spec for `draw_card_frame()`. Per ELEVATION_PLAN, the
+# common tier is intentionally muted (no glow), rare/epic glow lightly,
+# mythic gets a heavy gold halo. `stops` drives the bloom radius — 0
+# means "no glow ring," 3 means "wide soft halo."
+RARITY_RING = {
+    "common":  {"edge": "#3A2D44", "glow": None,            "stops": 0},
+    "rare":    {"edge": "#7FE7FF", "glow": "#7FE7FF",        "stops": 1},
+    "epic":    {"edge": "#C98BFF", "glow": "#C98BFF",        "stops": 2},
+    "mythic":  {"edge": "#E8B860", "glow": "#FFE8A6",        "stops": 3},
+}
+
+# Drop-shadow geometry for the card-frame compositor. Values are
+# absolute pt at the canvas's native resolution; the renderer scales
+# them down for thumbnails. Alpha is 0-1 float to match Pillow's
+# putalpha API.
+SHADOW = {
+    "card_drop":    {"dx": 0,  "dy": 6,  "blur": 14, "alpha": 0.45},
+    "card_rim":     {"dx": 0,  "dy": -1, "blur": 2,  "alpha": 0.35},
+    "headline":     {"dx": 0,  "dy": 2,  "blur": 0,  "alpha": 0.60},
+}
+
+# Glow halo sizing for rare+ rarity rings.
+GLOW = {
+    "rare_halo":    {"radius": 22, "alpha": 0.30},
+    "epic_halo":    {"radius": 30, "alpha": 0.40},
+    "mythic_halo":  {"radius": 44, "alpha": 0.55},
+}
+
+# Filename map for the Phase-2 baked pack textures. See
+# `book/build/bake_textures.py` for the generator.
+TEXTURE_DIR = REPO_ROOT / "book" / "assets" / "textures"
+TEXTURE = {
+    "sprinkles":  TEXTURE_DIR / "sprinkles_foods.png",
+    "bubbles":    TEXTURE_DIR / "bubbles_goo.png",
+    "moondust":   TEXTURE_DIR / "moondust_creatures.png",
+}
+
+# Per-pack texture pointer used by the gradient renderer.
+PACK_TEXTURE = {
+    "Squishy Foods":          TEXTURE["sprinkles"],
+    "Goo & Fidgets":          TEXTURE["bubbles"],
+    "Creepy-Cute Creatures":  TEXTURE["moondust"],
 }
 
 # ---------------------------------------------------------------------------
