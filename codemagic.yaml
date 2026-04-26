@@ -120,12 +120,21 @@ workflows:
         # Forward the Sentry DSN at build time. The Dart-side init in
         # main.dart only runs when SENTRY_DSN is non-empty, so this
         # flag is what flips crash reporting on for the shipped IPA.
-        # Export-options-plist is omitted intentionally — Flutter
-        # generates one from the applied provisioning profile, which
-        # works on a fresh Codemagic runner where no plist is staged.
+        #
+        # The --export-options-plist points at the file that the
+        # `xcode-project use-profiles` step (above) writes to
+        # /Users/builder/export_options.plist on the Codemagic
+        # mac_mini_m2 runner. Without this flag, `flutter build ipa`
+        # archives successfully but fails the IPA export step with
+        # "Runner.app requires a provisioning profile" — even though
+        # the .xcarchive already has the profile applied. The flag
+        # tells Xcode HOW to use the profile (app-store method, the
+        # right team, etc.) which the auto-generated default does
+        # not.
         script: |
           flutter build ipa --release \
-            --dart-define=SENTRY_DSN="$SENTRY_DSN"
+            --dart-define=SENTRY_DSN="$SENTRY_DSN" \
+            --export-options-plist=/Users/builder/export_options.plist
       - name: Upload dSYMs to Sentry
         # Without symbolication every release crash is a wall of
         # raw hex addresses — Sentry becomes cosmetic. The Codemagic
