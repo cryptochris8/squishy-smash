@@ -11,6 +11,7 @@ import '../game/share_capture.dart';
 import '../game/squishy_game.dart';
 import 'widgets/reward_toast_overlay.dart';
 import 'widgets/starter_bundle_popup.dart';
+import '../core/constants.dart';
 
 class GameplayScreen extends StatefulWidget {
   const GameplayScreen({super.key});
@@ -115,16 +116,24 @@ class _GameplayScreenState extends State<GameplayScreen>
       SnackBar(
         // P1.4 — extended from 6 s to 10 s. Six seconds was too
         // short for a 5-year-old to read "Mythic! Save this clip?"
-        // and react. Snackbar is also user-dismissible (showCloseIcon)
-        // so a parent can swipe it away if they're mid-round.
+        // and react. Snackbar is also user-dismissible (showCloseIcon).
+        // P1.20 — visual treatment aligned to RewardToast: black-at-
+        // 55%-alpha pill, cream-tinted border + glow, 999 radius.
+        // Same brand language as the duplicate / milestone toasts so
+        // all three "celebration" surfaces read as one family.
         duration: const Duration(seconds: 10),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFF3B2F4F),
+        backgroundColor: Colors.black.withValues(alpha: 0.55),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(999),
+          side: const BorderSide(color: Palette.cream, width: 1.4),
+        ),
         showCloseIcon: true,
         closeIconColor: Colors.white70,
         content: const Row(
           children: <Widget>[
-            Icon(Icons.auto_awesome, color: Color(0xFFFFD36E)),
+            Icon(Icons.auto_awesome, color: Palette.cream),
             SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -139,7 +148,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         ),
         action: SnackBarAction(
           label: 'SHARE',
-          textColor: const Color(0xFFFFD36E),
+          textColor: Palette.cream,
           onPressed: () => _shareNow(Rarity.mythic),
         ),
       ),
@@ -154,7 +163,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1320),
+        backgroundColor: Palette.bgSurface,
         title: const Text(
           'Quit this round?',
           style: TextStyle(color: Colors.white),
@@ -169,14 +178,14 @@ class _GameplayScreenState extends State<GameplayScreen>
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text(
               'Keep playing',
-              style: TextStyle(color: Color(0xFFFFD36E)),
+              style: TextStyle(color: Palette.cream),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text(
               'Quit',
-              style: TextStyle(color: Color(0xFFFF8FB8)),
+              style: TextStyle(color: Palette.pink),
             ),
           ),
         ],

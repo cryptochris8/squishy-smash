@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../core/diagnostics.dart';
 import '../core/service_locator.dart';
+import '../core/constants.dart';
 
 /// In-app log viewer for the global error buffer. Critical given the
 /// no-Mac-access constraint — without Xcode, this is the only way to
@@ -94,15 +95,15 @@ class _EntryTile extends StatelessWidget {
   Color get _sourceColor {
     switch (entry.source) {
       case 'flutter':
-        return const Color(0xFFFFD36E);
+        return Palette.cream;
       case 'platform':
-        return const Color(0xFFFF8FB8);
+        return Palette.pink;
       case 'zone':
-        return const Color(0xFFC98BFF);
+        return Palette.lavender;
       case 'bootstrap':
         return const Color(0xFFFF6B6B);
       default:
-        return const Color(0xFF7FE7FF);
+        return Palette.jellyBlue;
     }
   }
 
@@ -195,7 +196,7 @@ class _EmptyState extends StatelessWidget {
             Icon(
               Icons.check_circle_outline,
               size: 56,
-              color: const Color(0xFFB6FF5C).withValues(alpha: 0.7),
+              color: Palette.toxicLime.withValues(alpha: 0.7),
             ),
             const SizedBox(height: 16),
             const Text(

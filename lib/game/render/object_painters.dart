@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/painting.dart';
 
 import '../../data/models/smashable_def.dart';
+import '../../core/constants.dart';
 
 class ObjectPainter {
   ObjectPainter._();
@@ -25,17 +26,17 @@ class ObjectPainter {
   static Color _bodyColor(SmashableDef def) {
     switch (def.themeTag) {
       case 'jelly_cube':
-        return const Color(0xFF7FE7FF);
+        return Palette.jellyBlue;
       case 'soft_dessert':
         return const Color(0xFFFFE6BD);
       case 'viral_food_energy':
         return const Color(0xFFFFC4D6);
       case 'anti_stress':
-        return const Color(0xFFB6FF5C);
+        return Palette.toxicLime;
       case 'slime_pod':
         return const Color(0xFF7DE38A);
       case 'pop_pod':
-        return const Color(0xFF7FE7FF);
+        return Palette.jellyBlue;
       case 'blind_box_vibe':
         return const Color(0xFFB084F2);
       case 'snaggletooth':
@@ -43,7 +44,7 @@ class ObjectPainter {
       case 'mischievous_blob':
         return const Color(0xFF8C66E0);
       default:
-        return const Color(0xFFFF8FB8);
+        return Palette.pink;
     }
   }
 

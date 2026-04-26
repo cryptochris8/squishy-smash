@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../monetization/product_catalog.dart';
+import '../../core/constants.dart';
 
 /// Premium IAP card used in the Shop's "Offers" section. Matches the
 /// pastel-gradient language of PackCard so the shop reads consistently.
@@ -27,8 +28,8 @@ class IapProductCard extends StatelessWidget {
     final price = livePrice ?? product.fallbackPrice;
     final gradient = LinearGradient(
       colors: [
-        const Color(0xFFFF8FB8).withValues(alpha: 0.35),
-        const Color(0xFFFFD36E).withValues(alpha: 0.28),
+        Palette.pink.withValues(alpha: 0.35),
+        Palette.cream.withValues(alpha: 0.28),
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
@@ -37,7 +38,7 @@ class IapProductCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFFF8FB8), width: 1.4),
+        border: Border.all(color: Palette.pink, width: 1.4),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -60,7 +61,7 @@ class IapProductCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFD36E),
+                    color: Palette.cream,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
@@ -110,12 +111,12 @@ class _OwnedBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.check_circle, color: Color(0xFFB6FF5C)),
+        const Icon(Icons.check_circle, color: Palette.toxicLime),
         const SizedBox(width: 8),
         Text(
           'Owned',
           style: TextStyle(
-            color: const Color(0xFFB6FF5C),
+            color: Palette.toxicLime,
             fontSize: 15,
             fontWeight: FontWeight.w800,
           ),
@@ -145,14 +146,14 @@ class _PriceAndCta extends StatelessWidget {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w900,
-            color: Color(0xFFFFD36E),
+            color: Palette.cream,
           ),
         ),
         const Spacer(),
         ElevatedButton(
           onPressed: purchasing ? null : onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFF8FB8),
+            backgroundColor: Palette.pink,
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -198,7 +199,7 @@ class _RewardList extends StatelessWidget {
               children: [
                 const Text('  •  ',
                     style: TextStyle(
-                      color: Color(0xFFFFD36E),
+                      color: Palette.cream,
                       fontWeight: FontWeight.w900,
                     )),
                 Expanded(

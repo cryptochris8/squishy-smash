@@ -4,6 +4,7 @@ import '../core/routes.dart';
 import '../core/service_locator.dart';
 import 'gameplay_screen.dart';
 import 'widgets/big_button.dart';
+import '../core/constants.dart';
 
 class ResultsScreen extends StatelessWidget {
   const ResultsScreen({super.key});
@@ -39,13 +40,13 @@ class ResultsScreen extends StatelessWidget {
               const Spacer(),
               BigButton(
                 label: 'PLAY AGAIN',
-                color: const Color(0xFFFF8FB8),
+                color: Palette.pink,
                 onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.play),
               ),
               const SizedBox(height: 12),
               BigButton(
                 label: 'MENU',
-                color: const Color(0xFF7FE7FF),
+                color: Palette.jellyBlue,
                 onTap: () => Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.menu,

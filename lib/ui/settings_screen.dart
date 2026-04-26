@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../core/routes.dart';
 import '../core/service_locator.dart';
 import '../game/systems/arena_registry.dart';
-import 'diagnostics_screen.dart';
+import '../core/constants.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -70,13 +71,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             trailing: const Icon(Icons.chevron_right, color: Colors.white54),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const DiagnosticsScreen(),
-                ),
-              );
-            },
+            onTap: () =>
+                Navigator.of(context).pushNamed(AppRoutes.diagnostics),
+          ),
+          ListTile(
+            leading: const Icon(Icons.info_outline,
+                color: Colors.white70),
+            title: const Text('About'),
+            subtitle: Text(
+              'Version, credits, support links',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withValues(alpha: 0.55),
+              ),
+            ),
+            trailing:
+                const Icon(Icons.chevron_right, color: Colors.white54),
+            onTap: () =>
+                Navigator.of(context).pushNamed(AppRoutes.about),
           ),
         ],
       ),
@@ -150,7 +162,7 @@ class _ArenaTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderColor = isActive
-        ? const Color(0xFFFF8FB8)
+        ? Palette.pink
         : Colors.white.withValues(alpha: 0.12);
     // Compose an assistive-tech-friendly label that includes the
     // arena name, ownership state, and active state. Without this,

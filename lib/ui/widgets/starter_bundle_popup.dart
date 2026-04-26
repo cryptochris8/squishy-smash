@@ -4,6 +4,7 @@ import '../../analytics/events.dart';
 import '../../core/service_locator.dart';
 import '../../monetization/iap_service.dart';
 import '../../monetization/product_catalog.dart';
+import '../../core/constants.dart';
 
 /// Celebratory Starter Bundle paywall shown once, after the player's
 /// very first rare (or better) burst. Treated as an offer — not a
@@ -138,7 +139,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFF8FB8), Color(0xFFC98BFF), Color(0xFF7FE7FF)],
+            colors: [Palette.pink, Palette.lavender, Palette.jellyBlue],
           ),
           borderRadius: BorderRadius.circular(28),
           boxShadow: const [
@@ -161,14 +162,14 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
             children: [
               const Icon(
                 Icons.auto_awesome,
-                color: Color(0xFFFFD36E),
+                color: Palette.cream,
                 size: 40,
               ),
               const SizedBox(height: 10),
               const Text(
                 'First rare unlocked!',
                 style: TextStyle(
-                  color: Color(0xFFFFD36E),
+                  color: Palette.cream,
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -212,7 +213,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                 child: ElevatedButton(
                   onPressed: _purchasing ? null : _purchase,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD36E),
+                    backgroundColor: Palette.cream,
                     foregroundColor: const Color(0xFF1A0F23),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -269,7 +270,7 @@ class _BundleRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(Icons.check_circle,
-              color: Color(0xFFB6FF5C), size: 18),
+              color: Palette.toxicLime, size: 18),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

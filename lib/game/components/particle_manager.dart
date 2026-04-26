@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/painting.dart';
+import '../../core/constants.dart';
 
 class ParticleManager extends Component {
   final Random _rng = Random();
@@ -33,18 +34,18 @@ class ParticleManager extends Component {
   Color _colorForPreset(String preset) {
     switch (preset) {
       case 'blue_jelly_burst':
-        return const Color(0xFF7FE7FF);
+        return Palette.jellyBlue;
       case 'cream_puff_burst':
         return const Color(0xFFFFE6BD);
       case 'green_goo_burst':
-        return const Color(0xFFB6FF5C);
+        return Palette.toxicLime;
       case 'purple_monster_burst':
         return const Color(0xFFB084F2);
       case 'gold_mythic_burst':
         return const Color(0xFFFFD15C);
       case 'pink_soup_burst':
       default:
-        return const Color(0xFFFF8FB8);
+        return Palette.pink;
     }
   }
 }

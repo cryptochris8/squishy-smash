@@ -17,14 +17,14 @@ ReleaseType _parseReleaseType(String? raw) {
   }
 }
 
-class Palette {
-  const Palette({required this.primary, required this.secondary, required this.accent});
+class PackPalette {
+  const PackPalette({required this.primary, required this.secondary, required this.accent});
 
   final String primary;
   final String secondary;
   final String accent;
 
-  factory Palette.fromJson(Map<String, dynamic> json) => Palette(
+  factory PackPalette.fromJson(Map<String, dynamic> json) => PackPalette(
         primary: json['primary'] as String,
         secondary: json['secondary'] as String,
         accent: json['accent'] as String,
@@ -228,7 +228,7 @@ class ContentPack {
   final String displayName;
   final String themeTag;
   final ReleaseType releaseType;
-  final Palette palette;
+  final PackPalette palette;
   final String arenaSuggestion;
   final String featuredAudioSet;
   final List<SmashableDef> objects;
@@ -250,7 +250,7 @@ class ContentPack {
         displayName: json['displayName'] as String,
         themeTag: json['themeTag'] as String,
         releaseType: _parseReleaseType(json['releaseType'] as String?),
-        palette: Palette.fromJson(json['palette'] as Map<String, dynamic>),
+        palette: PackPalette.fromJson(json['palette'] as Map<String, dynamic>),
         arenaSuggestion: json['arenaSuggestion'] as String,
         featuredAudioSet: json['featuredAudioSet'] as String,
         objects: (json['objects'] as List)

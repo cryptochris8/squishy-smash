@@ -10,6 +10,7 @@ import '../monetization/product_catalog.dart';
 import 'widgets/coin_badge.dart';
 import 'widgets/iap_product_card.dart';
 import 'widgets/pack_card.dart';
+import '../core/constants.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -258,7 +259,7 @@ class _SectionHeader extends StatelessWidget {
       style: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w900,
-        color: Color(0xFFFFD36E),
+        color: Palette.cream,
         letterSpacing: 1.4,
       ),
     );
@@ -340,12 +341,12 @@ class _ArenaSkuCard extends StatelessWidget {
             ),
           ),
           if (unlocked)
-            const Icon(Icons.check_circle, color: Color(0xFFB6FF5C))
+            const Icon(Icons.check_circle, color: Palette.toxicLime)
           else ...[
             Text(
               '${theme.cost}',
               style: const TextStyle(
-                color: Color(0xFFFFD36E),
+                color: Palette.cream,
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),

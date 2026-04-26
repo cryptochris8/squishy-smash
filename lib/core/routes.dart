@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 
+import '../ui/about_screen.dart';
 import '../ui/collection_screen.dart';
+import '../ui/diagnostics_screen.dart';
 import '../ui/gameplay_screen.dart';
 import '../ui/menu_screen.dart';
 import '../ui/results_screen.dart';
@@ -16,6 +18,8 @@ class AppRoutes {
   static const String shop = '/shop';
   static const String settings = '/settings';
   static const String collection = '/collection';
+  static const String about = '/about';
+  static const String diagnostics = '/diagnostics';
 
   static final Map<String, WidgetBuilder> table = <String, WidgetBuilder>{
     menu: (_) => const MenuScreen(),
@@ -24,5 +28,7 @@ class AppRoutes {
     shop: (_) => const ShopScreen(),
     settings: (_) => const SettingsScreen(),
     collection: (_) => const CollectionScreen(),
+    about: (_) => const AboutScreen(),
+    diagnostics: (_) => const DiagnosticsScreen(),
   };
 }

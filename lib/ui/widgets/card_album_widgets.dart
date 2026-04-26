@@ -28,7 +28,7 @@ class FilterPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = tint ?? const Color(0xFFFFD36E);
+    final color = tint ?? Palette.cream;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -112,7 +112,7 @@ class BurstProgressBar extends StatelessWidget {
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w900,
-            color: Color(0xFFFFD36E),
+            color: Palette.cream,
             letterSpacing: 1.2,
           ),
         ),
@@ -124,7 +124,7 @@ class BurstProgressBar extends StatelessWidget {
             minHeight: 8,
             backgroundColor: Colors.white.withValues(alpha: 0.08),
             valueColor: const AlwaysStoppedAnimation<Color>(
-              Color(0xFFFFD36E),
+              Palette.cream,
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/painting.dart';
+import '../../core/constants.dart';
 
 /// Maps a pack's `arenaSuggestion` string to the skybox PNG filenames
 /// (sans directory prefix) and the fallback gradient palette used when
@@ -113,8 +114,8 @@ class ArenaRegistry {
   static const ArenaTheme _fallback = ArenaTheme(
     key: 'mochi_sunset_beach',
     displayName: 'Mochi Sunset Beach',
-    calmColors: <Color>[Color(0xFF24172C), Color(0xFF120B17)],
-    revealColors: <Color>[Color(0xFFFFD36E), Color(0xFFFF8FB8)],
+    calmColors: <Color>[Color(0xFF24172C), Palette.bgDeep],
+    revealColors: <Color>[Palette.cream, Palette.pink],
   );
 
   /// The arena a brand-new player starts in (matches the launch pack).

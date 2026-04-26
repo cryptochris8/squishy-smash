@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../squishy_game.dart';
 import '../systems/combo_controller.dart';
+import '../../core/constants.dart';
 
 /// Thin Flutter overlay for the score/multiplier/fill bar. Listens to
 /// `SquishyGame.hudNotifier` so it only rebuilds on real state changes
@@ -22,7 +23,7 @@ class HudOverlay extends StatelessWidget {
         return (color: Colors.white70, fontSize: 22, weight: FontWeight.w700);
       case ComboTier.starter:
         return (
-          color: const Color(0xFFFFD36E),
+          color: Palette.cream,
           fontSize: 24,
           weight: FontWeight.w800,
         );
@@ -34,13 +35,13 @@ class HudOverlay extends StatelessWidget {
         );
       case ComboTier.revealReady:
         return (
-          color: const Color(0xFFFF8FB8),
+          color: Palette.pink,
           fontSize: 32,
           weight: FontWeight.w900,
         );
       case ComboTier.mega:
         return (
-          color: const Color(0xFFB6FF5C),
+          color: Palette.toxicLime,
           fontSize: 36,
           weight: FontWeight.w900,
         );
@@ -51,13 +52,13 @@ class HudOverlay extends StatelessWidget {
     switch (tier) {
       case ComboTier.none:
       case ComboTier.starter:
-        return const Color(0xFFFF8FB8);
+        return Palette.pink;
       case ComboTier.stronger:
-        return const Color(0xFFFFD36E);
+        return Palette.cream;
       case ComboTier.revealReady:
-        return const Color(0xFFC98BFF);
+        return Palette.lavender;
       case ComboTier.mega:
-        return const Color(0xFFB6FF5C);
+        return Palette.toxicLime;
     }
   }
 

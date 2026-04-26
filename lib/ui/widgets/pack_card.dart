@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/models/content_pack.dart';
+import '../../core/constants.dart';
 
 class PackCard extends StatelessWidget {
   const PackCard({
@@ -52,12 +53,12 @@ class PackCard extends StatelessWidget {
                 ),
               ),
               if (unlocked)
-                const Icon(Icons.check_circle, color: Color(0xFFB6FF5C))
+                const Icon(Icons.check_circle, color: Palette.toxicLime)
               else
                 Text(
                   '${pack.unlockCost} coins',
                   style: const TextStyle(
-                    color: Color(0xFFFFD36E),
+                    color: Palette.cream,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

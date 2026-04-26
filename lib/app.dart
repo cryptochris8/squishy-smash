@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'core/routes.dart';
+import 'core/constants.dart';
 
 /// Font family registered in pubspec.yaml under `flutter > fonts`.
 /// Bundled (not fetched at runtime) so the app's typography is locked
@@ -16,11 +17,11 @@ class SquishySmashApp extends StatelessWidget {
     final base = ThemeData(
       brightness: Brightness.dark,
       colorScheme: const ColorScheme.dark(
-        primary: Color(0xFFFF8FB8),
-        secondary: Color(0xFFFFD36E),
-        surface: Color(0xFF1A1320),
+        primary: Palette.pink,
+        secondary: Palette.cream,
+        surface: Palette.bgSurface,
       ),
-      scaffoldBackgroundColor: const Color(0xFF120B17),
+      scaffoldBackgroundColor: Palette.bgDeep,
       useMaterial3: true,
     );
     return MaterialApp(

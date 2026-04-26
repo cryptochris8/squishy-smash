@@ -5,6 +5,7 @@ import '../core/service_locator.dart';
 import 'widgets/big_button.dart';
 import 'widgets/coin_badge.dart';
 import 'widgets/floating_mascot.dart';
+import '../core/constants.dart';
 
 /// Hero image shown idling on the menu's dead space. Picked from the
 /// launch pack's Legendary tier — splashy art that signals "rare
@@ -49,11 +50,11 @@ class MenuScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFFF8FB8), width: 1.5),
+                    border: Border.all(color: Palette.pink, width: 1.5),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.local_fire_department, color: Color(0xFFFFD36E)),
+                      const Icon(Icons.local_fire_department, color: Palette.cream),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -77,26 +78,26 @@ class MenuScreen extends StatelessWidget {
               ),
               BigButton(
                 label: 'PLAY',
-                color: const Color(0xFFFF8FB8),
+                color: Palette.pink,
                 onTap: () => Navigator.pushNamed(context, AppRoutes.play),
               ),
               const SizedBox(height: 12),
               BigButton(
                 label: 'SHOP',
-                color: const Color(0xFFFFD36E),
+                color: Palette.cream,
                 onTap: () => Navigator.pushNamed(context, AppRoutes.shop),
               ),
               const SizedBox(height: 12),
               BigButton(
                 label: 'COLLECTION',
-                color: const Color(0xFFC98BFF),
+                color: Palette.lavender,
                 onTap: () =>
                     Navigator.pushNamed(context, AppRoutes.collection),
               ),
               const SizedBox(height: 12),
               BigButton(
                 label: 'SETTINGS',
-                color: const Color(0xFF7FE7FF),
+                color: Palette.jellyBlue,
                 onTap: () => Navigator.pushNamed(context, AppRoutes.settings),
               ),
               const SizedBox(height: 24),

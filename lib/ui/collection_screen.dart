@@ -7,6 +7,7 @@ import '../data/models/achievement.dart';
 import '../data/models/card_entry.dart';
 import '../data/models/rarity.dart';
 import 'widgets/card_album_widgets.dart';
+import '../core/constants.dart';
 
 /// Card-album collection screen. Shows all 48 cards from the manifest
 /// in a pack-grouped grid; locked cards render as silhouettes, unlocked
@@ -114,7 +115,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   ) async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF1A1320),
+      backgroundColor: Palette.bgSurface,
       isScrollControlled: true,
       builder: (_) => _CardDetailSheet(
         card: card,
@@ -140,7 +141,7 @@ class _AlbumHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFF8FB8), width: 1.5),
+        border: Border.all(color: Palette.pink, width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,7 +163,7 @@ class _AlbumHeader extends StatelessWidget {
               minHeight: 8,
               backgroundColor: Colors.white.withValues(alpha: 0.08),
               valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFFB6FF5C),
+                Palette.toxicLime,
               ),
             ),
           ),
@@ -547,7 +548,7 @@ class _PurchaseButton extends StatelessWidget {
         ElevatedButton(
           onPressed: canAfford ? onPressed : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFFD36E),
+            backgroundColor: Palette.cream,
             disabledBackgroundColor: Colors.white.withValues(alpha: 0.1),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
@@ -580,7 +581,7 @@ class _PurchaseButton extends StatelessWidget {
             error!,
             style: const TextStyle(
               fontSize: 12,
-              color: Color(0xFFFF8FB8),
+              color: Palette.pink,
             ),
           ),
         ],
@@ -655,7 +656,7 @@ class _CustomFamilySection extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w900,
-              color: Color(0xFFC98BFF),
+              color: Palette.lavender,
               letterSpacing: 1.4,
             ),
           ),

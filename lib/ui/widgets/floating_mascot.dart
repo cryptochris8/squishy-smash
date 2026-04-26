@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../../core/constants.dart';
 
 /// Idle hero image that bobs gently on the menu screen so the empty
 /// space between the title and the action buttons doesn't read as
@@ -23,7 +24,7 @@ class FloatingMascot extends StatefulWidget {
     this.width = 180,
     this.bobAmplitude = 6.0,
     this.bobDuration = const Duration(milliseconds: 2500),
-    this.glowColor = const Color(0xFFFF8FB8),
+    this.glowColor = Palette.pink,
   });
 
   final String assetPath;
