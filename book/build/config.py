@@ -28,8 +28,30 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CARDS_DIR = REPO_ROOT / "assets" / "cards" / "final_48"
 FONT_PATH = REPO_ROOT / "website" / "public" / "fonts" / "Fredoka.ttf"
-BRAND_ICON = REPO_ROOT / "assets" / "branding" / "squishy_smash_icon_bunny_v1.png"
+BRAND_ICON = REPO_ROOT / "branding" / "icon" / "squishy_smash_icon_bunny_v1.png"
 OUT_DIR = Path(__file__).resolve().parent / "out"
+
+# ---------------------------------------------------------------------------
+# Phase-3 typography stack
+# ---------------------------------------------------------------------------
+# Three deliberate typographic roles per the elevation plan:
+#   * display — wordmarks, character names, section titles. Fredoka.
+#   * body    — narrator letter, bios, body prose. EB Garamond
+#               (humanist serif, "this is a real book" lever).
+#   * accent  — Squishkeeper italic flourishes, mythic flavor pulls,
+#               hand-feel callouts. Caveat Brush (script).
+#
+# Variable fonts deliver multiple weights from a single file via
+# their wght axis. Pillow's ImageFont.truetype reads them fine; the
+# weight is selected via font_variant() at draw time.
+
+BOOK_FONT_DIR = REPO_ROOT / "book" / "assets" / "fonts"
+FONTS = {
+    "display":          FONT_PATH,
+    "body":             BOOK_FONT_DIR / "EBGaramond-Variable.ttf",
+    "body_italic":      BOOK_FONT_DIR / "EBGaramond-Italic-Variable.ttf",
+    "accent":           BOOK_FONT_DIR / "CaveatBrush-Regular.ttf",
+}
 
 # ---------------------------------------------------------------------------
 # Page geometry (points; 1 inch = 72 pt)
