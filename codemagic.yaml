@@ -55,9 +55,14 @@ workflows:
         #   - SENTRY_DSN (secure) — full DSN URL from Sentry for crash
         #     reporting; gets passed to `flutter build ipa` via
         #     `--dart-define=SENTRY_DSN=$SENTRY_DSN` so release builds
-        #     forward errors. Empty/missing is allowed (Sentry init
-        #     falls through silently when the DSN is empty), but real
-        #     TestFlight/App Store builds should always have it set.
+        #     forward errors. Validated at the start of the build —
+        #     missing/empty fails the run loudly rather than shipping
+        #     silently with crash reporting off.
+        #   - SENTRY_AUTH_TOKEN (secure) — internal-integration token
+        #     from sentry.io with `project:write` so the post-archive
+        #     step can upload dSYMs for symbolication.
+        #   - SENTRY_ORG (plain) — slug, e.g. "squishy-smash"
+        #   - SENTRY_PROJECT (plain) — slug, e.g. "squishy-smash-ios"
         - smash
       vars:
         BUNDLE_ID: "com.athletedomains.squishySmash"
@@ -69,6 +74,22 @@ workflows:
         - pattern: "v*"
           include: true
     scripts:
+      - name: Verify required secrets
+        # Fail the build loudly when SENTRY_DSN is missing rather
+        # than shipping an IPA that's silently invisible to crash
+        # reporting. Repeat for the dSYM-upload secrets.
+        script: |
+          missing=""
+          for var in SENTRY_DSN SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
+            if [ -z "$(eval echo \$$var)" ]; then
+              missing="$missing $var"
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "ERROR: missing required secrets in 'smash' group:$missing"
+            echo "Add them in Codemagic dashboard before re-running."
+            exit 1
+          fi
       - name: Flutter packages
         script: flutter pub get
       - name: Static analysis
@@ -99,10 +120,28 @@ workflows:
         # Forward the Sentry DSN at build time. The Dart-side init in
         # main.dart only runs when SENTRY_DSN is non-empty, so this
         # flag is what flips crash reporting on for the shipped IPA.
+        # Export-options-plist is omitted intentionally — Flutter
+        # generates one from the applied provisioning profile, which
+        # works on a fresh Codemagic runner where no plist is staged.
         script: |
           flutter build ipa --release \
-            --dart-define=SENTRY_DSN="$SENTRY_DSN" \
-            --export-options-plist=/Users/builder/export_options.plist
+            --dart-define=SENTRY_DSN="$SENTRY_DSN"
+      - name: Upload dSYMs to Sentry
+        # Without symbolication every release crash is a wall of
+        # raw hex addresses — Sentry becomes cosmetic. The Codemagic
+        # mac_mini_m2 image ships sentry-cli; if that ever changes,
+        # `brew install getsentry/tools/sentry-cli` here.
+        script: |
+          DSYM_PATH=$(find build/ios/archive -name "*.xcarchive" -type d | head -1)/dSYMs
+          if [ ! -d "$DSYM_PATH" ]; then
+            echo "WARNING: no dSYMs found at $DSYM_PATH — skipping upload"
+            exit 0
+          fi
+          sentry-cli debug-files upload \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            --auth-token "$SENTRY_AUTH_TOKEN" \
+            "$DSYM_PATH"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log

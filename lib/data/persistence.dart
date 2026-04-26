@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/diagnostics.dart';
 import 'models/player_profile.dart';
 import 'models/rarity.dart';
 
@@ -53,6 +54,15 @@ class Persistence {
   /// fully lands or doesn't — no torn state.
   static const String _kProfileBlobKey = 'profile.blob_v3';
 
+  /// One-save-behind backup of [_kProfileBlobKey]. Rotated by
+  /// [saveProfile] before each new write so that if the live blob
+  /// ever fails to parse on load (rare but real — we've seen iOS
+  /// NSUserDefaults bit-flips on backgrounded apps), we have the
+  /// previous-good profile to recover from. This is the difference
+  /// between a paying customer losing their entitlements + coins and
+  /// silently rolling back one save's worth of progress.
+  static const String _kProfileBackupKey = 'profile.blob_v3.bak';
+
   /// Legacy schema-version pointer from v1/v2. Still read on migration
   /// so we know whether to expect the v2 per-field layout.
   static const String _kLegacyVersionKey = 'profile.schema_version';
@@ -96,6 +106,13 @@ class Persistence {
 
   final SharedPreferences _prefs;
 
+  /// Optional sink for corruption diagnostics. Wired up by
+  /// [ServiceLocator.bootstrap]; left null in unit tests that don't
+  /// need to assert on diagnostic emission. We keep this as a
+  /// nullable callback rather than a hard import of `ServiceLocator`
+  /// so persistence stays testable in isolation.
+  DiagnosticsService? diagnostics;
+
   static Future<Persistence> open() async {
     final prefs = await SharedPreferences.getInstance();
     return Persistence._(prefs);
@@ -115,8 +132,10 @@ class Persistence {
   }
 
   PlayerProfile loadProfile() {
-    // v3+ path — the blob is the source of truth.
-    final blob = _readBlobMap();
+    // v3+ path — the blob is the source of truth, with a one-save-
+    // behind backup if the live blob is corrupted. Both null only
+    // for fresh installs and for v0/v1/v2 carry-over players.
+    final blob = _readBlobOrBackup();
     if (blob != null) return _profileFromBlob(blob);
     // Fall back to legacy per-field load for v0/v1/v2 installs.
     return _loadLegacyProfile();
@@ -127,10 +146,28 @@ class Persistence {
   /// key write is platform-atomic — the whole blob lands or nothing
   /// does. Cancels any pending debounced write since we're committing
   /// the latest state right now.
+  ///
+  /// Before writing the new blob, the *current* live blob is rotated
+  /// to [_kProfileBackupKey] so we always have one save's worth of
+  /// recovery if the new write later corrupts. Skipped on the very
+  /// first save (no live blob to back up).
   Future<void> saveProfile(PlayerProfile p) async {
     _saveTimer?.cancel();
     _saveTimer = null;
     _pendingSave = null;
+    final currentRaw = _prefs.getString(_kProfileBlobKey);
+    if (currentRaw != null && currentRaw.isNotEmpty) {
+      // Rotate the previous-good live blob into the backup slot.
+      // Best-effort: a failure here is logged but doesn't block the
+      // primary save, since losing the backup is strictly less bad
+      // than losing the new write.
+      try {
+        await _prefs.setString(_kProfileBackupKey, currentRaw);
+      } catch (e, st) {
+        diagnostics?.record(
+            source: 'persistence', error: e, stack: st);
+      }
+    }
     final blob = _profileToBlob(p);
     await _prefs.setString(_kProfileBlobKey, jsonEncode(blob));
   }
@@ -174,8 +211,10 @@ class Persistence {
   // ---------------------------------------------------------------- v3 blob
 
   /// Read the v3 blob and decode to a Map. Returns null if no blob is
-  /// present or if the JSON is malformed (treated as "not v3" — caller
-  /// falls back to legacy load).
+  /// present or if the JSON is malformed. Used only by [profileVersion]
+  /// — [loadProfile] uses [_readBlobOrBackup] which has the recovery
+  /// path. Kept silent (no diagnostic emission) so calling
+  /// [profileVersion] alongside [loadProfile] doesn't double-log.
   Map<String, dynamic>? _readBlobMap() {
     final raw = _prefs.getString(_kProfileBlobKey);
     if (raw == null || raw.isEmpty) return null;
@@ -183,8 +222,60 @@ class Persistence {
       final decoded = jsonDecode(raw);
       if (decoded is Map<String, dynamic>) return decoded;
     } catch (_) {
-      // fall through to legacy load
+      // fall through
     }
+    return null;
+  }
+
+  /// Read the v3 blob with backup fallback. If the live blob exists
+  /// but is corrupt, falls back to [_kProfileBackupKey] and emits a
+  /// diagnostic event so corruption rates are visible in Sentry. If
+  /// both are corrupt, returns null and the caller (loadProfile)
+  /// falls through to legacy keys.
+  ///
+  /// Distinguishes three states for diagnostic clarity:
+  ///   - blob absent (fresh install) — return null silently
+  ///   - blob present + parses — return it
+  ///   - blob present + corrupt + backup parses — return backup +
+  ///     emit "recovered from backup" event
+  ///   - blob present + corrupt + backup corrupt/absent — return null
+  ///     + emit "fell through to legacy" event
+  Map<String, dynamic>? _readBlobOrBackup() {
+    final raw = _prefs.getString(_kProfileBlobKey);
+    if (raw == null || raw.isEmpty) {
+      // Fresh install or pre-v3 carry-over. No corruption, no event.
+      return null;
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) return decoded;
+    } catch (_) {
+      // fall through to backup
+    }
+    // Live blob is present but didn't parse. Try the backup before
+    // giving up — saves a v3+ player from a silent reset to legacy
+    // (which for v3-natives means coins=0, no purchasedSkus, no
+    // milestones, see PRELAUNCH_AUDIT.md P0.10).
+    final bak = _prefs.getString(_kProfileBackupKey);
+    if (bak != null && bak.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(bak);
+        if (decoded is Map<String, dynamic>) {
+          diagnostics?.record(
+            source: 'persistence',
+            error: 'profile.blob_v3 corrupt; recovered from .bak',
+          );
+          return decoded;
+        }
+      } catch (_) {
+        // both blobs are corrupt
+      }
+    }
+    diagnostics?.record(
+      source: 'persistence',
+      error: 'profile.blob_v3 + .bak both corrupt; falling through to '
+          'legacy keys (this resets v3-native players to defaults)',
+    );
     return null;
   }
 

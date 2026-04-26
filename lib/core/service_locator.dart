@@ -50,6 +50,10 @@ class ServiceLocator {
 
   static Future<void> bootstrap() async {
     persistence = await Persistence.open();
+    // Wire the persistence layer's corruption-diagnostics emitter to
+    // the shared service so Sentry sees blob corruption events. See
+    // Persistence._readBlobOrBackup for what triggers events.
+    persistence.diagnostics = diagnostics;
     final loader = ContentLoader();
     final loaded = await loader.loadAll();
     packs = PackRepository(loaded.packs, loaded.schedule);

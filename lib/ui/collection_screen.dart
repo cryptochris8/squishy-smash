@@ -314,10 +314,17 @@ class _CardTile extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
+                // cacheWidth keeps each thumbnail decoded at ~grid
+                // resolution rather than the source 1086x1448 RGBA.
+                // 48 cards x ~6 MB decoded = ~290 MB resident on
+                // iPhone — pre-fix this could OOM. Cap at 320 px
+                // wide; the grid cell is ~110-180 px wide, so a 2x
+                // upscale-buffer covers high-DPI without bloat.
                 child: unlocked
                     ? Image.asset(
                         card.assetPath,
                         fit: BoxFit.cover,
+                        cacheWidth: 320,
                         errorBuilder: (_, __, ___) =>
                             const _CardArtFallback(),
                       )
@@ -678,6 +685,8 @@ class _CustomFamilySection extends StatelessWidget {
                 child: Image.asset(
                   c.assetPath,
                   fit: BoxFit.cover,
+                  // Same memory-cap reasoning as the main grid above.
+                  cacheWidth: 320,
                   errorBuilder: (_, __, ___) => const _CardArtFallback(),
                 ),
               );

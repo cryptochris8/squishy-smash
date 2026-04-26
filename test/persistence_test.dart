@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:squishy_smash/core/diagnostics.dart';
 import 'package:squishy_smash/data/models/player_profile.dart';
 import 'package:squishy_smash/data/models/rarity.dart';
 import 'package:squishy_smash/data/persistence.dart';
@@ -540,4 +541,133 @@ void main() {
           reason: 'v3 saves should not write the v1/v2 per-field keys');
     });
   });
+
+  group('Persistence corruption recovery (P0.10)', () {
+    test('saveProfile rotates the previous blob into .bak before writing',
+        () async {
+      // First save: no previous blob, no backup written.
+      final p = await Persistence.open();
+      await p.saveProfile(PlayerProfile(
+        coins: 100,
+        unlockedPackIds: const {'launch_squishy_foods'},
+        bestScore: 0,
+        bestCombo: 0,
+      ));
+
+      final prefs1 = await SharedPreferences.getInstance();
+      expect(prefs1.containsKey('profile.blob_v3'), isTrue);
+      expect(prefs1.containsKey('profile.blob_v3.bak'), isFalse,
+          reason: 'first save should write live but skip backup '
+              '(nothing to back up yet)');
+
+      // Second save: live blob from first save rotates to .bak;
+      // the new blob lands at the live key.
+      await p.saveProfile(PlayerProfile(
+        coins: 250,
+        unlockedPackIds: const {'launch_squishy_foods'},
+        bestScore: 0,
+        bestCombo: 0,
+      ));
+      expect(prefs1.containsKey('profile.blob_v3.bak'), isTrue,
+          reason: 'second save must rotate prior live blob into .bak');
+
+      final liveBlob = jsonDecode(prefs1.getString('profile.blob_v3')!)
+          as Map<String, dynamic>;
+      final bakBlob = jsonDecode(prefs1.getString('profile.blob_v3.bak')!)
+          as Map<String, dynamic>;
+      expect(liveBlob['coins'], 250);
+      expect(bakBlob['coins'], 100,
+          reason: '.bak should hold the previous-good coins value');
+    });
+
+    test('corrupt live blob recovers coins from .bak (no silent reset)',
+        () async {
+      // Simulates the worst case: a v3-native player whose live blob
+      // got bit-flipped on disk, with no legacy keys to fall back to.
+      // Without .bak recovery this player's purchases, milestones,
+      // and coins reset silently — the data-loss vector flagged in
+      // PRELAUNCH_AUDIT.md P0.10.
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        'profile.blob_v3': '{ not valid json',
+        'profile.blob_v3.bak': jsonEncode(<String, dynamic>{
+          'schemaVersion': 4,
+          'coins': 4500,
+          'unlockedPackIds': ['launch_squishy_foods', 'goo_fidgets_drop_01'],
+          'purchasedSkus': ['remove_ads', 'starter_bundle'],
+          'bestScore': 12000,
+          'bestCombo': 8,
+          'starterBundleClaimed': true,
+        }),
+      });
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.coins, 4500,
+          reason: 'corrupted live blob must recover coins from .bak');
+      expect(profile.purchasedSkus, contains('remove_ads'),
+          reason: 'paying-customer entitlements must survive '
+              'a live-blob corruption');
+      expect(profile.starterBundleClaimed, isTrue);
+      expect(profile.bestScore, 12000);
+    });
+
+    test('both blobs corrupt falls through to legacy keys', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        'profile.blob_v3': '{ broken',
+        'profile.blob_v3.bak': '{ also broken',
+        'profile.schema_version': 2,
+        'profile.coins': 77,
+      });
+      final p = await Persistence.open();
+      final profile = p.loadProfile();
+      expect(profile.coins, 77,
+          reason: 'live and .bak both corrupt → legacy keys are the '
+              'last line of defense');
+    });
+
+    test('corrupt blob emits a diagnostics event when sink is wired',
+        () async {
+      final captured = <DiagnosticEntry>[];
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        'profile.blob_v3': '{ not valid json',
+        'profile.blob_v3.bak': jsonEncode(<String, dynamic>{
+          'schemaVersion': 4,
+          'coins': 1,
+          'unlockedPackIds': ['launch_squishy_foods'],
+        }),
+      });
+      final p = await Persistence.open();
+      final sink = DiagnosticsService();
+      sink.addSink(_RecordingSink(captured));
+      p.diagnostics = sink;
+
+      p.loadProfile();
+      expect(captured, isNotEmpty,
+          reason: 'corruption events must reach the wired diagnostics '
+              'sink so Sentry can see corruption rates in the wild');
+      expect(captured.first.error.toString(),
+          contains('recovered from .bak'));
+    });
+
+    test('fresh install does NOT emit a corruption event', () async {
+      final captured = <DiagnosticEntry>[];
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final p = await Persistence.open();
+      final sink = DiagnosticsService();
+      sink.addSink(_RecordingSink(captured));
+      p.diagnostics = sink;
+
+      p.loadProfile();
+      expect(captured, isEmpty,
+          reason: 'a fresh install (no blob, no .bak) is not '
+              'corruption — no diagnostic noise');
+    });
+  });
+}
+
+class _RecordingSink implements DiagnosticsSink {
+  _RecordingSink(this.entries);
+  final List<DiagnosticEntry> entries;
+
+  @override
+  void capture(DiagnosticEntry entry) => entries.add(entry);
 }
