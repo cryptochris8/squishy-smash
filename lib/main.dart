@@ -68,6 +68,33 @@ void main() {
           // Send errors only — no performance traces until we
           // explicitly opt in. Keeps quota use predictable.
           options.tracesSampleRate = 0.0;
+          // Apple's privacy nutrition label for v0.1.1 declares
+          // ONLY "Crash Data + Other Diagnostic Data → App
+          // Functionality." Sentry's defaults send several event
+          // shapes that don't fit that scope — explicitly disable
+          // each one so the binary's network surface matches the
+          // declared posture.
+          //
+          // - sessions: send_session_start / send_session_end on
+          //   every app foreground/background. Behavioral
+          //   telemetry, not a crash.
+          // - app hangs: a watchdog that fires when the main thread
+          //   stalls > 2 s. Produces a synthetic event that's not a
+          //   real crash and is shaped like one.
+          // - user interaction breadcrumbs: tap / scroll trail
+          //   attached to crash reports. Useful for debugging but
+          //   crosses the line into "Usage Data."
+          // - default PII: device name, IP, etc. Already off by
+          //   default in sentry_flutter ^8 — set explicitly so a
+          //   future SDK upgrade can't accidentally flip it on.
+          // - screenshot attach: for debugging UI crashes — a
+          //   screenshot of the screen at crash time. Could include
+          //   text the user typed; not declared. Off.
+          options.enableAutoSessionTracking = false;
+          options.enableAppHangTracking = false;
+          options.enableUserInteractionBreadcrumbs = false;
+          options.attachScreenshot = false;
+          options.sendDefaultPii = false;
         });
         ServiceLocator.diagnostics.addSink(SentrySink());
       } catch (e, st) {

@@ -1,7 +1,7 @@
 name: squishy_smash
-description: "Squishy Smash — satisfying, ASMR-flavored, meme-driven smash game."
+description: "Squishy Smash — satisfying, ASMR-flavored collectible card game where every smash reveals a soft squishy."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.1+1
 
 environment:
   sdk: ^3.8.1
@@ -18,8 +18,14 @@ dependencies:
   path_provider: ^2.1.0
   share_plus: ^10.0.0
   in_app_purchase: ^3.2.0
-  google_mobile_ads: ^5.2.0
-  app_tracking_transparency: ^2.0.6
+  # Note: google_mobile_ads + app_tracking_transparency intentionally
+  # NOT bundled in v0.1.1 — see lib/core/feature_flags.dart for the
+  # rationale. Implementation files preserved under
+  # _pending_v02/monetization/ for re-enable. To restore, add the
+  # deps back here, move the files into lib/monetization/, restore
+  # the AdMob/ATT/SKAdNetwork keys to ios/Runner/Info.plist + the
+  # AndroidManifest <meta-data> for AdMob APPLICATION_ID, and ship
+  # with --dart-define=ADS_ENABLED=true.
   sentry_flutter: ^8.10.0
 
 dev_dependencies:

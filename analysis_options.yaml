@@ -9,6 +9,16 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # Stale Flutter build artifacts — `flutter clean` removes these,
+    # but they can linger in dev clones and pollute analyze output.
+    - build/**
+    # Code stashed for re-enable in v0.2 (AdMob + ATT). Not compiled
+    # into the IPA; intentionally references packages that aren't in
+    # pubspec.yaml so analyze must skip it.
+    - _pending_v02/**
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

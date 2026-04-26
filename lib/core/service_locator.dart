@@ -9,12 +9,11 @@ import '../data/persistence.dart';
 import '../data/repositories/pack_repository.dart';
 import '../data/repositories/progression_repo.dart';
 import 'diagnostics.dart';
+import 'feature_flags.dart';
 import '../game/systems/sound_manager.dart';
 import '../game/systems/ui_sound_registry.dart';
 import '../game/systems/voice_line_registry.dart';
 import '../monetization/ad_offer_controller.dart';
-import '../monetization/admob_rewarded_ad_service.dart';
-import '../monetization/consent_controller.dart';
 import '../monetization/iap_service.dart';
 import '../monetization/iap_service_real.dart';
 import '../monetization/iap_service_stub.dart';
@@ -48,7 +47,6 @@ class ServiceLocator {
   static late final PurchaseGrantController purchaseGrants;
   static late final RewardedAdService rewardedAds;
   static late final AdOfferController adOffers;
-  static late final ConsentController consent;
 
   static Future<void> bootstrap() async {
     persistence = await Persistence.open();
@@ -90,34 +88,39 @@ class ServiceLocator {
     ui = UiSounds(sounds);
     analytics = const NoOpAnalytics();
 
-    // StoreKit + Play Billing are only available on iOS and Android.
-    // Everywhere else (web, macOS tests, Windows dev) we fall back to
-    // a stub that auto-completes purchases so UI flows can be
-    // exercised without a sandbox account.
-    iap = _isMobile ? RealIapService() : StubIapService();
+    // IAP service: gated behind FeatureFlags.iapsEnabled. With the
+    // flag off, the stub is selected on every platform so the
+    // RealIapService never constructs and never calls StoreKit's
+    // SKProductsRequest at boot. With the flag on (a future build
+    // that has products configured + sandbox-tested + reviewed), the
+    // mobile platforms get the real service; web/desktop still get
+    // the stub so dev flows work without a sandbox account.
+    iap = (FeatureFlags.iapsEnabled && _isMobile)
+        ? RealIapService()
+        : StubIapService();
     purchaseGrants = PurchaseGrantController(progression);
-    // Fire-and-forget product load so the Shop screen has prices the
-    // first time it's opened. Offline or store-unavailable just
-    // returns an empty list; UI falls back to ProductCatalog prices.
-    unawaited(iap.loadProducts(ProductIds.launchLoaded));
+    if (FeatureFlags.iapsEnabled) {
+      // Fire-and-forget product load so the Shop screen has prices
+      // the first time it's opened. Offline or store-unavailable
+      // just returns an empty list; UI falls back to ProductCatalog
+      // prices. Skipped entirely when iapsEnabled is false so we
+      // make zero StoreKit network calls in v0.1.1.
+      unawaited(iap.loadProducts(ProductIds.launchLoaded));
+    }
 
-    // Rewarded ads go through AdMob on mobile. On web/desktop/tests
-    // the stub auto-completes so offer flows can be exercised
-    // without the SDK. ConsentController + MobileAds.initialize run
-    // in the background once bootstrap finishes — ads are served only
-    // after that path returns successfully.
-    consent = ConsentController();
-    rewardedAds = _isMobile
-        ? AdMobRewardedAdService()
-        : StubRewardedAdService();
+    // Rewarded ads: gated behind FeatureFlags.adsEnabled. With the
+    // flag off (v0.1.1 ship config) the stub is wired with
+    // alwaysReady=false so any UI surface that probes "is an ad
+    // available?" cleanly hides itself. The ads stack (AdMob SDK,
+    // UMP consent flow, ATT prompt) is NOT linked into the IPA — see
+    // _pending_v02/monetization/ for the implementation files that
+    // get re-enabled when ads ship.
+    rewardedAds = StubRewardedAdService(alwaysReady: false);
     adOffers = AdOfferController(
       ads: rewardedAds,
       progression: progression,
       events: GameEvents(analytics),
     );
-    if (_isMobile) {
-      unawaited(consent.ensureConsentAndInit());
-    }
   }
 
   static bool get _isMobile {
