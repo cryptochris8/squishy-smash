@@ -46,6 +46,70 @@ from card_frame import (
 )
 
 
+def _draw_gradient_wordmark(canvas, x_center, y, text, *,
+                            font_size, top_hex, mid_hex, bottom_hex,
+                            shadow=True):
+    """Paint a wordmark with a vertical 3-stop color gradient
+    inside each glyph (foil-stamp illusion). Pre-fix the title was
+    flat pink/cream which read as digital. With a top->mid->bottom
+    ramp clipped to the glyph alpha, the wordmark reads as press-
+    foil.
+
+    Implementation: render the text once on a large RGBA tile in
+    pure white (which becomes our alpha mask), build a 3-stop
+    vertical gradient image at the same size, then putalpha() to
+    keep only the gradient pixels where the text was opaque.
+    """
+    from PIL import ImageDraw as _ID
+    f = font("display", font_size)
+    # Measure
+    bbox = _ID.Draw(canvas).textbbox((0, 0), text, font=f)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    # Tile size = text bbox + margin for glyph descenders
+    tile_w = tw + 80
+    tile_h = th + 80
+    # 1) Build 3-stop vertical gradient
+    grad = Image.new("RGB", (tile_w, tile_h))
+    top = _hex_to_rgba(top_hex)[:3]
+    mid = _hex_to_rgba(mid_hex)[:3]
+    bot = _hex_to_rgba(bottom_hex)[:3]
+    for ty in range(tile_h):
+        if ty < tile_h // 2:
+            t = ty / max(tile_h // 2 - 1, 1)
+            r = round(top[0] * (1 - t) + mid[0] * t)
+            g = round(top[1] * (1 - t) + mid[1] * t)
+            b = round(top[2] * (1 - t) + mid[2] * t)
+        else:
+            t = (ty - tile_h // 2) / max(tile_h // 2 - 1, 1)
+            r = round(mid[0] * (1 - t) + bot[0] * t)
+            g = round(mid[1] * (1 - t) + bot[1] * t)
+            b = round(mid[2] * (1 - t) + bot[2] * t)
+        for tx in range(tile_w):
+            grad.putpixel((tx, ty), (r, g, b))
+    grad = grad.convert("RGBA")
+    # 2) Build alpha mask = opacity from rendered text
+    mask = Image.new("L", (tile_w, tile_h), 0)
+    _ID.Draw(mask).text((40 - bbox[0], 40 - bbox[1]),
+                        text, font=f, fill=255)
+    grad.putalpha(mask)
+    # 3) Optional drop shadow (rendered as offset black silhouette)
+    if shadow:
+        shadow_layer = Image.new("RGBA", (tile_w, tile_h), (0, 0, 0, 0))
+        _ID.Draw(shadow_layer).text(
+            (40 - bbox[0] + 6, 40 - bbox[1] + 6),
+            text, font=f, fill=(0, 0, 0, 130),
+        )
+        # Stamp shadow first
+        sx = x_center - tile_w // 2
+        sy = y - 40
+        canvas.alpha_composite(shadow_layer, (sx, sy))
+    # 4) Stamp gradient-filled wordmark
+    sx = x_center - tile_w // 2
+    sy = y - 40
+    canvas.alpha_composite(grad, (sx, sy))
+
+
 def _draw_star_row(canvas, x, y, count, *, size=24,
                    color_hex=None, gap=6):
     """Draw `count` filled stars starting at (x, y). Used in place of
@@ -73,6 +137,7 @@ from config import (
     BRAND_ICON,
     GLOW,
     PACK_BG_GRADIENT,
+    PACK_ORNAMENT,
     PACK_TEXTURE,
     PACK_TINTS,
     PALETTE,
@@ -202,6 +267,32 @@ def _folio(canvas: Image.Image, page_num: int, *,
     )
 
 
+def _stamp_pack_corners(canvas: Image.Image, pack: str,
+                         size: int = 220, alpha: int = 220) -> None:
+    """Stamp the per-pack corner ornament in top-left + bottom-right.
+    Bottom-right copy is rotated 180° so the ornament reads as a
+    visual frame — the ear of one ornament points into the page,
+    the ear of the other points out. The ornament is the single
+    most "Scholastic-bridge" element per the UI design audit.
+
+    No-op if the ornament file is missing (fresh checkouts before
+    bake_ornaments.py runs)."""
+    path = PACK_ORNAMENT.get(pack)
+    if path is None or not path.exists():
+        return
+    src = Image.open(path).convert("RGBA")
+    src = src.resize((size, size), Image.Resampling.LANCZOS)
+    # Apply alpha
+    r, g, b, a = src.split()
+    a = a.point(lambda v, k=alpha: int(v * (k / 255)))
+    tinted = Image.merge("RGBA", (r, g, b, a))
+    # Top-left
+    canvas.alpha_composite(tinted, (40, 40))
+    # Bottom-right, rotated 180° for a "frame" feel
+    rotated = tinted.rotate(180, resample=Image.Resampling.BICUBIC)
+    canvas.alpha_composite(rotated, (PAGE_W - size - 40, PAGE_H - size - 40))
+
+
 def _bunny_mark(canvas: Image.Image, x: int, y: int, size: int,
                 tint_hex: str | None = None,
                 alpha: int = 220) -> None:
@@ -251,13 +342,25 @@ def T1_title() -> Image.Image:
         alpha=180,
     )
 
-    # SQUISHY (pink) over SMASH (cream), centered
+    # SQUISHY (pink->rose dust->pink gradient) over SMASH (cream->
+    # gold_hi->cream gradient), centered. Foil-stamp illusion via
+    # 3-stop vertical gradient inside each glyph.
     cx = PAGE_W // 2
     title_y = 280
-    draw_text(canvas, cx, title_y,
-              "SQUISHY", style_name="wordmark", shadow=True)
-    draw_text(canvas, cx, title_y + 230,
-              "SMASH", style_name="wordmark_alt", shadow=True)
+    _draw_gradient_wordmark(
+        canvas, cx, title_y, "SQUISHY",
+        font_size=220,
+        top_hex=PALETTE["pink"],
+        mid_hex=PALETTE["rose_dust"],
+        bottom_hex=PALETTE["pink"],
+    )
+    _draw_gradient_wordmark(
+        canvas, cx, title_y + 230, "SMASH",
+        font_size=220,
+        top_hex=PALETTE["cream"],
+        mid_hex=PALETTE["gold_hi"],
+        bottom_hex=PALETTE["cream"],
+    )
 
     # Subtitle + tagline
     sub_y = title_y + 480
@@ -398,13 +501,16 @@ def T3_narrator() -> Image.Image:
     # Body — the locked 110-word narrator letter (italic,
     # narrator style on a single block).
     letter = (
+        # 5a fix: removed em dash. Voice rule: kids read periods,
+        # not em dashes. The first prose the reader meets must
+        # follow our own rules.
         "Long ago, the very first wobble rolled across the Squishy "
-        "World — and someone had to keep track of every wonderful "
+        "World. Someone had to keep track of every wonderful "
         "squish that followed.\n\n"
         "That someone is me. I am the Squishkeeper.\n\n"
-        "No one is quite sure where I live (somewhere soft, "
-        "probably). No one is quite sure what I look like (probably "
-        "round). What I can tell you is this: every squishy that "
+        "No one is quite sure where I live. Somewhere soft, "
+        "probably. No one is quite sure what I look like. Probably "
+        "round. What I can tell you is this: every squishy that "
         "bounces, ripples, glows, or giggles has a page in this "
         "book.\n\n"
         "Forty-eight friends. Three packs. One soft, silly, "
@@ -526,6 +632,37 @@ def T_map() -> Image.Image:
             draw_text(canvas, mx, ly, "·  " + landmark + "  ·",
                       style_name="map_landmark_lg")
             ly += 44
+
+    # Phase 5c — anchor 1 character thumbnail per region. Kids match
+    # characters to places visually; without a thumbnail anchor the
+    # map teaches geography but not character-place pairing.
+    chars = by_num()
+    region_heroes = [
+        (1,  positions[0]),    # Soft Dumpling -> Pudding Hills
+        (17, positions[1]),    # Goo Ball -> Goo Coast
+        (33, positions[2]),    # Blushy Bun Bunny -> Moonlit Hollow
+    ]
+    thumb_w = 180
+    thumb_h = int(thumb_w * 1.3)
+    for num, (mx, my) in region_heroes:
+        char = chars[num]
+        # Place thumbnail to the side of the medallion so it doesn't
+        # cover the region name. Goo Coast (center, lower) gets its
+        # thumbnail to the right; left + right medallions get
+        # thumbnails toward the page edge.
+        if mx < PAGE_W // 2:           # left medallion -> outside left
+            tx = mx - medallion_r - thumb_w - 30
+        elif mx > PAGE_W // 2:          # right medallion -> outside right
+            tx = mx + medallion_r + 30
+        else:                           # center medallion -> off to right
+            tx = mx + medallion_r + 40
+        ty = my - thumb_h // 2
+        draw_card_frame(
+            canvas, char.card_path,
+            tx, ty, thumb_w, thumb_h,
+            rarity=char.rarity, pack=char.pack,
+            background="transparent",
+        )
 
     _folio(canvas, 4)
     _vignette(canvas, intensity=0.30)
@@ -717,6 +854,7 @@ def T5_pack_portal(pack: str, page_num: int) -> Image.Image:
         sizes=(4, 12),
         alpha=180,
     )
+    _stamp_pack_corners(canvas, pack, size=220, alpha=200)
 
     _folio(canvas, page_num, pack_color=tint)
     _vignette(canvas, intensity=0.40)
@@ -757,9 +895,12 @@ PACK_SCENE_DATA = {
 
 def T6_pack_scene(pack: str, page_num: int) -> Image.Image:
     canvas = _new_canvas(PALETTE["bg"])
+    # Phase 5b — texture opacity bumped to 64 (was 48). T6 is the
+    # most "scene"-like page; the texture should clearly carry the
+    # pack identity rather than be a faint wash.
     paint_pack_background(canvas, 0, 0, PAGE_W, PAGE_H,
                           pack=pack, with_texture=True,
-                          texture_alpha=48)
+                          texture_alpha=64)
     data = PACK_SCENE_DATA[pack]
     tint = PACK_TINTS[pack]
     chars = by_num()
@@ -791,29 +932,31 @@ def T6_pack_scene(pack: str, page_num: int) -> Image.Image:
             background="transparent",
         )
 
-    # Text block — sits on a tinted plate so it reads cleanly over
-    # the busy background.
+    # Text block on a parchment plate so the pack-scene title +
+    # body read like a real picture-book "welcome to" header card,
+    # not a flat website hero. Pack-tinted stroke matches the
+    # gradient world below.
     text_w = PAGE_W - SAFE * 2 - 200
-    plate_h = 340
+    plate_h = 380
     plate_y = SAFE + 100
     plate = Image.new("RGBA", (text_w, plate_h), (0, 0, 0, 0))
     ImageDraw.Draw(plate).rounded_rectangle(
         (0, 0, text_w, plate_h),
-        radius=24,
-        fill=_hex_to_rgba(PALETTE["bg"], 200),
-        outline=_hex_to_rgba(tint, 160),
-        width=2,
+        radius=22,
+        fill=_hex_to_rgba(PALETTE["parchment"], 240),
+        outline=_hex_to_rgba(tint, 220),
+        width=3,
     )
     canvas.alpha_composite(plate, (SAFE + 100, plate_y))
 
     block_y = plate_y + 40
     block_y = draw_text(canvas, SAFE + 100, block_y,
                         data["title"],
-                        style_name="char_name_lg",
+                        style_name="char_name_lg_dark",
                         max_width=text_w)
     block_y += 30
     draw_text(canvas, SAFE + 100, block_y,
-              data["body"], style_name="body",
+              data["body"], style_name="field_value_dark",
               max_width=text_w)
 
     # Engagement prompt at the bottom
@@ -821,6 +964,7 @@ def T6_pack_scene(pack: str, page_num: int) -> Image.Image:
               data["prompt"], style_name="flavor",
               max_width=PAGE_W - SAFE * 2)
 
+    _stamp_pack_corners(canvas, pack, size=200, alpha=180)
     _folio(canvas, page_num, pack_color=tint)
     _vignette(canvas, intensity=0.30)
     return canvas
@@ -833,9 +977,13 @@ def T6_pack_scene(pack: str, page_num: int) -> Image.Image:
 def T8_featured(num: int, page_num: int) -> Image.Image:
     char = by_num()[num]
     canvas = _new_canvas(PALETTE["bg"])
+    # 5b: pack texture opacity 20 -> 40 so the sprinkles / bubbles /
+    # moondust actually announce the pack at-a-glance instead of
+    # whispering. The whole point of the per-pack signatures is that
+    # a child can tell "I'm in the Goo pack now" without reading.
     paint_pack_background(canvas, 0, 0, PAGE_W, PAGE_H,
                           pack=char.pack, with_texture=True,
-                          texture_alpha=20)
+                          texture_alpha=40)
     tint = PACK_TINTS[char.pack]
 
     # Card hero on the left
@@ -849,17 +997,31 @@ def T8_featured(num: int, page_num: int) -> Image.Image:
         rarity=char.rarity, pack=char.pack,
     )
 
-    # Field-guide entry on the right
+    # Field-guide entry on the right, set on a parchment plate so the
+    # serif body type reads as "real children's hardcover" instead of
+    # cream-on-plum digital. The plate is sized to the text column,
+    # rounded corners, low-alpha pack-tinted stroke. UI agent flagged
+    # PALETTE["parchment"] as defined-but-unused; this is its first
+    # production use.
     text_x = card_x + card_w + 120
     text_w = PAGE_W - SAFE - 80 - text_x
+    plate_top = card_y + 20
+    plate_h = card_h - 40
+    plate = Image.new("RGBA", (text_w + 100, plate_h), (0, 0, 0, 0))
+    ImageDraw.Draw(plate).rounded_rectangle(
+        (0, 0, text_w + 100, plate_h),
+        radius=18,
+        fill=_hex_to_rgba(PALETTE["parchment"], 235),
+        outline=_hex_to_rgba(tint, 200),
+        width=2,
+    )
+    canvas.alpha_composite(plate, (text_x - 50, plate_top))
 
     cursor_y = card_y + 40
 
     # Header: name + pack chip + rarity stars
-    name_style = "char_name_mythic" if char.rarity == "mythic" \
-        else "char_name_lg"
     cursor_y = draw_text(canvas, text_x, cursor_y, char.name,
-                         style_name="char_name_lg",
+                         style_name="char_name_lg_dark",
                          max_width=text_w)
     cursor_y += 10
 
@@ -868,74 +1030,73 @@ def T8_featured(num: int, page_num: int) -> Image.Image:
     star_count = {"common": 1, "rare": 2, "epic": 3, "mythic": 4}[char.rarity]
     pack_label = f"{char.pack}  ·  "
     rarity_word = f"  ·  {char.rarity}"
-    label_w = measure_line(pack_label, style("rarity_stars"))
-    rarity_w = measure_line(rarity_word, style("rarity_stars"))
+    label_w = measure_line(pack_label, style("rarity_stars_dark"))
     star_w = star_count * 30 + (star_count - 1) * 6
-    total_w = label_w + star_w + rarity_w
     draw_text(canvas, text_x, cursor_y, pack_label,
-              style_name="rarity_stars")
+              style_name="rarity_stars_dark")
     _draw_star_row(canvas, text_x + label_w, cursor_y + 6,
-                   star_count, size=24, color_hex=PALETTE["cream"])
+                   star_count, size=24, color_hex=PALETTE["gold"])
     draw_text(canvas, text_x + label_w + star_w, cursor_y,
-              rarity_word, style_name="rarity_stars")
+              rarity_word, style_name="rarity_stars_dark")
     cursor_y += 50
 
     _dotted_rule(canvas, text_x, cursor_y,
-                 text_x + text_w, PALETTE["rose_dust"])
+                 text_x + text_w, tint, alpha=180)
     cursor_y += 50
 
-    # Squishkeeper says (narrator italic)
+    # Squishkeeper says (narrator italic) — dark on parchment
     if char.keeper_says:
         draw_text(canvas, text_x, cursor_y,
                   "Squishkeeper says…",
-                  style_name="field_label",
+                  style_name="field_label_dark",
                   max_width=text_w)
         cursor_y += 32
         cursor_y = draw_text(canvas, text_x, cursor_y,
                              '"' + char.keeper_says + '"',
-                             style_name="narrator",
+                             style_name="narrator_dark",
                              max_width=text_w)
         cursor_y += 40
 
     # First spotted at
     if char.location:
         draw_text(canvas, text_x, cursor_y, "FIRST SPOTTED AT",
-                  style_name="field_label", max_width=text_w)
+                  style_name="field_label_dark", max_width=text_w)
         cursor_y += 32
         cursor_y = draw_text(canvas, text_x, cursor_y,
                              char.location.rstrip("."),
-                             style_name="field_value",
+                             style_name="field_value_dark",
                              max_width=text_w)
         cursor_y += 36
 
     # Signature squish
     if char.signature_squish:
         draw_text(canvas, text_x, cursor_y, "SIGNATURE SQUISH",
-                  style_name="field_label", max_width=text_w)
+                  style_name="field_label_dark", max_width=text_w)
         cursor_y += 32
         cursor_y = draw_text(canvas, text_x, cursor_y,
                              char.signature_squish,
-                             style_name="field_value",
+                             style_name="field_value_dark",
                              max_width=text_w)
         cursor_y += 36
 
     # Pack-mate
     if char.pack_mate:
         draw_text(canvas, text_x, cursor_y, "PACK-MATE",
-                  style_name="field_label", max_width=text_w)
+                  style_name="field_label_dark", max_width=text_w)
         cursor_y += 32
         cursor_y = draw_text(canvas, text_x, cursor_y,
                              char.pack_mate,
-                             style_name="field_value",
+                             style_name="field_value_dark",
                              max_width=text_w)
 
-    # Flavor pull quote at the bottom of the text column
+    # Flavor pull quote inside the parchment plate, near the bottom
     if char.flavor:
-        flavor_y = card_y + card_h - 200
+        flavor_y = plate_top + plate_h - 140
         draw_text(canvas, text_x, flavor_y,
                   char.flavor,
                   style_name="flavor", max_width=text_w)
 
+    _stamp_pack_corners(canvas, char.pack, size=180, alpha=160)
     _folio(canvas, page_num, pack_color=tint)
     _vignette(canvas, intensity=0.30)
     return canvas
@@ -952,14 +1113,17 @@ T9_HEADERS = {
 }
 
 
-def T9_premium_duo(num_a: int, num_b: int, page_num: int) -> Image.Image:
+def T9_premium_duo(num_a: int, num_b: int, page_num: int,
+                    mid_pack_note: str | None = None) -> Image.Image:
     a = by_num()[num_a]
     b = by_num()[num_b]
     pack = a.pack
     canvas = _new_canvas(PALETTE["bg"])
+    # Phase 5b — texture 28 -> 44 to announce pack identity at-a-
+    # glance on every spread, not just the scene page.
     paint_pack_background(canvas, 0, 0, PAGE_W, PAGE_H,
                           pack=pack, with_texture=True,
-                          texture_alpha=28)
+                          texture_alpha=44)
     tint = PACK_TINTS[pack]
 
     # Header band at top
@@ -1031,6 +1195,18 @@ def T9_premium_duo(num_a: int, num_b: int, page_num: int) -> Image.Image:
                            "Signature squish — " + char.signature_squish,
                            style_name="body", max_width=text_w)
 
+    # Mid-pack rest beat (Phase 5b). One of the three packs gets a
+    # single italic line per pack from the Squishkeeper to break
+    # the long T9 run. Bottom-right corner, in the Squishkeeper's
+    # accent script so it reads as a quiet aside, not chrome.
+    if mid_pack_note:
+        draw_text(canvas, PAGE_W // 2,
+                  PAGE_H - SAFE - 90,
+                  mid_pack_note,
+                  style_name="flavor",
+                  max_width=PAGE_W - SAFE * 2)
+
+    _stamp_pack_corners(canvas, pack, size=180, alpha=160)
     _folio(canvas, page_num, pack_color=tint)
     _vignette(canvas, intensity=0.35)
     return canvas
@@ -1066,7 +1242,11 @@ MYTHIC_COPY = {
                  "a soft pawprint shows up in the dust.\n"
                  "Then another. Then another."),
         "stinger": "Someone is always coming back for them.",
-        "guide": None,
+        # Each mythic now has its own closing flourish so the third
+        # mythic doesn't look identical to the first two. #16 has a
+        # pronunciation guide; #32 has a sense prompt embedded in
+        # the stinger; #48 gets a "find the trail" prompt.
+        "guide": "Look back through the book. Did you spot any pawprints?",
     },
 }
 
@@ -1204,8 +1384,14 @@ def T_tracker() -> Image.Image:
 
     draw_text(canvas, PAGE_W // 2, SAFE + 60,
               "THE SQUISHY TRACKER", style_name="title")
+    # Phase 5b — one verb only ("star your favorites"). Earlier
+    # version had both a checkbox AND a star which was one verb too
+    # many for a 5-year-old. Picking star because it's more
+    # emotional than ownership ("which is your favorite?" beats
+    # "have you met").
     draw_text(canvas, PAGE_W // 2, SAFE + 220,
-              "Tick the squishies you have met.\nStar your favorite.",
+              "Star the squishies you love most.\n"
+              "Find a friend you might have missed.",
               style_name="tagline", max_width=PAGE_W - SAFE * 2)
 
     # 48 cells in a 6 x 8 grid
@@ -1250,26 +1436,20 @@ def T_tracker() -> Image.Image:
             rarity=char.rarity, pack=char.pack,
             background="transparent",
         )
-        # Tiny tickbox + star at the bottom of the cell
-        cb_y = y + h - 36
+        # Single star outline at the bottom-center of each cell.
+        # One verb (star) instead of the previous checkbox-AND-star
+        # combo so a 5-year-old has a clean action.
+        sx = x + w // 2
+        sy = y + h - 24
         draw = ImageDraw.Draw(canvas)
-        # Checkbox
-        draw.rectangle(
-            (x + 12, cb_y, x + 12 + 24, cb_y + 24),
-            outline=_hex_to_rgba(PALETTE["soft_white"], 220),
-            width=2,
-        )
-        # Tiny star
-        sx = x + w - 36
-        sy = cb_y + 12
         draw.polygon(
-            [(sx, sy - 12), (sx + 4, sy - 4),
-             (sx + 12, sy - 4), (sx + 6, sy + 2),
-             (sx + 8, sy + 12), (sx, sy + 6),
-             (sx - 8, sy + 12), (sx - 6, sy + 2),
-             (sx - 12, sy - 4), (sx - 4, sy - 4)],
-            outline=_hex_to_rgba(PALETTE["cream"], 230),
-            width=2,
+            [(sx, sy - 16), (sx + 5, sy - 5),
+             (sx + 16, sy - 5), (sx + 7, sy + 2),
+             (sx + 10, sy + 14), (sx, sy + 7),
+             (sx - 10, sy + 14), (sx - 7, sy + 2),
+             (sx - 16, sy - 5), (sx - 5, sy - 5)],
+            outline=_hex_to_rgba(PALETTE["cream"], 240),
+            width=3,
         )
 
     # Closing line

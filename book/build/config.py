@@ -172,6 +172,20 @@ PACK_TEXTURE = {
     "Creepy-Cute Creatures":  TEXTURE["moondust"],
 }
 
+# Phase-5c per-pack corner ornaments. PNG paths to the three baked
+# 280x280 RGBA tiles in book/assets/ornaments/ — Foods sprinkle
+# cluster, Goo concentric bubbles, Creatures crescent + stars.
+# Page templates stamp these in top-left + bottom-right corners of
+# pack-character pages so each pack reads as its own visual world
+# at-a-glance. UI agent flagged as the single biggest "Scholastic"
+# lever in the audit.
+ORNAMENT_DIR = REPO_ROOT / "book" / "assets" / "ornaments"
+PACK_ORNAMENT = {
+    "Squishy Foods":          ORNAMENT_DIR / "foods_corner.png",
+    "Goo & Fidgets":          ORNAMENT_DIR / "goo_corner.png",
+    "Creepy-Cute Creatures":  ORNAMENT_DIR / "creatures_corner.png",
+}
+
 # ---------------------------------------------------------------------------
 # Character data (canonical bios, lightly trimmed for layout fit)
 # Source: book/squishy_smash_featured_character_bio_sheet_for_claude.md
@@ -299,7 +313,7 @@ def _foods() -> list[Character]:
                   rarity="rare",
                   location="the strawberry patch beyond Dumpling Dell.",
                   signature_squish="a rosy burst with berry-sparkle bounce. *poppp.*",
-                  pack_mate="Peach Mochi",
+                  pack_mate="Jelly Bun",
                   keeper_says="A pink burst, a bright bounce, a tiny shower of berry-sparkles."),
         Character(10, "Rainbow Jelly Bun", "Squishy Foods",
                   "Sends colorful shimmer rippling through every bounce.",
@@ -338,12 +352,12 @@ def _foods() -> list[Character]:
                   pack_mate="Sparkle Mochi",
                   keeper_says="Have you ever bounced among stars? Galaxy Dumpling has. It does it every single night."),
         Character(14, "Crystal Mochi", "Squishy Foods",
-                  "Glows from the inside out with rare, prismatic light.",
-                  ("Clear and magical", "Bright and delicate"),
+                  "Glows from the inside out with rare, glassy light.",
+                  ("Clear and bright", "Bright and delicate"),
                   "Crystal Mochi sparkles like a secret treasure made of dessert light.",
                   rarity="epic",
                   location="high crystal cliffs above the Sprinkle Cliffs.",
-                  signature_squish="a clear, prismatic press. *tinggggg.*",
+                  signature_squish="a clear, glassy press. *tinggggg.*",
                   pack_mate="Sparkle Mochi",
                   keeper_says="Hold one up to the lamp. The whole room turns into a rainbow."),
         Character(15, "Neon Dessert Blob", "Squishy Foods",
@@ -360,7 +374,7 @@ def _foods() -> list[Character]:
                   ("Mythic and radiant", "Powerful and kind"),
                   "Some say the stars learned to glow by watching Celestial Dumpling Core.",
                   rarity="mythic",
-                  location="the highest cloud above the Pudding Hills.",
+                  location="above the Sprinkle Cliffs, where the clouds go gold.",
                   signature_squish="a hush, then a glow. *...*",
                   pack_mate="Galaxy Dumpling",
                   keeper_says="Long ago, before the stars knew how to glow, they watched a tiny dumpling shine in the dark. That is how they learned."),
@@ -394,13 +408,13 @@ def _goo() -> list[Character]:
                   pack_mate="Goo Ball",
                   keeper_says="Stretch. Stretch some more. Snap right back. Stretch some more."),
         Character(20, "Soft Stress Orb", "Goo & Fidgets",
-                  "A soothing friend made for perfect rhythmic squishes.",
+                  "A soothing friend made for slow, steady squishes.",
                   ("Calm and steady", "Firm and comforting"),
                   "Soft Stress Orb makes every squeeze feel just right.",
                   location="the quiet end of Stretch Tide.",
-                  signature_squish="a steady, soothing press. *one. two. three.*",
+                  signature_squish="a slow, steady press. *one. two. three.*",
                   pack_mate="Stretch Cube",
-                  keeper_says="Squeeze. Wait. Squeeze. Soft Stress Orb likes a good rhythm."),
+                  keeper_says="Squeeze. Wait. Squeeze. Soft Stress Orb likes the slow steady kind."),
         Character(21, "Jelly Pad", "Goo & Fidgets",
                   "Ripples from edge to edge with glossy gel motion.",
                   ("Smooth and wiggly", "Flat and fun"),
@@ -431,7 +445,7 @@ def _goo() -> list[Character]:
                   "Squish Capsule always seems to be rolling toward its next surprise.",
                   location="the smooth tide-pools at the edge of Aurora Reef.",
                   signature_squish="a rolling pop. *tok-pop.*",
-                  pack_mate="Goo Ball",
+                  pack_mate="Wobble Drop",
                   keeper_says="Round. Smooth. Always rolling. Always one beat ahead of you."),
         Character(25, "Glitter Goo Ball", "Goo & Fidgets",
                   "Flashes with sparkling flecks every time it bursts.",
@@ -449,7 +463,7 @@ def _goo() -> list[Character]:
                   rarity="rare",
                   location="the broad center of Stretch Tide.",
                   signature_squish="a heavy pop with rings going wide. *whoom.*",
-                  pack_mate="Goo Ball",
+                  pack_mate="Bubble Blob",
                   keeper_says="Stand back. The ring goes wide. The ripple keeps going."),
         Character(27, "Frost Gel Cube", "Goo & Fidgets",
                   "Cracks into cool frosty splats with every icy bounce.",
@@ -501,10 +515,10 @@ def _goo() -> list[Character]:
                   ("Mythic and powerful", "Strange and dazzling"),
                   "Legends say even gravity likes to wobble around Singularity Goo Core.",
                   rarity="mythic",
-                  location="the deepest tide pool on the Goo Coast.",
-                  signature_squish="a hush. then a pull. *...*",
+                  location="the deepest tide pool past Aurora Reef.",
+                  signature_squish="a hush. then a pull. *thummm.*",
                   pack_mate="Aurora Stretch Cube",
-                  keeper_says="So heavy the air bends around it. So strange that gravity tips its hat as it walks by."),
+                  keeper_says="So heavy the air bends. So strange that even gravity slows down to look."),
     ]
 
 
@@ -539,7 +553,7 @@ def _creatures() -> list[Character]:
                   ("Curious and silly", "Round and playful"),
                   "Every little wobble from Wobble Kitty brings a spark of fun.",
                   location="the spongy moss of Cuddle Glade.",
-                  signature_squish="a tilt, a tip, a soft landing. *thup.*",
+                  signature_squish="a tilt, a tip, a soft landing. *plonk.*",
                   pack_mate="Sleepy Slime Pet",
                   keeper_says="It wobbles before it stands. It charms before it knows it. Wobble Kitty is mostly tilt."),
         Character(37, "Tiny Blob Monster", "Creepy-Cute Creatures",
@@ -589,27 +603,27 @@ def _creatures() -> list[Character]:
                   "Moon Bat Blob loves the quiet glow of the night sky.",
                   rarity="rare",
                   location="the high ledges above Crescent Cave.",
-                  signature_squish="a slow glide and a softer landing. *whoosh-thup.*",
+                  signature_squish="a slow glide and a softer landing. *fwoom-soft.*",
                   pack_mate="Squish Bat",
-                  keeper_says="Pale wings. Quiet glow. Moon Bat Blob keeps the night company."),
+                  keeper_says="Two pale wings. One small glow. Moon Bat Blob always finds the moon."),
         Character(43, "Glow Ghost Puff", "Creepy-Cute Creatures",
                   "Shines brighter with every happy bounce.",
                   ("Radiant and sweet", "Glowy and light"),
                   "Glow Ghost Puff can brighten even the sleepiest corner of the world.",
                   rarity="rare",
                   location="Whisper Woods, where the dark is darkest.",
-                  signature_squish="a gentle bloom of light. *hmmm.*",
+                  signature_squish="a gentle bloom of light. *hmmm-shine.*",
                   pack_mate="Puff Ghost",
-                  keeper_says="Light a corner of your room. Now it is brighter. That is what Glow Ghost Puff does to the world."),
+                  keeper_says="Watch the dark corner. Now watch it glow. Glow Ghost Puff just walked in."),
         Character(44, "Candy Fang Creature", "Creepy-Cute Creatures",
                   "Sugary chaos wrapped in a grin and tiny fangs.",
                   ("Mischievous and bright", "Sweet and wild"),
-                  "Candy Fang Creature always brings a surprise -- and usually a sprinkle or two.",
+                  "Candy Fang Creature always brings a surprise. Usually a sprinkle or two.",
                   rarity="rare",
-                  location="the bramble paths near the Pudding Hills border.",
+                  location="the bramble paths between Dumpling Dell and Whisper Woods.",
                   signature_squish="a sugary chomp and a sprinkle scatter. *crunch-poof.*",
                   pack_mate="Soft Fang Critter",
-                  keeper_says="Sugar grin. Tiny fangs. The fangs are also made of candy."),
+                  keeper_says="Tiny fangs. Sugar grin. The fangs? Also candy."),
         Character(45, "Dream Eater Squish", "Creepy-Cute Creatures",
                   "Floats through sleepy sparkles and leaves perfect pops behind.",
                   ("Mythic and dreamy", "Soft and magical"),

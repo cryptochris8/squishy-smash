@@ -76,7 +76,9 @@ PAGE_RENDERERS = [
     (13, lambda: T8_featured(6, 13)),    # Rice Ball Squish [solo]
     (14, lambda: T9_premium_duo(4, 7, 14)),    # Syrup Cube + Marshmallow Puff
     (15, lambda: T9_premium_duo(8, 9, 15)),    # Pudding Pop + Strawberry Dumpling
-    (16, lambda: T9_premium_duo(10, 11, 16)),  # Rainbow Jelly Bun + Sparkle Mochi
+    # Rest beat — one Squishkeeper line per pack to break the long T9 runs.
+    (16, lambda: T9_premium_duo(10, 11, 16,
+        mid_pack_note="Halfway through the Pudding Hills. How many have you met?")),  # Rainbow Jelly Bun + Sparkle Mochi
     (17, lambda: T9_premium_duo(12, 13, 17)),  # Golden Syrup Cube + Galaxy Dumpling
     (18, lambda: T9_premium_duo(14, 15, 18)),  # Crystal Mochi + Neon Dessert Blob
     (19, lambda: T10_mythic_finale(16, 19)),    # Celestial Dumpling Core
@@ -91,7 +93,8 @@ PAGE_RENDERERS = [
     (26, lambda: T8_featured(21, 26)),   # Jelly Pad [solo]
     (27, lambda: T9_premium_duo(22, 23, 27)),  # Sticky Pop Ball + Wobble Drop
     (28, lambda: T9_premium_duo(24, 25, 28)),  # Squish Capsule + Glitter Goo Ball
-    (29, lambda: T9_premium_duo(26, 27, 29)),  # Shockwave Blob + Frost Gel Cube
+    (29, lambda: T9_premium_duo(26, 27, 29,
+        mid_pack_note="Halfway down the Goo Coast. Listen for the next splat.")),  # Shockwave Blob + Frost Gel Cube
     (30, lambda: T9_premium_duo(28, 29, 30)),  # Prism Stress Orb + Plasma Goo Ball
     (31, lambda: T9_premium_duo(30, 31, 31)),  # Aurora Stretch Cube + Cosmic Jelly Pad
     (32, lambda: T10_mythic_finale(32, 32)),    # Singularity Goo Core
@@ -106,7 +109,8 @@ PAGE_RENDERERS = [
     (39, lambda: T8_featured(36, 39)),   # Wobble Kitty [solo]
     (40, lambda: T9_premium_duo(37, 38, 40)),  # Tiny Blob Monster + Soft Fang Critter
     (41, lambda: T9_premium_duo(40, 41, 41)),  # Round Eared Creature + Star-Eyed Bunny
-    (42, lambda: T9_premium_duo(42, 43, 42)),  # Moon Bat Blob + Glow Ghost Puff
+    (42, lambda: T9_premium_duo(42, 43, 42,
+        mid_pack_note="Halfway through Moonlit Hollow. The moon is watching too.")),  # Moon Bat Blob + Glow Ghost Puff
     (43, lambda: T9_premium_duo(44, 45, 43)),  # Candy Fang Creature + Dream Eater Squish
     (44, lambda: T9_premium_duo(46, 47, 44)),  # Arcane Wobble Kitty + Phantom Jelly Beast
     (45, lambda: T10_mythic_finale(48, 45)),    # Mythic Plush Familiar

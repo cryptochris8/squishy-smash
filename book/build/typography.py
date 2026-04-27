@@ -130,6 +130,18 @@ STYLES: dict[str, TextStyle] = {
     "map_region_lg": TextStyle("display",   56,  62, 6,  "cream",    "center"),
     "map_landmark":  TextStyle("body_italic", 22, 28, 0, "soft_white","center"),
     "map_landmark_lg": TextStyle("body_italic", 28, 36, 0, "soft_white","center"),
+
+    # Phase 5b — dark variants used when the text sits on a parchment
+    # plate (T3 narrator, T8 right column, T10 fairy-tale paragraph).
+    # Dark plum on cream parchment reads as "real children's
+    # hardcover" instead of cream-on-cream-confusion.
+    "char_name_lg_dark":     TextStyle("display",   88,  96, -3, "deep_plum", "left"),
+    "rarity_stars_dark":     TextStyle("display",   30,  36, 4,  "deep_plum", "left"),
+    "field_label_dark":      TextStyle("display",   26,  32, 4,  "shadow_warm","left"),
+    "field_value_dark":      TextStyle("body",      30,  40, 0,  "deep_plum", "left"),
+    "narrator_dark":         TextStyle("body_italic", 32, 46, 0, "shadow_warm", "left"),
+    "narrator_lg_dark":      TextStyle("body_italic", 42, 56, 0, "deep_plum", "left"),
+    "lede_dark":             TextStyle("body",      36,  48, 0, "deep_plum","center"),
 }
 
 
