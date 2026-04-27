@@ -70,10 +70,13 @@ class InteriorPDFTests(unittest.TestCase):
         self.assertGreater(self.pdf_path.stat().st_size, 10_000,
                            "interior PDF is suspiciously small")
 
-    def test_pdf_has_32_pages(self) -> None:
+    def test_pdf_has_46_pages(self) -> None:
+        # Phase 4 expansion: every character gets a real entry, so
+        # 32 pages grew to 46 = 6 front matter + 13 per pack * 3
+        # packs + 1 tracker.
         pages, _, _ = _read_pdf_pages_and_size(self.pdf_path)
-        self.assertEqual(pages, 32,
-                         "KDP target is 32 interior pages")
+        self.assertEqual(pages, 46,
+                         "KDP target is 46 interior pages")
 
     def test_pdf_page_size_matches_kdp_bleed(self) -> None:
         _, w_pt, h_pt = _read_pdf_pages_and_size(self.pdf_path)
@@ -135,28 +138,18 @@ class CharacterAssetTests(unittest.TestCase):
 
 
 class FeaturedScheduleTests(unittest.TestCase):
-    """Phase-1 schema: every Featured-21 character must have the full
-    Squishkeeper field-guide schema populated. Page 31 gallery characters
-    do NOT have the new fields (they render as plain thumbnails)."""
+    """Phase-4 schema: every one of the 48 characters must have the
+    full Squishkeeper field-guide schema populated. SOLO_NUMS pins
+    which of those get full-page T8 hero treatment vs T9 2-up duo."""
 
-    def test_featured_count_is_21(self) -> None:
-        self.assertEqual(len(FEATURED_NUMS), 21,
-                         "Featured-21 hero count is locked")
-        self.assertEqual(len(set(FEATURED_NUMS)), 21,
+    def test_featured_count_is_48(self) -> None:
+        self.assertEqual(len(FEATURED_NUMS), 48,
+                         "Phase 4: every character is featured")
+        self.assertEqual(len(set(FEATURED_NUMS)), 48,
                          "FEATURED_NUMS must contain unique character ids")
+        self.assertEqual(set(FEATURED_NUMS), set(range(1, 49)))
 
-    def test_seven_featured_per_pack(self) -> None:
-        chars = featured_characters()
-        per_pack: dict[str, int] = {}
-        for c in chars:
-            per_pack[c.pack] = per_pack.get(c.pack, 0) + 1
-        self.assertEqual(per_pack, {
-            "Squishy Foods": 7,
-            "Goo & Fidgets": 7,
-            "Creepy-Cute Creatures": 7,
-        })
-
-    def test_each_featured_has_full_schema(self) -> None:
+    def test_each_character_has_full_schema(self) -> None:
         for c in featured_characters():
             with self.subTest(char=c.name):
                 self.assertIsNotNone(c.location,
@@ -177,15 +170,18 @@ class FeaturedScheduleTests(unittest.TestCase):
             self.assertIn(c.pack_mate, names,
                           f"{c.name}: pack_mate '{c.pack_mate}' is not a real character")
 
-    def test_gallery_count_is_27(self) -> None:
-        gallery = gallery_characters()
-        self.assertEqual(len(gallery), 27)
-        # Featured + gallery covers all 48 with no overlap
-        featured_ids = {c.num for c in featured_characters()}
-        gallery_ids = {c.num for c in gallery}
-        self.assertEqual(featured_ids & gallery_ids, set())
-        self.assertEqual(featured_ids | gallery_ids,
-                         set(range(1, 49)))
+    def test_solo_layout_is_5_per_pack(self) -> None:
+        from config import SOLO_NUMS, solo_characters
+        self.assertEqual(len(SOLO_NUMS), 15,
+                         "5 solo per pack × 3 packs = 15 total")
+        per_pack: dict[str, int] = {}
+        for c in solo_characters():
+            per_pack[c.pack] = per_pack.get(c.pack, 0) + 1
+        self.assertEqual(per_pack, {
+            "Squishy Foods": 5,
+            "Goo & Fidgets": 5,
+            "Creepy-Cute Creatures": 5,
+        })
 
     def test_three_mythics_all_featured(self) -> None:
         """The 3 mythic-rarity characters (Celestial Dumpling Core,

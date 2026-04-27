@@ -54,47 +54,65 @@ INTERIOR_PDF = OUT_DIR / "interior.pdf"
 PDF_PAGE_W_PT = 8.75 * 72
 PDF_PAGE_H_PT = 8.75 * 72
 
-# 32-page sequence per book/manuscript/02_manuscript_v2.md.
-# Each lambda renders ONE page as an RGBA Pillow Image.
+# 46-page sequence per the Phase-4 expansion. Every character gets a
+# real entry: 5 solo (T8) + 5 T9 duos + 1 mythic finale per pack =
+# 13 character pages × 3 packs = 39, plus 6 front matter + 1 tracker = 46.
 PAGE_RENDERERS = [
-    # 1-4: Front matter
+    # 1-6: Front matter
     (1,  lambda: T1_title()),
     (2,  lambda: T2_imprint()),
     (3,  lambda: T3_narrator()),
     (4,  lambda: T_map()),
-    # 5-6: Meet the Three Packs
     (5,  lambda: T4_pack_index_left()),
     (6,  lambda: T4_pack_index_right()),
-    # 7-14: Squishy Foods
+
+    # 7-19: Squishy Foods (13 pages, 16 characters)
     (7,  lambda: T5_pack_portal("Squishy Foods", 7)),
     (8,  lambda: T6_pack_scene("Squishy Foods", 8)),
-    (9,  lambda: T8_featured(1, 9)),    # Soft Dumpling
-    (10, lambda: T8_featured(2, 10)),   # Jelly Bun
-    (11, lambda: T8_featured(3, 11)),   # Peach Mochi
-    (12, lambda: T8_featured(5, 12)),   # Cream Puff
-    (13, lambda: T9_premium_duo(11, 13, 13)),   # Sparkle Mochi + Galaxy Dumpling
-    (14, lambda: T10_mythic_finale(16, 14)),     # Celestial Dumpling Core
-    # 15-22: Goo & Fidgets
-    (15, lambda: T5_pack_portal("Goo & Fidgets", 15)),
-    (16, lambda: T6_pack_scene("Goo & Fidgets", 16)),
-    (17, lambda: T8_featured(17, 17)),  # Goo Ball
-    (18, lambda: T8_featured(19, 18)),  # Stretch Cube
-    (19, lambda: T8_featured(18, 19)),  # Bubble Blob
-    (20, lambda: T8_featured(20, 20)),  # Soft Stress Orb
-    (21, lambda: T9_premium_duo(25, 30, 21)),    # Glitter Goo Ball + Aurora Stretch Cube
-    (22, lambda: T10_mythic_finale(32, 22)),     # Singularity Goo Core
-    # 23-30: Creepy-Cute Creatures
-    (23, lambda: T5_pack_portal("Creepy-Cute Creatures", 23)),
-    (24, lambda: T6_pack_scene("Creepy-Cute Creatures", 24)),
-    (25, lambda: T8_featured(33, 25)),  # Blushy Bun Bunny
-    (26, lambda: T8_featured(35, 26)),  # Puff Ghost
-    (27, lambda: T8_featured(34, 27)),  # Squish Bat
-    (28, lambda: T8_featured(39, 28)),  # Sleepy Slime Pet
-    (29, lambda: T9_premium_duo(41, 43, 29)),    # Star-Eyed Bunny + Glow Ghost Puff
-    (30, lambda: T10_mythic_finale(48, 30)),     # Mythic Plush Familiar
-    # 31-32: Back matter
-    (31, lambda: T_gallery()),
-    (32, lambda: T_tracker()),
+    (9,  lambda: T8_featured(1, 9)),     # Soft Dumpling [solo]
+    (10, lambda: T8_featured(2, 10)),    # Jelly Bun [solo]
+    (11, lambda: T8_featured(3, 11)),    # Peach Mochi [solo]
+    (12, lambda: T8_featured(5, 12)),    # Cream Puff [solo]
+    (13, lambda: T8_featured(6, 13)),    # Rice Ball Squish [solo]
+    (14, lambda: T9_premium_duo(4, 7, 14)),    # Syrup Cube + Marshmallow Puff
+    (15, lambda: T9_premium_duo(8, 9, 15)),    # Pudding Pop + Strawberry Dumpling
+    (16, lambda: T9_premium_duo(10, 11, 16)),  # Rainbow Jelly Bun + Sparkle Mochi
+    (17, lambda: T9_premium_duo(12, 13, 17)),  # Golden Syrup Cube + Galaxy Dumpling
+    (18, lambda: T9_premium_duo(14, 15, 18)),  # Crystal Mochi + Neon Dessert Blob
+    (19, lambda: T10_mythic_finale(16, 19)),    # Celestial Dumpling Core
+
+    # 20-32: Goo & Fidgets (13 pages, 16 characters)
+    (20, lambda: T5_pack_portal("Goo & Fidgets", 20)),
+    (21, lambda: T6_pack_scene("Goo & Fidgets", 21)),
+    (22, lambda: T8_featured(17, 22)),   # Goo Ball [solo]
+    (23, lambda: T8_featured(18, 23)),   # Bubble Blob [solo]
+    (24, lambda: T8_featured(19, 24)),   # Stretch Cube [solo]
+    (25, lambda: T8_featured(20, 25)),   # Soft Stress Orb [solo]
+    (26, lambda: T8_featured(21, 26)),   # Jelly Pad [solo]
+    (27, lambda: T9_premium_duo(22, 23, 27)),  # Sticky Pop Ball + Wobble Drop
+    (28, lambda: T9_premium_duo(24, 25, 28)),  # Squish Capsule + Glitter Goo Ball
+    (29, lambda: T9_premium_duo(26, 27, 29)),  # Shockwave Blob + Frost Gel Cube
+    (30, lambda: T9_premium_duo(28, 29, 30)),  # Prism Stress Orb + Plasma Goo Ball
+    (31, lambda: T9_premium_duo(30, 31, 31)),  # Aurora Stretch Cube + Cosmic Jelly Pad
+    (32, lambda: T10_mythic_finale(32, 32)),    # Singularity Goo Core
+
+    # 33-45: Creepy-Cute Creatures (13 pages, 16 characters)
+    (33, lambda: T5_pack_portal("Creepy-Cute Creatures", 33)),
+    (34, lambda: T6_pack_scene("Creepy-Cute Creatures", 34)),
+    (35, lambda: T8_featured(33, 35)),   # Blushy Bun Bunny [solo]
+    (36, lambda: T8_featured(34, 36)),   # Squish Bat [solo]
+    (37, lambda: T8_featured(35, 37)),   # Puff Ghost [solo]
+    (38, lambda: T8_featured(39, 38)),   # Sleepy Slime Pet [solo]
+    (39, lambda: T8_featured(36, 39)),   # Wobble Kitty [solo]
+    (40, lambda: T9_premium_duo(37, 38, 40)),  # Tiny Blob Monster + Soft Fang Critter
+    (41, lambda: T9_premium_duo(40, 41, 41)),  # Round Eared Creature + Star-Eyed Bunny
+    (42, lambda: T9_premium_duo(42, 43, 42)),  # Moon Bat Blob + Glow Ghost Puff
+    (43, lambda: T9_premium_duo(44, 45, 43)),  # Candy Fang Creature + Dream Eater Squish
+    (44, lambda: T9_premium_duo(46, 47, 44)),  # Arcane Wobble Kitty + Phantom Jelly Beast
+    (45, lambda: T10_mythic_finale(48, 45)),    # Mythic Plush Familiar
+
+    # 46: Back matter
+    (46, lambda: T_tracker()),
 ]
 
 

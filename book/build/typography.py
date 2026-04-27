@@ -127,7 +127,9 @@ STYLES: dict[str, TextStyle] = {
 
     # Map labels (page 4).
     "map_region":    TextStyle("display",   42,  48, 4,  "cream",    "center"),
+    "map_region_lg": TextStyle("display",   56,  62, 6,  "cream",    "center"),
     "map_landmark":  TextStyle("body_italic", 22, 28, 0, "soft_white","center"),
+    "map_landmark_lg": TextStyle("body_italic", 28, 36, 0, "soft_white","center"),
 }
 
 

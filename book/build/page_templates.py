@@ -267,21 +267,69 @@ def T1_title() -> Image.Image:
               "A Field Guide from the Squishkeeper",
               style_name="tagline")
 
-    # Hero trio — one card from each pack, framed with rarity rings.
+    # Hero trio — asymmetric stack with the center card largest and
+    # forward, the two side cards rotated slightly and overlapping
+    # behind. Pre-fix the trio sat as three equal cards with a flat
+    # row — the gap between title and cards read as empty space and
+    # the layout was static. Post-fix the cards fill the lower half
+    # confidently and signal "three packs, one world" at a glance.
     chars = by_num()
-    hero_size = 460
-    hero_gap = 60
-    total_w = hero_size * 3 + hero_gap * 2
-    hero_y = PAGE_H - SAFE - 260 - hero_size
-    start_x = cx - total_w // 2
-    for i, num in enumerate([1, 17, 33]):
+    pack_heroes = [
+        (17, -10, 0.78),   # Goo Ball, rotated CCW, smaller, behind-left
+        (33,  +0, 1.00),   # Blushy Bun Bunny, no rotation, biggest, center+front
+        (1,  +10, 0.78),   # Soft Dumpling, rotated CW, smaller, behind-right
+    ]
+    center_card_w = 820
+    center_card_h = int(center_card_w * 1.3)
+    # Pull the trio up so its top tucks ~200 px under the tagline
+    # rather than sitting in the bottom third with a big empty
+    # band above. Bottom of center card ends well above the trim
+    # line; the side cards are rotated so they extend slightly
+    # past the center card's footprint without crossing safe area.
+    center_y = 1080
+    center_x = cx - center_card_w // 2
+    overlap_inset = 240  # how far the side cards tuck under center
+
+    # Render the side cards FIRST so the center card composites on
+    # top — overlap reads correctly with the larger card in front.
+    for i, (num, angle_deg, scale) in enumerate(pack_heroes):
+        if scale == 1.0:
+            continue  # render center last
         char = chars[num]
+        cw = int(center_card_w * scale)
+        ch = int(center_card_h * scale)
+
+        # Render the card onto a tile slightly larger than the card
+        # so the rotation doesn't clip the rarity ring + drop shadow.
+        pad = 80
+        tile = Image.new("RGBA", (cw + pad * 2, ch + pad * 2),
+                         (0, 0, 0, 0))
         draw_card_frame(
-            canvas, char.card_path,
-            start_x + i * (hero_size + hero_gap), hero_y,
-            hero_size, int(hero_size * 1.3),
+            tile, char.card_path,
+            pad, pad, cw, ch,
             rarity=char.rarity, pack=char.pack,
         )
+        # Rotate around the tile center; resample bicubic for smooth
+        # edges. expand=False keeps tile size stable so we know
+        # exactly where to paste.
+        rotated = tile.rotate(angle_deg, resample=Image.Resampling.BICUBIC,
+                              expand=False)
+        side = "left" if i == 0 else "right"
+        if side == "left":
+            paste_x = center_x - cw + overlap_inset - pad
+        else:
+            paste_x = center_x + center_card_w - overlap_inset - pad
+        paste_y = center_y + (center_card_h - ch) // 2 - pad
+        canvas.alpha_composite(rotated, (paste_x, paste_y))
+
+    # Center card — biggest, no rotation, drawn last so it sits in
+    # front of the side cards.
+    center_char = chars[pack_heroes[1][0]]
+    draw_card_frame(
+        canvas, center_char.card_path,
+        center_x, center_y, center_card_w, center_card_h,
+        rarity=center_char.rarity, pack=center_char.pack,
+    )
 
     _vignette(canvas, intensity=0.45)
     return canvas
@@ -423,14 +471,16 @@ def T_map() -> Image.Image:
               "One Squishkeeper to keep track.",
               style_name="tagline", max_width=PAGE_W - SAFE * 2)
 
-    # Three region medallions, one per pack, arranged in a triangle
-    # with the landmarks listed beneath each.
-    medallion_r = 240
-    triangle_y = SAFE + 700
+    # Three region medallions in triangle layout. Pulled down + scaled
+    # up so the page reads as balanced rather than top-heavy. Inside
+    # text bumped at the same time so the larger medallions don't
+    # leave a small label rattling around in a big circle.
+    medallion_r = 320         # was 240
+    triangle_y = SAFE + 880   # was SAFE + 700
     positions = [
-        (cx - 600, triangle_y),               # Pudding Hills (left)
-        (cx,       triangle_y + 360),         # Goo Coast (center, lower)
-        (cx + 600, triangle_y),               # Moonlit Hollow (right)
+        (cx - 700, triangle_y),               # Pudding Hills (left)
+        (cx,       triangle_y + 420),         # Goo Coast (center, lower)
+        (cx + 700, triangle_y),               # Moonlit Hollow (right)
     ]
 
     for i, region in enumerate(REGIONS):
@@ -438,7 +488,7 @@ def T_map() -> Image.Image:
         tint = region["tint"]
         # Soft glow halo per region
         halo = _glow_layer(medallion_r * 4, medallion_r * 4,
-                           tint, radius=140, alpha=0.30)
+                           tint, radius=180, alpha=0.30)
         canvas.alpha_composite(
             halo, (mx - medallion_r * 2, my - medallion_r * 2),
         )
@@ -448,7 +498,7 @@ def T_map() -> Image.Image:
             (mx - medallion_r, my - medallion_r,
              mx + medallion_r, my + medallion_r),
             outline=_hex_to_rgba(tint, 230),
-            width=4,
+            width=5,
         )
         # Inner soft fill
         inner = Image.new("RGBA",
@@ -460,21 +510,22 @@ def T_map() -> Image.Image:
         )
         canvas.alpha_composite(inner, (mx - medallion_r,
                                        my - medallion_r))
-        # Region name
-        draw_text(canvas, mx, my - 36,
-                  region["name"], style_name="map_region")
-        # Subtitle (italic)
-        draw_text(canvas, mx, my + 24,
-                  region["subtitle"], style_name="map_landmark")
+        # Region name (bumped from map_region 42pt -> 56pt for
+        # presence inside the larger medallion)
+        draw_text(canvas, mx, my - 50,
+                  region["name"], style_name="map_region_lg")
+        # Subtitle (bumped from 22pt -> 28pt for legibility)
+        draw_text(canvas, mx, my + 30,
+                  region["subtitle"], style_name="map_landmark_lg")
 
     # Landmarks for each region — under the corresponding medallion
     for i, region in enumerate(REGIONS):
         mx, my = positions[i]
-        ly = my + medallion_r + 60
+        ly = my + medallion_r + 70
         for landmark in region["landmarks"]:
             draw_text(canvas, mx, ly, "·  " + landmark + "  ·",
-                      style_name="map_landmark")
-            ly += 36
+                      style_name="map_landmark_lg")
+            ly += 44
 
     _folio(canvas, 4)
     _vignette(canvas, intensity=0.30)
@@ -515,58 +566,75 @@ def T4_pack_index_left() -> Image.Image:
 
 def T4_pack_index_right() -> Image.Image:
     canvas = _new_canvas(PALETTE["bg"])
-
-    panel_h = (PAGE_H - SAFE * 2 - 60) // 3
     chars = by_num()
 
-    panels = [
-        ("SQUISHY FOODS",
-         "warm and sweet",
-         PALETTE["lime"], "Squishy Foods",
-         [1, 2, 3]),
-        ("GOO & FIDGETS",
-         "glossy and bouncy",
-         PALETTE["jelly_blue"], "Goo & Fidgets",
-         [17, 18, 19]),
-        ("CREEPY-CUTE CREATURES",
-         "spooky and sweet",
-         PALETTE["lavender"], "Creepy-Cute Creatures",
-         [33, 34, 35]),
+    # 3 pack sections, each with a centered text block above 2
+    # cards. Pre-fix this template had 9 cards in tinted plinth
+    # panels with the headers tucked into a left text column —
+    # cream-on-cream blended into the warm card art and the cards
+    # crowded each other. Post-fix: tint the pack name itself so it
+    # pops against the dark plum bg, keep the blurb cream, drop to
+    # 2 hero cards per pack, lose the plinth panel entirely.
+    sections = [
+        ("SQUISHY FOODS",         "warm and sweet",
+         PALETTE["lime"],         "Squishy Foods",
+         [1, 2]),                 # Soft Dumpling + Jelly Bun
+        ("GOO & FIDGETS",         "glossy and bouncy",
+         PALETTE["jelly_blue"],   "Goo & Fidgets",
+         [17, 18]),                # Goo Ball + Bubble Blob
+        ("CREEPY-CUTE CREATURES", "spooky and sweet",
+         PALETTE["lavender"],      "Creepy-Cute Creatures",
+         [33, 34]),                # Blushy Bun Bunny + Squish Bat
     ]
 
-    for i, (name, blurb, tint, pack, nums) in enumerate(panels):
-        py = SAFE + i * (panel_h + 30)
-        # Tinted plinth background
-        plinth = Image.new("RGBA", (PAGE_W - SAFE * 2, panel_h),
-                           (0, 0, 0, 0))
-        ImageDraw.Draw(plinth).rounded_rectangle(
-            (0, 0, PAGE_W - SAFE * 2, panel_h),
-            radius=24,
-            fill=_hex_to_rgba(tint, 35),
-            outline=_hex_to_rgba(tint, 180),
-            width=3,
-        )
-        canvas.alpha_composite(plinth, (SAFE, py))
+    section_h = (PAGE_H - SAFE * 2) // 3
+    cx = PAGE_W // 2
 
-        # 3 thumbnails on the right edge
-        thumb = panel_h - 60
-        thumb_x_start = PAGE_W - SAFE - thumb * 3 - 80
+    for i, (name, blurb, tint, pack, nums) in enumerate(sections):
+        sy = SAFE + i * section_h
+
+        # Pack name — tinted so it stands out against the dark bg
+        # rather than blending with the cream/pink card details.
+        # Custom inline draw because the style sheet's char_name_lg
+        # is locked to cream; we want pack tint just for this row.
+        from PIL import ImageDraw as _ID
+        pack_font = font("display", 78)
+        bbox = _ID.Draw(canvas).textbbox((0, 0), name, font=pack_font)
+        name_w = bbox[2] - bbox[0]
+        name_x = cx - name_w // 2
+        name_y = sy + 30
+        # Soft drop shadow + fill in pack tint
+        d = _ID.Draw(canvas)
+        d.text((name_x + 4, name_y + 4), name, font=pack_font,
+               fill=(0, 0, 0, 130))
+        d.text((name_x, name_y), name, font=pack_font,
+               fill=_hex_to_rgba(tint, 255))
+
+        # Blurb (italic cream) below the pack name
+        draw_text(canvas, cx, name_y + 130, blurb,
+                  style_name="tagline",
+                  max_width=PAGE_W - SAFE * 2)
+
+        # 2 cards centered in the row, generous gap between them.
+        # Card size sized to fit a 3-section vertical stack: at
+        # 380x494 each, two cards + name + blurb + breathing room
+        # leaves ~50 px between sections so headers don't collide
+        # with cards from the row above.
+        card_w = 380
+        card_h = int(card_w * 1.3)
+        gap = 100
+        total_w = card_w * 2 + gap
+        cards_x_start = cx - total_w // 2
+        cards_y = name_y + 220
         for j, num in enumerate(nums):
             char = chars[num]
             draw_card_frame(
                 canvas, char.card_path,
-                thumb_x_start + j * (thumb + 16),
-                py + 30, thumb, int(thumb * 1.2),
+                cards_x_start + j * (card_w + gap),
+                cards_y, card_w, card_h,
                 rarity=char.rarity, pack=pack,
                 background="transparent",
             )
-
-        # Title + blurb on the left
-        text_x = SAFE + 60
-        draw_text(canvas, text_x, py + 60, name,
-                  style_name="char_name_lg")
-        draw_text(canvas, text_x, py + 200, blurb,
-                  style_name="flavor")
 
     _folio(canvas, 6)
     _vignette(canvas, intensity=0.25)
@@ -903,16 +971,23 @@ def T9_premium_duo(num_a: int, num_b: int, page_num: int) -> Image.Image:
                       colors=[tint, PALETTE["cream"]],
                       seed=page_num, sizes=(3, 10), alpha=160)
 
-    # Two stacked entries — top half + bottom half
+    # Two stacked entries — top half + bottom half. Pre-fix the card
+    # was sized to entry_h with a 1.3 aspect ratio, which made it
+    # taller than the entry itself and spilled into the header above
+    # AND off the bottom of the page. Now the card height is sized
+    # to FIT in the entry with breathing room, and the width is
+    # derived from the 0.769 aspect (card art is 1086x1408 ≈ 0.77).
     entry_h = (PAGE_H - SAFE - 280) // 2 - 30
     entry_w = PAGE_W - SAFE * 2
 
     for i, char in enumerate((a, b)):
         ey = SAFE + 280 + i * (entry_h + 60)
 
-        # Card on the left
-        card_w = entry_h - 40
-        card_h = int(card_w * 1.3)
+        # Card sized to fit the entry with 50 px padding above and
+        # below. Width derived from the card-art aspect ratio so the
+        # frame doesn't add letterbox gaps.
+        card_h = entry_h - 100
+        card_w = int(card_h / 1.3)
         card_x = SAFE + 40
         card_y = ey + (entry_h - card_h) // 2
         draw_card_frame(
