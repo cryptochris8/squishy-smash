@@ -1,3 +1,5 @@
+import { APP_STORE_URL } from '../constants/links'
+
 export function Footer() {
   return (
     <footer className="relative z-10 mt-12 py-12 px-6 border-t border-white/10">
@@ -21,7 +23,7 @@ export function Footer() {
           <FooterLink href="#core-loop">How it plays</FooterLink>
           <FooterLink href="#collection">Collection</FooterLink>
           <FooterLink href="#packs">Packs</FooterLink>
-          <FooterLink href="#join">TestFlight</FooterLink>
+          <FooterLink href={APP_STORE_URL} external>App Store</FooterLink>
         </FooterColumn>
 
         <FooterColumn title="About">

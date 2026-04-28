@@ -1,3 +1,4 @@
+import { APP_STORE_URL } from '../constants/links'
 import { squishies } from '../data/squishies'
 
 /* Six hero-companion sprites — hand-picked to show off tier variety:
@@ -24,7 +25,7 @@ export function Hero() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 glass-card px-4 py-2 mb-6 text-xs font-bold tracking-wider uppercase text-cream-300 animate-pop">
             <span aria-hidden="true">✨</span>
-            <span>Soft-launch on TestFlight</span>
+            <span>Live on the App Store</span>
           </div>
 
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] mb-6 animate-fade-in-up">
@@ -42,9 +43,14 @@ export function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-3 items-center animate-fade-in-up-delayed">
-            <a href="#join" className="glow-btn">
-              Join TestFlight
-              <span aria-hidden="true">→</span>
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glow-btn inline-flex items-center gap-2"
+            >
+              <AppleLogo />
+              <span>Download on the App Store</span>
             </a>
             <a href="#collection" className="glow-btn ghost">
               See the collection
@@ -68,6 +74,19 @@ export function Hero() {
         </div>
       </div>
     </header>
+  )
+}
+
+function AppleLogo() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="w-5 h-5"
+      aria-hidden="true"
+    >
+      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
   )
 }
 
