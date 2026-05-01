@@ -94,3 +94,19 @@ cert_key
 cert_key.pub
 .env
 .env.local
+
+# Marketing video outputs — regeneratable from tools/build_trailer_video.py.
+# Trailers can run 15–22 MB each; treat them as build artifacts, not assets.
+# Leading slash is intentional — matches ONLY the root-level marketing/ dir,
+# not assets/audio/marketing/ which legitimately holds tracked VO MP3s.
+/marketing/
+
+# Book cover mockups — regeneratable from book/build/_render_title_mockup.py.
+# These are design exploration renders, not source-of-truth.
+book/mockups/
+
+# Raw screen recordings — over GitHub's 100 MB push limit. Keep locally
+# as the master input to the trailer pipeline; gitignore so they don't
+# block pushes. Re-record into the same path when needed.
+assets/images/ScreenRecording*.MP4
+branding/ScreenRecording*.MP4
