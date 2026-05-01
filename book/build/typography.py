@@ -87,6 +87,7 @@ STYLES: dict[str, TextStyle] = {
     "wordmark_alt": TextStyle("display", 220, 240, -8, "cream",      "center"),
     "title":         TextStyle("display", 110, 124, -4, "soft_white","center"),
     "subtitle":      TextStyle("display",  56,  68, -2, "cream",     "center"),
+    "subtitle_xl":   TextStyle("display",  72,  86, -2, "cream",     "center"),
     "tagline":       TextStyle("body_italic", 38, 46, 0, "soft_white","center"),
 
     # Section / pack headers.

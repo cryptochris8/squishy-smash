@@ -213,9 +213,17 @@ def draw_front_cover(c: canvas_mod.Canvas) -> None:
     pink_style = _style(DISPLAY_FONT, 56, 60, PALETTE["pink"], TA_CENTER)
     cream_style = _style(DISPLAY_FONT, 56, 60, PALETTE["cream"], TA_CENTER)
 
-    y = TRIM_Y_TOP - safe_inset - 56
-    y = _draw_paragraph(c, "SQUISHY", inner_x, y + 56, inner_w, pink_style)
-    y = _draw_paragraph(c, "SMASH", inner_x, y + 56, inner_w, cream_style)
+    # _draw_paragraph returns the y-position at the BOTTOM of the
+    # just-drawn block (PDF coords: smaller y = lower on page). The
+    # subtitle/tagline lines below use the correct `y -= gap` pattern;
+    # the wordmark block previously tried to "advance" with `+ 56`,
+    # which moved upward in PDF space and dropped SMASH back on top
+    # of SQUISHY (~4pt offset = total overlap). Use the standard
+    # draw / y -= gap / draw pattern.
+    y = TRIM_Y_TOP - safe_inset
+    y = _draw_paragraph(c, "SQUISHY", inner_x, y, inner_w, pink_style)
+    y -= 20
+    y = _draw_paragraph(c, "SMASH", inner_x, y, inner_w, cream_style)
     y -= 12
 
     sub_style = _style(DISPLAY_FONT, 22, 26, PALETTE["soft_white"], TA_CENTER)

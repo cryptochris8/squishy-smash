@@ -342,25 +342,24 @@ def T1_title() -> Image.Image:
         alpha=180,
     )
 
-    # SQUISHY (pink->rose dust->pink gradient) over SMASH (cream->
-    # gold_hi->cream gradient), centered. Foil-stamp illusion via
-    # 3-stop vertical gradient inside each glyph.
+    # SQUISHY in solid pink over SMASH in solid cream, centered.
+    # Pre-fix the wordmark used a 3-stop vertical gradient inside
+    # each glyph for a foil-stamp illusion, but two issues showed
+    # up on the cover: (1) the gradient renderer's per-glyph tile
+    # padding caused the SMASH tile to overlap the bottom of
+    # SQUISHY by ~70 px, and (2) the rose-dust mid-color was too
+    # close in luminance to the dark plum bg, making the middle of
+    # each letter hard to read. Solid colors with a wider vertical
+    # gap fix both at once. We keep the drop shadow for legibility.
     cx = PAGE_W // 2
     title_y = 280
-    _draw_gradient_wordmark(
-        canvas, cx, title_y, "SQUISHY",
-        font_size=220,
-        top_hex=PALETTE["pink"],
-        mid_hex=PALETTE["rose_dust"],
-        bottom_hex=PALETTE["pink"],
-    )
-    _draw_gradient_wordmark(
-        canvas, cx, title_y + 230, "SMASH",
-        font_size=220,
-        top_hex=PALETTE["cream"],
-        mid_hex=PALETTE["gold_hi"],
-        bottom_hex=PALETTE["cream"],
-    )
+    draw_text(canvas, cx, title_y,
+              "SQUISHY", style_name="wordmark", shadow=True)
+    # 380 px gap (was 230) so the words have clear breathing room
+    # — the SQUISHY descender ("Y") and the SMASH cap ("S") no
+    # longer touch.
+    draw_text(canvas, cx, title_y + 380,
+              "SMASH", style_name="wordmark_alt", shadow=True)
 
     # Subtitle + tagline
     sub_y = title_y + 480
