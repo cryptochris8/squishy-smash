@@ -10,27 +10,40 @@ class VoiceLineRegistry {
   static const List<String> revealRare = <String>[
     'audio/vo/vo_reveal_rare_a.mp3',
     'audio/vo/vo_reveal_rare_b.mp3',
+    'audio/vo/vo_reveal_rare_c.mp3',
+    'audio/vo/vo_reveal_rare_d.mp3',
+    'audio/vo/vo_reveal_rare_e.mp3',
   ];
 
   static const List<String> revealEpic = <String>[
     'audio/vo/vo_reveal_epic_a.mp3',
     'audio/vo/vo_reveal_epic_b.mp3',
+    'audio/vo/vo_reveal_epic_c.mp3',
+    'audio/vo/vo_reveal_epic_d.mp3',
+    'audio/vo/vo_reveal_epic_e.mp3',
   ];
 
   static const List<String> revealMythic = <String>[
     'audio/vo/vo_reveal_mythic_a.mp3',
     'audio/vo/vo_reveal_mythic_b.mp3',
+    'audio/vo/vo_reveal_mythic_c.mp3',
+    'audio/vo/vo_reveal_mythic_d.mp3',
   ];
 
   static const List<String> mega = <String>[
     'audio/vo/vo_mega_a.mp3',
     'audio/vo/vo_mega_b.mp3',
     'audio/vo/vo_mega_c.mp3',
+    'audio/vo/vo_mega_d.mp3',
+    'audio/vo/vo_mega_e.mp3',
   ];
 
   static const List<String> asmrIdle = <String>[
     'audio/vo/vo_asmr_idle_a.mp3',
     'audio/vo/vo_asmr_idle_b.mp3',
+    'audio/vo/vo_asmr_idle_c.mp3',
+    'audio/vo/vo_asmr_idle_d.mp3',
+    'audio/vo/vo_asmr_idle_e.mp3',
   ];
 
   /// Flat list of every bundled VO path. Passed to [SoundManager.warm]

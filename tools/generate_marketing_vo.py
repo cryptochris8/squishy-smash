@@ -56,6 +56,13 @@ VOICE_SETTINGS = {
 #   voice_id         — default ElevenLabs voice (override with --voice)
 #   voice_name       — default filename suffix (override with --voice-name)
 #   segments         — list of (slug, timecode_label, text)
+#   output_dir       — (optional) override the default OUT_DIR (e.g. game
+#                      VO drops into assets/audio/vo/, not marketing/)
+#   output_pattern   — (optional) override the default
+#                      "{prefix}_{slug}_{voice}.mp3" filename layout. Used
+#                      by the in-game scripts so emitted files land at
+#                      "vo_{category}_{letter}.mp3" matching what
+#                      VoiceLineRegistry already references.
 SCRIPTS = {
     # In-character storybook narration. Squishkeeper voice.
     # Ellipses + em-dashes are deliberate phrasing cues for ElevenLabs.
@@ -134,6 +141,83 @@ SCRIPTS = {
                 "Squishy Smash — out now on the App Store. "
                 "Smash one. You'll see why.",
             ),
+        ],
+    },
+
+    # ─── In-game VO additions (drops into assets/audio/vo/) ────────────────
+    # File naming intentionally matches the existing vo_{category}_{letter}.mp3
+    # convention so VoiceLineRegistry only needs new paths added. Slug = the
+    # next free letter (existing files use a, b, [c]; new ones continue from
+    # there).
+
+    # Reveal-rare reaction. Jessica voice — matches existing
+    # "You've found a rare one" tone (conversational, declarative).
+    "game_reveal_rare": {
+        "filename_prefix": "vo_reveal_rare",
+        "voice_id":   "cgSgspJ2msm6clMCkdW9",  # Jessica
+        "voice_name": "jessica",
+        "output_dir": REPO_ROOT / "assets" / "audio" / "vo",
+        "output_pattern": "vo_reveal_rare_{slug}.mp3",
+        "segments": [
+            ("c", "—", "Ooh — you got a rare one!"),
+            ("d", "—", "Nice — that one's rare!"),
+            ("e", "—", "A rare squishy! Look at that."),
+        ],
+    },
+
+    # Reveal-epic reaction. Jessica, escalating excitement vs. rare.
+    "game_reveal_epic": {
+        "filename_prefix": "vo_reveal_epic",
+        "voice_id":   "cgSgspJ2msm6clMCkdW9",  # Jessica
+        "voice_name": "jessica",
+        "output_dir": REPO_ROOT / "assets" / "audio" / "vo",
+        "output_pattern": "vo_reveal_epic_{slug}.mp3",
+        "segments": [
+            ("c", "—", "Whoa — an epic squishy!"),
+            ("d", "—", "Epic drop! Very nice."),
+            ("e", "—", "Look at that — an epic one!"),
+        ],
+    },
+
+    # Reveal-mythic reaction. Lily — switches to the storybook voice for
+    # the rarest tier so the audio cue itself feels rarer than rare/epic.
+    "game_reveal_mythic": {
+        "filename_prefix": "vo_reveal_mythic",
+        "voice_id":   "pFZP5JQG7iQjIQuC4Bku",  # Lily
+        "voice_name": "lily",
+        "output_dir": REPO_ROOT / "assets" / "audio" / "vo",
+        "output_pattern": "vo_reveal_mythic_{slug}.mp3",
+        "segments": [
+            ("c", "—", "Oh my... a mythic squishy."),
+            ("d", "—", "Well now... a mythic. How rare."),
+        ],
+    },
+
+    # Mega-burst combo hype. Jessica, peak energy.
+    "game_mega": {
+        "filename_prefix": "vo_mega",
+        "voice_id":   "cgSgspJ2msm6clMCkdW9",  # Jessica
+        "voice_name": "jessica",
+        "output_dir": REPO_ROOT / "assets" / "audio" / "vo",
+        "output_pattern": "vo_mega_{slug}.mp3",
+        "segments": [
+            ("d", "—", "Whoa — mega smash!"),
+            ("e", "—", "Look at you go!"),
+        ],
+    },
+
+    # ASMR idle-loop reaction. Lily — matches existing "mmmmm... so satisfying"
+    # vocalize-then-adjective pattern.
+    "game_asmr_idle": {
+        "filename_prefix": "vo_asmr_idle",
+        "voice_id":   "pFZP5JQG7iQjIQuC4Bku",  # Lily
+        "voice_name": "lily",
+        "output_dir": REPO_ROOT / "assets" / "audio" / "vo",
+        "output_pattern": "vo_asmr_idle_{slug}.mp3",
+        "segments": [
+            ("c", "—", "Ahhh... so squishy."),
+            ("d", "—", "Mmmm... that's nice."),
+            ("e", "—", "Ooh... so cozy."),
         ],
     },
 
@@ -226,15 +310,17 @@ def main() -> int:
     voice_name = args.voice_name or cfg["voice_name"]
     prefix = cfg["filename_prefix"]
     segments = cfg["segments"]
+    out_dir = cfg.get("output_dir", OUT_DIR)
+    output_pattern = cfg.get("output_pattern")
 
     api_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     if not args.dry_run and not api_key:
         print("ERROR: ELEVENLABS_API_KEY env var not set.", file=sys.stderr)
         return 1
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     print(f"Script:     {args.script}")
-    print(f"Output dir: {OUT_DIR}")
+    print(f"Output dir: {out_dir}")
     print(f"Voice:      {voice_name} ({voice_id})")
     print(f"Model:      {MODEL_ID}")
     print(f"Settings:   {VOICE_SETTINGS}")
@@ -245,8 +331,11 @@ def main() -> int:
     print()
 
     for slug, tc, text in segments:
-        fname = f"{prefix}_{slug}_{voice_name}.mp3"
-        out_path = OUT_DIR / fname
+        if output_pattern:
+            fname = output_pattern.format(slug=slug)
+        else:
+            fname = f"{prefix}_{slug}_{voice_name}.mp3"
+        out_path = out_dir / fname
         print(f"  [{tc}] {slug}  ({len(text)} chars)")
         print(f"    \"{text}\"")
         if args.dry_run:

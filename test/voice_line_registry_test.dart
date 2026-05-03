@@ -18,14 +18,19 @@ void main() {
       expect(VoiceLineRegistry.asmrIdle, isNotEmpty);
     });
 
-    test('mega has at least 3 variants for anti-repetition headroom', () {
-      expect(VoiceLineRegistry.mega.length, greaterThanOrEqualTo(3));
-    });
-
-    test('rare/epic/mythic each have at least 2 variants', () {
-      expect(VoiceLineRegistry.revealRare.length, greaterThanOrEqualTo(2));
-      expect(VoiceLineRegistry.revealEpic.length, greaterThanOrEqualTo(2));
-      expect(VoiceLineRegistry.revealMythic.length, greaterThanOrEqualTo(2));
+    // SoundVariantPicker's anti-repetition rule forces a hard alternation
+    // when a tier has exactly 2 variants (next pick must differ from last,
+    // so a 2-element list goes a-b-a-b deterministically and the player's
+    // ear catches the loop within ~3 reveals). 3 variants relaxes the
+    // pattern but still feels thin on deterministic-firing tiers. We
+    // require ≥4 on every tier where firing is per-event (no probability
+    // gating) so the audible randomization holds across a normal session.
+    test('every VO tier has ≥4 variants (anti-repetition headroom)', () {
+      expect(VoiceLineRegistry.revealRare.length, greaterThanOrEqualTo(4));
+      expect(VoiceLineRegistry.revealEpic.length, greaterThanOrEqualTo(4));
+      expect(VoiceLineRegistry.revealMythic.length, greaterThanOrEqualTo(4));
+      expect(VoiceLineRegistry.mega.length, greaterThanOrEqualTo(4));
+      expect(VoiceLineRegistry.asmrIdle.length, greaterThanOrEqualTo(4));
     });
 
     test('allPaths is the union of every tier', () {
