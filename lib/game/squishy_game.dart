@@ -25,6 +25,7 @@ import 'systems/anti_spam_cooldown.dart';
 import 'systems/arena_registry.dart';
 import 'systems/burst_resolver.dart';
 import 'systems/combo_controller.dart';
+import 'systems/combo_sound_registry.dart';
 import 'systems/feedback_dispatcher.dart';
 import 'systems/flame_feedback_sink.dart';
 import 'systems/haptics_manager.dart';
@@ -201,7 +202,9 @@ class SquishyGame extends FlameGame {
         haptics: haptics,
         shaker: shaker,
       ),
-    )..voiceLines.addAll(VoiceLineRegistry.dispatcherMap);
+    )
+      ..voiceLines.addAll(VoiceLineRegistry.dispatcherMap)
+      ..comboChimes.addAll(ComboSoundRegistry.dispatcherMap);
 
     final featured = ServiceLocator.packs.schedule.currentWeek(DateTime.now());
     _activePackId = featured?.featuredPack ??
@@ -350,7 +353,10 @@ class SquishyGame extends FlameGame {
     score.addHit(base, multiplier: combo.multiplier);
     feedback.dispatch(FeedbackTier.hit, c.def);
     if (milestone != null && milestone != ComboTier.none) {
-      feedback.dispatch(FeedbackTier.comboMilestone, c.def);
+      // Pass the freshly-crossed tier so the dispatcher can pick the
+      // right chime variant (combo_3 / combo_6 / combo_10 / combo_15).
+      feedback.dispatch(FeedbackTier.comboMilestone, c.def,
+          comboTier: milestone);
       // Tiny accent particle burst centered on the object so the
       // milestone is visually obvious, not just haptic.
       particles.burst(

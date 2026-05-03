@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:squishy_smash/data/models/rarity.dart';
 import 'package:squishy_smash/data/models/smashable_def.dart';
+import 'package:squishy_smash/game/systems/combo_controller.dart';
 import 'package:squishy_smash/game/systems/feedback_dispatcher.dart';
 import 'package:squishy_smash/game/systems/sound_variant_picker.dart';
 
@@ -229,6 +230,96 @@ void main() {
         expect(sequence[i], isNot(equals(sequence[i - 1])),
             reason: 'VO repeat at index $i');
       }
+    });
+  });
+
+  group('FeedbackDispatcher combo milestone chimes', () {
+    test('comboMilestone always fires haptic + shake (chime is additive)', () {
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      // No chimes registered — milestone should still produce
+      // haptic + shake so the player never gets a *silent* milestone.
+      d.dispatch(FeedbackTier.comboMilestone, _def());
+      expect(sink.calls, ['hapticMedium', 'shake:0.10:4']);
+      expect(sink.countOf('playVariant'), 0);
+    });
+
+    test('comboMilestone with comboTier=null plays no chime', () {
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.comboChimes[ComboTier.starter] = const ['a.mp3', 'b.mp3'];
+
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: null);
+
+      expect(sink.countOf('playVariant'), 0);
+    });
+
+    test('comboMilestone with comboTier=none plays no chime', () {
+      // Defensive: even though the call site filters out `none` before
+      // dispatching, the dispatcher should not crash or play a chime
+      // if it somehow receives `none`.
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.comboChimes[ComboTier.starter] = const ['a.mp3', 'b.mp3'];
+
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.none);
+
+      expect(sink.countOf('playVariant'), 0);
+    });
+
+    test('comboMilestone routes each tier to its registered chime pool', () {
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.comboChimes[ComboTier.starter] = const ['s_a.mp3', 's_b.mp3'];
+      d.comboChimes[ComboTier.stronger] = const ['m_a.mp3', 'm_b.mp3'];
+      d.comboChimes[ComboTier.revealReady] = const ['r_a.mp3', 'r_b.mp3'];
+      d.comboChimes[ComboTier.mega] = const ['x_a.mp3', 'x_b.mp3'];
+
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.starter);
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.stronger);
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.revealReady);
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.mega);
+
+      expect(sink.calls.where((c) => c.startsWith('playVariant:')), [
+        'playVariant:combo_starter:2',
+        'playVariant:combo_stronger:2',
+        'playVariant:combo_revealReady:2',
+        'playVariant:combo_mega:2',
+      ]);
+    });
+
+    test('comboMilestone variant keys are scoped per tier (independent state)',
+        () {
+      // The variant picker keys "combo_starter", "combo_stronger" etc.
+      // need to be distinct so the anti-repetition state for one tier
+      // doesn't bleed into another (e.g., crossing starter then later
+      // crossing stronger should NOT influence which stronger variant
+      // plays first).
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(
+        sink: sink,
+        variantPicker: SoundVariantPicker(rng: Random(7)),
+        rng: Random(11),
+      );
+      d.comboChimes[ComboTier.starter] = const ['s_a', 's_b'];
+      d.comboChimes[ComboTier.mega] = const ['x_a', 'x_b'];
+
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.starter);
+      d.dispatch(FeedbackTier.comboMilestone, _def(),
+          comboTier: ComboTier.mega);
+
+      // Each playVariant key uses tier name — confirms scoping.
+      expect(sink.calls.where((c) => c.startsWith('playVariant:')).toList(), [
+        'playVariant:combo_starter:2',
+        'playVariant:combo_mega:2',
+      ]);
     });
   });
 }

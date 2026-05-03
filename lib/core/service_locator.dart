@@ -11,6 +11,7 @@ import '../data/repositories/progression_repo.dart';
 import 'diagnostics.dart';
 import 'feature_flags.dart';
 import '../game/systems/sound_manager.dart';
+import '../game/systems/combo_sound_registry.dart';
 import '../game/systems/ui_sound_registry.dart';
 import '../game/systems/voice_line_registry.dart';
 import '../monetization/ad_offer_controller.dart';
@@ -99,6 +100,7 @@ class ServiceLocator {
       ...packs.allObjectSoundPaths(),
       ...VoiceLineRegistry.allPaths,
       ...UiSoundRegistry.allPaths,
+      ...ComboSoundRegistry.allPaths,
     ]));
     ui = UiSounds(sounds);
     analytics = const NoOpAnalytics();

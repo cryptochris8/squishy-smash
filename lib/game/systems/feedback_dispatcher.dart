@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
+import 'combo_controller.dart';
 import 'sound_variant_picker.dart';
 import 'ui_sound_registry.dart';
 
@@ -57,10 +58,26 @@ class FeedbackDispatcher {
   ///  - 'reveal_mythic' — played every revealBurst with mythic tier
   final Map<String, List<String>> voiceLines = <String, List<String>>{};
 
+  /// Combo-milestone chime variants keyed by [ComboTier]. Populated from
+  /// [ComboSoundRegistry.dispatcherMap] at game init. When a milestone
+  /// fires, the dispatcher picks a variant from the matching tier's list
+  /// via [SoundVariantPicker] (anti-repetition scoped per tier).
+  /// [ComboTier.none] is never expected — the call site filters that out.
+  final Map<ComboTier, List<String>> comboChimes = <ComboTier, List<String>>{};
+
   /// Probability a mega-burst triggers a VO callout. Default 1/3.
   double megaCalloutProbability = 1 / 3;
 
-  void dispatch(FeedbackTier tier, SmashableDef def) {
+  /// Dispatch a feedback event.
+  ///
+  /// [comboTier] is required for [FeedbackTier.comboMilestone] so the
+  /// dispatcher can play the matching chime — supplied by the call site
+  /// (combo controller knows its current tier). Ignored for other tiers.
+  void dispatch(
+    FeedbackTier tier,
+    SmashableDef def, {
+    ComboTier? comboTier,
+  }) {
     switch (tier) {
       case FeedbackTier.hit:
         _fireHit(def);
@@ -78,7 +95,7 @@ class FeedbackDispatcher {
         _fireMegaBurst(def);
         break;
       case FeedbackTier.comboMilestone:
-        _fireComboMilestone(def);
+        _fireComboMilestone(def, comboTier);
         break;
     }
   }
@@ -126,13 +143,25 @@ class FeedbackDispatcher {
     }
   }
 
-  /// A mid-combo milestone (streak 3/6/10/15). Not tied to a burst —
-  /// fires off a punchier haptic + a small screen shake so the player
-  /// physically feels the step-up. No voice line (those stay reserved
+  /// A mid-combo milestone (streak 3/6/10/15 → starter/stronger/
+  /// revealReady/mega). Not tied to a burst — fires a punchier haptic
+  /// + small screen shake + tier-appropriate chime so the player both
+  /// feels and hears the step-up. No voice line (those stay reserved
   /// for reveal moments).
-  void _fireComboMilestone(SmashableDef def) {
+  ///
+  /// [tier] is the freshly-crossed [ComboTier] (caller filters out
+  /// [ComboTier.none] before dispatching). When null or chimes aren't
+  /// registered for the tier, the chime is skipped silently — haptic +
+  /// shake still fire, so the milestone is never *invisible*.
+  void _fireComboMilestone(SmashableDef def, ComboTier? tier) {
     sink.hapticMedium();
     sink.screenShake(duration: 0.10, intensity: 4);
+
+    if (tier == null || tier == ComboTier.none) return;
+    final chimes = comboChimes[tier];
+    if (chimes != null && chimes.isNotEmpty) {
+      sink.playVariant('combo_${tier.name}', chimes);
+    }
   }
 
   void _fireMegaBurst(SmashableDef def) {
