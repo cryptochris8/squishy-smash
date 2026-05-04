@@ -25,16 +25,29 @@ A Character Adventure Book
 
 ### Hero art (lower two-thirds)
 
-Recommendation: a 3-mascot cluster pulled from `assets/cards/final_48/`:
-- `001_Soft_Dumpling.webp` (Squishy Foods)
-- `017_Goo_Ball.webp` (Goo & Fidgets)
-- `033_Blushy_Bun_Bunny.webp` (Creepy-Cute Creatures)
+One central hero + two supporting characters, asymmetric size hierarchy (not equal-weight cluster). Pulled from `assets/cards/final_48/`:
 
-This puts one face from each pack on the front, telegraphing the book's structure at a glance.
+- **Central hero (largest, ~55–60% of art zone):** `001_Soft_Dumpling.webp` (Squishy Foods) — most universally appealing, brand-recognizable, soft warm pink reads strongest at thumbnail size
+- **Lower-left supporting (~25%):** `017_Goo_Ball.webp` (Goo & Fidgets) — jelly-blue accent
+- **Lower-right supporting (~25%):** `033_Blushy_Bun_Bunny.webp` (Creepy-Cute Creatures) — lavender accent
 
-### Lower-corner mark (optional)
+The hierarchy gives a clear focal point (parent eye lands on the hero in ~1 second) while still telegraphing all three packs.
 
-A small "Volume 1" or "Book One" tag, bottom-right inside safe area. Useful if a sequel is on the roadmap.
+### Backdrop
+
+Light pastel world-blend (NOT the deep `#120B17` starry-night used in the in-app menu — the book cover and the app menu should feel like sibling pieces, not identical).
+
+Backdrop should subtly layer hints of all three packs:
+- soft dessert clouds (warm pink/cream)
+- glossy goo swirls (jelly-blue)
+- spooky-cute sparkle motifs (lavender)
+- ambient magical sparkle dust throughout
+
+Treatment: bright but not messy. Backdrop supports the characters; it never competes for attention.
+
+### Volume tag (lower-right, inside safe area)
+
+Small "Book One" tag. Confirms a series and primes returning buyers for sequels (`Squishy Smash: Squishy Foods`, `Squishy Smash: Goo & Fidgets`, etc.).
 
 ---
 
@@ -77,7 +90,7 @@ squishysmash.com
 
 Brand-color band only. No text at this page count.
 
-Recommended fill: brand pink `#FF8FB8` or background `#120B17`. Match whichever the front cover uses as its primary fill so the wrap reads as one continuous piece.
+Fill: brand pink `#FF8FB8` (matches the light-mode front cover so the wrap reads as one continuous piece).
 
 ---
 
@@ -96,9 +109,9 @@ Recommended fill: brand pink `#FF8FB8` or background `#120B17`. Match whichever 
 
 **Fredoka** (variable, 300–700). Bundled at `website/public/fonts/Fredoka.ttf` — same TTF used across the marketing site and static legal pages, so the book brand-matches.
 
-## Open decisions before final layout
+## Locked decisions
 
-1. **Hero art arrangement** — confirm the 3-mascot cluster (001 + 017 + 033). Alternative: single hero (just Soft Dumpling).
-2. **Volume tag** — yes/no on "Book One" / "Volume 1" to signal a series.
-3. **Author byline** — back cover currently shows publisher only. Add personal author name?
-4. **Background mode** — light pastel front cover or deep `#120B17` "starry night" front cover? Both work; the in-app menu uses the dark mode.
+1. **Hero arrangement** — single central hero (Soft Dumpling) + two supporting (Goo Ball lower-left, Blushy Bun Bunny lower-right). Asymmetric hierarchy, not equal-weight cluster.
+2. **Volume tag** — yes, small "Book One" tag at bottom-right inside safe area.
+3. **Author byline** — publisher only at this stage (subtle, near bottom). Personal author name can be added later if desired — one-line edit.
+4. **Background mode** — light pastel world-blend with hints of all three packs and ambient sparkle. The deep starry-night look stays reserved for the in-app menu so cover and app feel like siblings rather than duplicates.
