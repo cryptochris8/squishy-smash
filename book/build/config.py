@@ -73,8 +73,8 @@ SAFE_INSET = BLEED + SAFETY  # inset from bleed edge
 
 # Cover wrap: back + spine + front, with bleed on top/bottom/outsides.
 SPINE_PER_PAGE_COLOR = 0.002347  # KDP color paper formula (in/page)
-INTERIOR_PAGES = 32
-SPINE_W_IN = round(INTERIOR_PAGES * SPINE_PER_PAGE_COLOR, 4)  # ~0.075 in
+INTERIOR_PAGES = 46
+SPINE_W_IN = round(INTERIOR_PAGES * SPINE_PER_PAGE_COLOR, 4)  # ~0.108 in
 COVER_W = (TRIM_IN + SPINE_W_IN + TRIM_IN + 2 * BLEED_IN) * INCH
 COVER_H = PAGE_H
 
