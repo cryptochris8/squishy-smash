@@ -351,21 +351,28 @@ def T1_title() -> Image.Image:
     # close in luminance to the dark plum bg, making the middle of
     # each letter hard to read. Solid colors with a wider vertical
     # gap fix both at once. We keep the drop shadow for legibility.
+    #
+    # All four lines chain off draw_text's return value (= bottom
+    # of the just-drawn line) so spacing cascades correctly. An
+    # earlier version pinned subtitle/tagline to fixed `title_y +
+    # offset` constants; when SMASH was later pushed 150 px lower
+    # to clear SQUISHY's descender, those constants didn't move
+    # with it and SMASH started overlapping the subtitle.
     cx = PAGE_W // 2
     title_y = 280
-    draw_text(canvas, cx, title_y,
-              "SQUISHY", style_name="wordmark", shadow=True)
-    # 380 px gap (was 230) so the words have clear breathing room
-    # — the SQUISHY descender ("Y") and the SMASH cap ("S") no
-    # longer touch.
-    draw_text(canvas, cx, title_y + 380,
-              "SMASH", style_name="wordmark_alt", shadow=True)
-
-    # Subtitle + tagline
-    sub_y = title_y + 480
-    draw_text(canvas, cx, sub_y,
-              "Meet the Squishies", style_name="subtitle")
-    draw_text(canvas, cx, sub_y + 90,
+    y = draw_text(canvas, cx, title_y,
+                  "SQUISHY", style_name="wordmark", shadow=True)
+    # 140 px breathing-room gap after SQUISHY (the wordmark's
+    # 240 px leading already accounts for the descender, so this
+    # gap is purely visual breathing room — keeps the "Y" tail
+    # well clear of the "S" cap below).
+    y = draw_text(canvas, cx, y + 140,
+                  "SMASH", style_name="wordmark_alt", shadow=True)
+    # Subtitle 50 px below SMASH baseline.
+    y = draw_text(canvas, cx, y + 50,
+                  "Meet the Squishies", style_name="subtitle")
+    # Tagline 20 px below subtitle.
+    draw_text(canvas, cx, y + 20,
               "A Field Guide from the Squishkeeper",
               style_name="tagline")
 
