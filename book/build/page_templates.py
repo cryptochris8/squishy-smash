@@ -826,10 +826,15 @@ def T5_pack_portal(pack: str, page_num: int) -> Image.Image:
               font=cap_font,
               fill=_hex_to_rgba(tint, 255))
 
-    # Rest of the title runs inline
+    # Rest of the title runs inline. Sized so the longest pack name
+    # ("REEPY-CUTE CREATURES.") fits inside the safe area with a
+    # comfortable right-margin; applied uniformly so all three pack
+    # portals share a single visual treatment rather than having one
+    # title look obviously smaller than the others.
+    rest_size = 145
     rest_x = cap_x + int(cap_font.getlength(data["letter"])) + 30
-    rest_y = cap_y + cap_size - 220
-    rest_font = font("display", 220)
+    rest_y = cap_y + cap_size - rest_size
+    rest_font = font("display", rest_size)
     draw.text((rest_x + 4, rest_y + 4), data["title"],
               font=rest_font, fill=(0, 0, 0, 100))
     draw.text((rest_x, rest_y), data["title"],
