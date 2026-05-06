@@ -184,20 +184,23 @@ def draw_back_cover(c: canvas_mod.Canvas) -> None:
                        "&copy; 2026 Squishy Smash",
                     inner_x, footer_y, inner_w, footer_style)
 
-    # Barcode safe zone — visible outline ONLY in this draft proof so the
-    # designer can see where KDP will overlay the barcode. Comment out the
-    # outline before final upload (KDP draws over whatever is there, but a
-    # visible box muddles the proof).
-    bx = BACK_X + TRIM_W - BARCODE_INSET - BARCODE_W
-    by = TRIM_Y_BOT + BARCODE_INSET
-    c.setStrokeColor(HexColor("#5A4A6E"))
-    c.setDash(3, 3)
-    c.rect(bx, by, BARCODE_W, BARCODE_H, fill=0, stroke=1)
-    c.setDash()
-    c.setFillColor(HexColor("#5A4A6E"))
-    c.setFont(BODY_FONT, 7)
-    c.drawCentredString(bx + BARCODE_W / 2, by + BARCODE_H / 2,
-                        "KDP barcode (auto)")
+    # Barcode safe zone — outline DISABLED for the production cover.
+    # KDP overlays its own barcode at the lower-right of the back
+    # cover (2 × 1.2 in, 0.25 in inset from trim), and the outline
+    # below was a designer aid only — KDP would print whatever the
+    # PDF contains, including the dashed box. Re-enable by
+    # uncommenting if you need to visually verify the safe zone
+    # against your back-cover art layout.
+    # bx = BACK_X + TRIM_W - BARCODE_INSET - BARCODE_W
+    # by = TRIM_Y_BOT + BARCODE_INSET
+    # c.setStrokeColor(HexColor("#5A4A6E"))
+    # c.setDash(3, 3)
+    # c.rect(bx, by, BARCODE_W, BARCODE_H, fill=0, stroke=1)
+    # c.setDash()
+    # c.setFillColor(HexColor("#5A4A6E"))
+    # c.setFont(BODY_FONT, 7)
+    # c.drawCentredString(bx + BARCODE_W / 2, by + BARCODE_H / 2,
+    #                     "KDP barcode (auto)")
 
 
 def draw_front_cover(c: canvas_mod.Canvas) -> None:
