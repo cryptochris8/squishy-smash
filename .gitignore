@@ -108,5 +108,17 @@ book/mockups/
 # Raw screen recordings — over GitHub's 100 MB push limit. Keep locally
 # as the master input to the trailer pipeline; gitignore so they don't
 # block pushes. Re-record into the same path when needed.
+#
+# Going forward, recordings should land in /recordings/ (cleaner than
+# co-mingling with assets/images/ which gets bundled into the iOS app).
+# The two paths below are kept for backward-compat — old recordings
+# still living there continue to be ignored.
+/recordings/
 assets/images/ScreenRecording*.MP4
 branding/ScreenRecording*.MP4
+
+# Merch print-ready PNGs — ~100 MB of regeneratable artifacts produced
+# by tools/generate_merch_designs.py. Same policy as book/build/out/
+# (regen from source, don't bloat the repo). Run the script after a
+# fresh clone if you need the files locally.
+commerce/print_ready/
