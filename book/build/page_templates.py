@@ -321,9 +321,18 @@ def _bunny_mark(canvas: Image.Image, x: int, y: int, size: int,
 # T1 — Title page (page 1)
 # ---------------------------------------------------------------------------
 
-def T1_title() -> Image.Image:
+def T1_title(
+    tagline_text: str = "A Field Guide from the Squishkeeper",
+    show_book_one: bool = False,
+) -> Image.Image:
     """Cover-open title page. Brand wordmark, subtitle, hero trio
-    one card per pack (1, 17, 33), sparkle scatter."""
+    one card per pack (1, 17, 33), sparkle scatter.
+
+    Parameters let the same composition serve both the interior
+    title page (defaults: poetic Squishkeeper tagline, no volume tag)
+    and the printed cover front (cover passes the marketing tagline
+    "A Character Adventure Book" + show_book_one=True for the
+    bottom-right "Book One" tag locked in cover_copy.md §2)."""
     canvas = _new_canvas(PALETTE["bg"])
 
     # Subtle radial highlight behind the wordmark to lift it off
@@ -373,7 +382,7 @@ def T1_title() -> Image.Image:
                   "Meet the Squishies", style_name="subtitle")
     # Tagline 20 px below subtitle.
     draw_text(canvas, cx, y + 20,
-              "A Field Guide from the Squishkeeper",
+              tagline_text,
               style_name="tagline")
 
     # Hero trio — asymmetric stack with the center card largest and
@@ -439,6 +448,25 @@ def T1_title() -> Image.Image:
         center_x, center_y, center_card_w, center_card_h,
         rarity=center_char.rarity, pack=center_char.pack,
     )
+
+    # Volume tag — drawn before the vignette so the vignette darkens
+    # it slightly along with the rest of the page (otherwise the tag
+    # pops harder than the trio's edge cards). Bottom-right inside
+    # the safe area, small cream caps so it reads as a series mark
+    # rather than competing with the wordmark.
+    if show_book_one:
+        from PIL import ImageDraw as _BD
+        tag_text = "Book One"
+        tag_font = font("display", 36)
+        d = _BD.Draw(canvas)
+        bbox = d.textbbox((0, 0), tag_text, font=tag_font)
+        tag_w = bbox[2] - bbox[0]
+        tag_x = PAGE_W - SAFE - tag_w
+        tag_y = PAGE_H - SAFE - 60
+        d.text((tag_x + 2, tag_y + 2), tag_text, font=tag_font,
+               fill=(0, 0, 0, 140))
+        d.text((tag_x, tag_y), tag_text, font=tag_font,
+               fill=_hex_to_rgba(PALETTE["cream"], 230))
 
     _vignette(canvas, intensity=0.45)
     return canvas

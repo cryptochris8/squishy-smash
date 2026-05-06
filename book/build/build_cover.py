@@ -201,55 +201,55 @@ def draw_back_cover(c: canvas_mod.Canvas) -> None:
 
 
 def draw_front_cover(c: canvas_mod.Canvas) -> None:
-    """Front cover: title block + 3-mascot hero cluster."""
-    chars = {ch.num: ch for ch in all_characters()}
+    """Front cover: renders interior page 1's composition (T1_title)
+    with cover-specific copy and a "Book One" volume tag, then embeds
+    it as a single image on the front-cover region of the wrap.
 
-    safe_inset = 0.375 * INCH
-    inner_x = FRONT_X + safe_inset
-    inner_w = TRIM_W - 2 * safe_inset
-    inner_cx = FRONT_X + TRIM_W / 2
+    Why route through T1_title instead of laying out the cover in
+    ReportLab primitives: the user prefers the interior page-1 look
+    (dramatic SQUISHY/SMASH wordmark, asymmetric 3-mascot trio with
+    rotation, sparkle scatter, vignette) over a flat 3-card row,
+    and reusing T1_title means the cover and interior title page
+    auto-track if the composition is ever refined. Ratified in
+    cover_copy.md §4 (locked decision: dark starry-night front)."""
+    from io import BytesIO
+    from page_templates import T1_title  # local import — heavy module
 
-    # Title block (upper third)
-    pink_style = _style(DISPLAY_FONT, 56, 60, PALETTE["pink"], TA_CENTER)
-    cream_style = _style(DISPLAY_FONT, 56, 60, PALETTE["cream"], TA_CENTER)
+    # Render the page-1 composition with cover-specific copy:
+    #   tagline → marketing-friendly "A Character Adventure Book"
+    #     (interior keeps the poetic Squishkeeper tagline)
+    #   show_book_one=True → adds the bottom-right volume tag
+    front_img = T1_title(
+        tagline_text="A Character Adventure Book",
+        show_book_one=True,
+    )
 
-    # _draw_paragraph returns the y-position at the BOTTOM of the
-    # just-drawn block (PDF coords: smaller y = lower on page). The
-    # subtitle/tagline lines below use the correct `y -= gap` pattern;
-    # the wordmark block previously tried to "advance" with `+ 56`,
-    # which moved upward in PDF space and dropped SMASH back on top
-    # of SQUISHY (~4pt offset = total overlap). Use the standard
-    # draw / y -= gap / draw pattern.
-    y = TRIM_Y_TOP - safe_inset
-    y = _draw_paragraph(c, "SQUISHY", inner_x, y, inner_w, pink_style)
-    y -= 20
-    y = _draw_paragraph(c, "SMASH", inner_x, y, inner_w, cream_style)
-    y -= 12
+    # T1_title renders at 2625×2625 px (8.75×8.75 in incl. bleed all
+    # around). The cover front has bleed only on the OUTSIDE three
+    # edges — none on the spine side. Crop the left bleed (~38 px =
+    # 0.125 in at 300 DPI) so the image's left edge lands cleanly at
+    # the spine boundary without distortion.
+    left_bleed_px = 38
+    front_img = front_img.crop(
+        (left_bleed_px, 0, front_img.width, front_img.height)
+    )
 
-    sub_style = _style(DISPLAY_FONT, 22, 26, PALETTE["soft_white"], TA_CENTER)
-    y = _draw_paragraph(c, "<i>Meet the Squishies</i>",
-                        inner_x, y, inner_w, sub_style)
-    y -= 6
+    # Stream the PIL image into ReportLab via an in-memory PNG so we
+    # don't have to manage a temp file on disk.
+    buf = BytesIO()
+    front_img.save(buf, format="PNG")
+    buf.seek(0)
+    from reportlab.lib.utils import ImageReader
+    img_reader = ImageReader(buf)
 
-    tag_style = _style(BODY_FONT, 12, 14, PALETTE["soft_white"], TA_CENTER)
-    y = _draw_paragraph(c, "A Character Adventure Book",
-                        inner_x, y, inner_w, tag_style)
-
-    # Hero card cluster (lower two-thirds)
-    hero_side = 150
-    spacing = 18
-    total_w = hero_side * 3 + spacing * 2
-    start_x = inner_cx - total_w / 2
-    hero_y = TRIM_Y_BOT + safe_inset + 70
-    for i, num in enumerate([1, 17, 33]):
-        _draw_card(c, chars[num].card_path,
-                   start_x + i * (hero_side + spacing), hero_y, hero_side)
-
-    # Volume tag (bottom-right corner inside safe area)
-    tag = _style(BODY_FONT, 9, 11, PALETTE["soft_white"], TA_CENTER)
-    _draw_paragraph(c, "Book One",
-                    FRONT_X + TRIM_W - safe_inset - 80,
-                    TRIM_Y_BOT + safe_inset + 14, 80, tag)
+    # Place: x starts at the spine boundary (FRONT_X), y at 0 (full
+    # bleed bottom), width = remaining wrap width, height = full
+    # wrap height. Native aspect — no squish since we cropped the
+    # left bleed to match the cover front's 8.625-in width.
+    front_w = COVER_W - FRONT_X
+    c.drawImage(img_reader, FRONT_X, 0,
+                width=front_w, height=COVER_H,
+                preserveAspectRatio=False, mask="auto")
 
 
 def build(out_path: Path = COVER_PDF) -> Path:

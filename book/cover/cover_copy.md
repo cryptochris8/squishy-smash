@@ -35,15 +35,9 @@ The hierarchy gives a clear focal point (parent eye lands on the hero in ~1 seco
 
 ### Backdrop
 
-Light pastel world-blend (NOT the deep `#120B17` starry-night used in the in-app menu — the book cover and the app menu should feel like sibling pieces, not identical).
+Deep `#120B17` starry-night, matching the in-app menu and the interior title page (T1_title in `book/build/page_templates.py`). Sparkle scatter, soft pink radial glow behind the wordmark, vignette pulled in at the corners.
 
-Backdrop should subtly layer hints of all three packs:
-- soft dessert clouds (warm pink/cream)
-- glossy goo swirls (jelly-blue)
-- spooky-cute sparkle motifs (lavender)
-- ambient magical sparkle dust throughout
-
-Treatment: bright but not messy. Backdrop supports the characters; it never competes for attention.
+Reversed from the brief's "light pastel world-blend" recommendation after a side-by-side review: the user explicitly preferred the dark theme on both the cover and throughout the book interior. Sibling-vs-duplicate concerns (whether the book cover should differ from the in-app menu) are overridden by the actual user preference.
 
 ### Volume tag (lower-right, inside safe area)
 
@@ -114,4 +108,4 @@ Fill: brand pink `#FF8FB8` (matches the light-mode front cover so the wrap reads
 1. **Hero arrangement** — single central hero (Soft Dumpling) + two supporting (Goo Ball lower-left, Blushy Bun Bunny lower-right). Asymmetric hierarchy, not equal-weight cluster.
 2. **Volume tag** — yes, small "Book One" tag at bottom-right inside safe area.
 3. **Author byline** — publisher only at this stage (subtle, near bottom). Personal author name can be added later if desired — one-line edit.
-4. **Background mode** — light pastel world-blend with hints of all three packs and ambient sparkle. The deep starry-night look stays reserved for the in-app menu so cover and app feel like siblings rather than duplicates.
+4. **Background mode** — deep `#120B17` starry-night, matching the in-app menu and the interior title page. Originally the brief recommended a light pastel world-blend backdrop to differentiate the book from the app, but a side-by-side review of the rendered interior page 1 and the cover front led to a flip: dark theme reads more dramatic, makes the cards pop, and matches the book's interior throughout. Cover front is now built by re-using the interior page 1 composition (T1_title) with the cover-specific tagline and a "Book One" volume tag.
