@@ -1130,12 +1130,22 @@ def T8_featured(num: int, page_num: int) -> Image.Image:
                              style_name="field_value_dark",
                              max_width=text_w)
 
-    # Flavor pull quote inside the parchment plate, near the bottom
+    # Flavor pull-quote — pink rose-dust on the dark page background,
+    # centered on the full page width below the card+plate composition.
+    # Pre-fix this was rendered inside the parchment plate where pink
+    # rose-dust on cream parchment was low-contrast (the user flagged
+    # the Jelly Pad page legibility on 2026-05-13). T3 and T5 already
+    # render flavor on dark plum; pulling T8 into that same visual
+    # system gives the line high contrast AND a clear hierarchy (the
+    # plate carries the field-guide schema; the flavor line is the
+    # Squishkeeper's flourish on top — different register, different
+    # surface).
     if char.flavor:
-        flavor_y = plate_top + plate_h - 140
-        draw_text(canvas, text_x, flavor_y,
+        flavor_y = card_y + card_h + 60
+        draw_text(canvas, PAGE_W // 2, flavor_y,
                   char.flavor,
-                  style_name="flavor", max_width=text_w)
+                  style_name="flavor",
+                  max_width=PAGE_W - SAFE * 2)
 
     _stamp_pack_corners(canvas, char.pack, size=180, alpha=160)
     _folio(canvas, page_num, pack_color=tint)
