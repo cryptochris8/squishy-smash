@@ -4,15 +4,16 @@ Build the cover wrap PDF for the Squishy Smash KDP character book.
 Output: book/build/out/cover_wrap.pdf
 
 Layout:
-    [back cover (8.5") + spine (~0.075") + front cover (8.5")] x 8.5" tall,
+    [back cover (8.5") + spine (~0.108") + front cover (8.5")] x 8.5" tall,
     with 0.125" bleed added to top, bottom, and outside edges.
 
 KDP wants the cover as a single PDF with the back on the left, front on
 the right, and the spine in between.
 
 Spine note:
-    32 interior pages produces a ~0.075" spine. KDP recommends NO spine
-    text below ~80 pages. We treat the spine as a brand-color band only.
+    46 interior pages produces a ~0.108" spine (computed live from
+    `config.SPINE_W_IN`). KDP recommends NO spine text below ~80
+    pages. We treat the spine as a brand-color band only.
 
 Barcode safe zone:
     KDP overlays a 2 x 1.2 in barcode at the lower-right of the back cover
@@ -95,7 +96,7 @@ def draw_full_background(c: canvas_mod.Canvas) -> None:
 
 
 def draw_spine(c: canvas_mod.Canvas) -> None:
-    """Brand-color spine band, no text (32 pages too thin for spine print)."""
+    """Brand-color spine band, no text (46 pages still under KDP's ~80-page threshold for spine print)."""
     c.setFillColor(HexColor(PALETTE["pink"]))
     c.rect(SPINE_X, 0, SPINE_W, COVER_H, fill=1, stroke=0)
 

@@ -107,7 +107,12 @@ STYLES: dict[str, TextStyle] = {
     "narrator_lg":   TextStyle("body_italic", 42, 56, 0, "cream",    "left"),
 
     # Hand-letter accents — flavor pulls, mythic stingers.
-    "flavor":        TextStyle("accent",    52,  58, 0, "rose_dust","left"),
+    # `flavor` is the centered default (matches `flavor_lg`); 6 of 7
+    # current callsites pass cx as anchor expecting centered output.
+    # `flavor_left` preserves the original left-aligned variant for the
+    # one T8 column-aligned scribe line.
+    "flavor":        TextStyle("accent",    52,  58, 0, "rose_dust","center"),
+    "flavor_left":   TextStyle("accent",    52,  58, 0, "rose_dust","left"),
     "flavor_lg":     TextStyle("accent",    72,  82, 0, "cream",    "center"),
 
     # Character + field labels.

@@ -1,5 +1,5 @@
 """
-Build the 32-page interior PDF for the Squishy Smash KDP character book.
+Build the 46-page interior PDF for the Squishy Smash KDP character book.
 
 Phase 3 rewrite: each page is rendered as a Pillow Image at 300 DPI
 by `page_templates.py`, then stamped onto a ReportLab Canvas page
@@ -12,10 +12,10 @@ Usage:
     python -m pip install -r book/build/requirements.txt
     python book/build/build_interior.py
 
-The 32-page sequence is locked by ELEVATION_PLAN.md and the v2
-manuscript at book/manuscript/02_manuscript_v2.md. Each entry in
-PAGE_ORDER below is a (page_number, render_fn) pair that MUST
-align with the Featured-21 selection in config.FEATURED_NUMS.
+The 46-page sequence (Phase 4 every-character expansion) is locked
+by PAGE_RENDERERS below. Each entry is a (page_number, render_fn)
+pair and aligns with config.FEATURED_NUMS (= all 48) plus the
+solo/duo split in config.SOLO_NUMS.
 """
 
 from __future__ import annotations

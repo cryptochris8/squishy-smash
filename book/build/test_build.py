@@ -9,7 +9,7 @@ Or directly:
 
 Tests assert that:
   - The interior PDF builds without raising and lands in the expected location
-  - The interior has 32 pages at 8.75 x 8.75 in
+  - The interior has 46 pages at 8.75 x 8.75 in
   - The cover wrap PDF builds and is the expected width (back + spine + front
     + outside bleed) and height
   - All 48 character WebPs referenced by config exist on disk
@@ -101,8 +101,9 @@ class CoverPDFTests(unittest.TestCase):
 
     def test_cover_dimensions(self) -> None:
         _, w_pt, h_pt = _read_pdf_pages_and_size(self.pdf_path)
-        # Width: back 8.5 + spine 0.075 + front 8.5 + outside bleed 0.25
-        # = 17.325 in = 1247.4 pt
+        # Width: back 8.5 + spine SPINE_W_IN + front 8.5 + outside bleed 0.25
+        # (currently ~17.358 in at 46 pages; spine grows with page count
+        # since SPINE_W_IN = INTERIOR_PAGES × 0.002347).
         expected_w = 2 * TRIM_IN + SPINE_W_IN + 2 * (0.125)
         self.assertAlmostEqual(w_pt, expected_w * INCH, places=2)
         self.assertAlmostEqual(w_pt, COVER_W, places=2)

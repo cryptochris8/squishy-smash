@@ -880,10 +880,12 @@ def T5_pack_portal(pack: str, page_num: int) -> Image.Image:
     draw_text(canvas, SAFE + 60, tag_y,
               data["tagline"], style_name="char_name_lg")
 
-    # Scribe line in script
+    # Scribe line in script — column-aligned to the tagline above,
+    # so we use the left-aligned flavor variant (default `flavor` is
+    # centered).
     scribe_y = tag_y + 200
     draw_text(canvas, SAFE + 60, scribe_y,
-              data["scribe"], style_name="flavor")
+              data["scribe"], style_name="flavor_left")
 
     # Decorative pack-tinted corner ornament (sparkle cluster)
     _scatter_sparkles(
@@ -1363,6 +1365,10 @@ def T10_mythic_finale(num: int, page_num: int) -> Image.Image:
                   max_width=PAGE_W - SAFE * 2)
 
     _folio(canvas, page_num, pack_color=PALETTE["gold"])
+    # Edge vignette to match every other page template (T8/T9 use 0.30;
+    # mythic is darker so a touch heavier here keeps the velvet bleed
+    # from reading flat at the corners).
+    _vignette(canvas, intensity=0.35)
     return canvas
 
 

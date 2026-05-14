@@ -107,13 +107,17 @@ Choose: **I own the copyright and I hold the necessary publishing rights.**
 
 ### Categories
 
-KDP forces you to pick from a fixed tree (NOT free text). Click **Choose categories** and pick up to 3:
+KDP forces you to pick from a fixed tree (NOT free text). Click **Choose categories** and pick up to 3.
 
-1. **Children's Books → Animals → Imaginary Creatures**
-2. **Children's Books → Activities, Crafts & Games → Games**
-3. **Children's Books → Humor**
+**Primary placement strategy** (per the storybook market research, May 2026 — friendship-themed character books over-index in the Friendship/Social Skills subcategory, where a Top-5K Books ranking is reachable for indie IP):
 
-⚠️ Amazon's category tree shifts occasionally. If the exact paths above are missing, search the picker for "Imaginary Creatures" and "Picture Books" and pick the closest match. Keep one category in **Children's Books** (not generic Fiction).
+1. **Children's Books → Growing Up & Facts of Life → Friendship, Social Skills** — highest-traffic subcategory reachable for indie character IP (maps to BISAC JUV039020)
+2. **Children's Books → Animals → Imaginary Creatures** — toy-adjacent parent demographic (BISAC JUV002020)
+3. **Children's Books → Humorous Stories** — lower competition, high conversion for character-ensemble books
+
+⚠️ Amazon's category tree shifts occasionally. If a path above is missing, search the picker for "Friendship," "Imaginary Creatures," and "Humor" and pick the closest match. Keep all three under **Children's Books** (not generic Fiction).
+
+**Avoid** "Activities, Crafts & Games → Games" — this is a poor fit (the book has no game/activity content) and hurts discoverability in the character-book search lane.
 
 ### Keywords (up to 7)
 
@@ -210,7 +214,7 @@ KDP shows the **printing cost** below the price field (~$4.85 for our spec). Roy
 
 At $12.99: ~$7.79 royalty share × 0.6 ≈ **~$4.67 per sale.**
 
-Don't go below KDP's enforced minimum (the form blocks it). Going above $14.99 starts to feel premium for a 32–46-page kids' character book at thumbnail glance — savings here come from word-of-mouth, not margin.
+Don't go below KDP's enforced minimum (the form blocks it). Going above $14.99 starts to feel premium for a 46-page kids' character book at thumbnail glance — savings here come from word-of-mouth, not margin.
 
 **Other Marketplaces:** click **Set automatic prices** — KDP localizes the price for UK/DE/JP/etc. using current exchange rates. Setting them manually is more work for marginal gain on a launch title.
 

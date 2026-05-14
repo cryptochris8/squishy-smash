@@ -1,13 +1,13 @@
 # Squishy Smash — Cover Copy v1
 
-**Production target:** KDP paperback wrap cover, 8.5 × 8.5 in trim, 32-page interior, color paper.
+**Production target:** KDP paperback wrap cover, 8.5 × 8.5 in trim, 46-page interior, color paper.
 
 **Cover wrap PDF dimensions** (single PDF that includes back + spine + front, with bleed):
-- Width: 17.325 in (back 8.5 + spine 0.075 + front 8.5 + 0.125 left bleed + 0.125 right bleed)
+- Width: 17.358 in (back 8.5 + spine 0.108 + front 8.5 + 0.125 left bleed + 0.125 right bleed)
 - Height: 8.75 in (8.5 + 0.125 top + 0.125 bottom)
-- Spine width formula: `pages × 0.002347` for color paper. 32 × 0.002347 = 0.0751 in. Round to 0.075.
+- Spine width formula: `pages × 0.002347` for color paper. 46 × 0.002347 = 0.1080 in. Computed live by `book/build/config.py` (`SPINE_W_IN`).
 
-**Spine warning:** at 32 pages, KDP recommends *no spine text* — the spine is too thin to print legibly. Treat the spine as a brand-color stripe only.
+**Spine warning:** at 46 pages the spine is still under KDP's ~80-page threshold for spine text — keep it a brand-color stripe only (no text).
 
 **KDP barcode safe zone:** KDP auto-overlays the barcode at the lower-right of the back cover, in a 2 × 1.2 in area positioned 0.25 in from trim edges. Keep this zone empty in our art.
 
