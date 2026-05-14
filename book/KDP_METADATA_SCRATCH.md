@@ -28,31 +28,83 @@
 
 ## 2. Description (paste into the Description field)
 
+**Strategy:** Amazon-specific copy, not the back-cover blurb expanded. Back cover is constrained by physical real estate (~80 words); Amazon has different reader behavior (scanning thumbnails, comparing options, deciding whether to click Buy). Lead with a parent-grabbing hook that survives mobile truncation, then go formatted + bulleted so the page is scannable. Aim ~275–350 words. KDP's 4,000-char limit is a ceiling, not a target — parents bail past ~400 words.
+
+### Plain-text reading version (~275 words / ~1,750 chars)
+
 ```
-A field guide to forty-eight squishy friends from the soft, silly, sparkly world of Squishy Smash.
+Meet 48 squishy friends from the soft, silly, sparkly world of Squishy Smash.
 
-Long ago, the very first wobble rolled across the Squishy World — and the Squishkeeper began to write it all down. This is that book.
+A bright, collectible character book for ages 4–8 — perfect for kids who love squishies, kawaii art, and the kind of story they ask you to read again and again.
 
-Meet Soft Dumpling, Goo Ball, Blushy Bun Bunny, and forty-five other squishies across three magical packs:
+Step into the world of the Squishkeeper, the mysterious narrator who catalogs every wonderful squish in three magical packs:
 
-• SQUISHY FOODS — warm, tasty, sweet
-• GOO & FIDGETS — glossy, bouncy, satisfying
-• CREEPY-CUTE CREATURES — spooky-sweet magical friends
+SQUISHY FOODS — dumplings, mochi, jelly buns, glittery sweets
+GOO & FIDGETS — stress orbs, jelly pads, plasma blobs
+CREEPY-CUTE CREATURES — bunnies, ghosts, fang critters, plush familiars
 
-Every page is a hello. Every squishy is a feeling soft enough to hold.
+Inside this 46-page full-color paperback:
 
-Inside you'll find:
-• 48 hand-illustrated character cards
-• A pull-out map of the Squishy World
-• A Squishy Tracker so you can mark every friend you meet
-• Three legendary mythics — a dumpling that taught the stars to glow, a goo that bends gravity, and a guardian who watches over every lost squishy
+• 48 hand-illustrated character cards, each with personality, a home region, and a signature squish
+• A map of the Squishy World — Pudding Hills, Goo Coast, Moonlit Hollow
+• A Squishy Tracker checklist so kids can mark every friend they meet
+• Three legendary "mythic" finales — a dumpling that taught the stars to glow, a goo that bends gravity, and a guardian who watches over every lost squishy
 
-A bright, collectible character book for ages 4 and up — perfect for fans of soft toys, squishy crazes, and the kind of story you read again and again.
+Why kids love it: every page is a hello. The Squishkeeper's gentle voice turns every character into someone worth meeting — not just looking at.
+
+Why parents pick it up: no screens, no subscriptions, no ads. A real bound book that fits next to the classics in their picture-book lineup.
+
+This is Volume One of a planned series.
 
 Every pop is a hello. Every hello comes back.
+
+— The Squishkeeper
 ```
 
-*(KDP description field accepts limited HTML: `<b>`, `<i>`, `<br>`, `<ul><li>`. The plain-text bullets above work fine — KDP renders the `•` correctly. ~1,100 characters; KDP limit is 4,000.)*
+### HTML version (paste this one into the KDP Description field)
+
+KDP's description field accepts `<b>`, `<i>`, `<br>`, `<ul><li>`. Bold + bullets dramatically improve scannability — parents read 30% more of a formatted description than a wall of text.
+
+```html
+<b>Meet 48 squishy friends from the soft, silly, sparkly world of Squishy Smash.</b>
+<br><br>
+A bright, collectible character book for ages 4–8 — perfect for kids who love squishies, kawaii art, and the kind of story they ask you to read again and again.
+<br><br>
+Step into the world of the <b>Squishkeeper</b>, the mysterious narrator who catalogs every wonderful squish in three magical packs:
+<br><br>
+<b>SQUISHY FOODS</b> — dumplings, mochi, jelly buns, glittery sweets<br>
+<b>GOO &amp; FIDGETS</b> — stress orbs, jelly pads, plasma blobs<br>
+<b>CREEPY-CUTE CREATURES</b> — bunnies, ghosts, fang critters, plush familiars
+<br><br>
+Inside this 46-page full-color paperback:
+<ul>
+<li>48 hand-illustrated character cards, each with personality, a home region, and a signature squish</li>
+<li>A map of the Squishy World — Pudding Hills, Goo Coast, Moonlit Hollow</li>
+<li>A Squishy Tracker checklist so kids can mark every friend they meet</li>
+<li>Three legendary "mythic" finales — a dumpling that taught the stars to glow, a goo that bends gravity, and a guardian who watches over every lost squishy</li>
+</ul>
+<b>Why kids love it:</b> every page is a hello. The Squishkeeper's gentle voice turns every character into someone worth meeting — not just looking at.
+<br><br>
+<b>Why parents pick it up:</b> no screens, no subscriptions, no ads. A real bound book that fits next to the classics in their picture-book lineup.
+<br><br>
+This is Volume One of a planned series.
+<br><br>
+<i>Every pop is a hello. Every hello comes back.</i>
+<br>
+— The Squishkeeper
+```
+
+### Why this differs from the back cover
+
+The back cover blurb on `cover_wrap.pdf` is intentionally compressed (~80 words) because it shares the back panel with the headline, three pack callouts, footer, and the barcode safe zone. Reusing it on Amazon would waste 80% of the description field and leave parents with less reason to click Buy. The Amazon version uses the room for: a parent-grabbing hook, scannable structure, specifics about what's inside (which back covers can't fit), and explicit reassurance ("no screens, no subscriptions, no ads") — the parent-confidence signals that drive picture-book purchases.
+
+### Promotional text (170 char limit)
+
+```
+Every pop is a hello. 48 squishy friends across 3 magical packs — meet them all in the Squishkeeper's field guide. Ages 4–8.
+```
+
+*(124 chars. KDP allows you to edit this WITHOUT re-review, so swap in featured-week / holiday copy whenever useful.)*
 
 ---
 
