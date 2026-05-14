@@ -11,6 +11,11 @@ class ParticleManager extends Component {
   void burst(Vector2 position, {required String preset, double intensity = 0.7}) {
     final color = _colorForPreset(preset);
     final count = (28 + intensity * 36).round();
+    // One Paint shared across all particles in the burst. Pre-fix this
+    // allocated a Paint + Color per particle (28-65 per burst), all
+    // immediately eligible for GC at burst end. The paint is read-only
+    // inside Flame's CircleParticle so sharing is safe.
+    final sharedPaint = _paintForColor(color);
     final particle = Particle.generate(
       count: count,
       lifespan: 0.9,
@@ -23,12 +28,24 @@ class ParticleManager extends Component {
           speed: velocity,
           child: CircleParticle(
             radius: 3 + _rng.nextDouble() * 5,
-            paint: Paint()..color = color.withValues(alpha: 0.9),
+            paint: sharedPaint,
           ),
         );
       },
     );
     parent?.add(ParticleSystemComponent(particle: particle, position: position));
+  }
+
+  /// Cached `Paint` per preset color. The set of presets is closed
+  /// (6 entries) and Paint+Color allocation is the single biggest
+  /// short-lived allocation in the burst path. Cached lazily so the
+  /// game doesn't pay for paints it never uses.
+  final Map<int, Paint> _paintCache = <int, Paint>{};
+
+  Paint _paintForColor(Color color) {
+    final faded = color.withValues(alpha: 0.9);
+    final key = faded.toARGB32();
+    return _paintCache.putIfAbsent(key, () => Paint()..color = faded);
   }
 
   Color _colorForPreset(String preset) {

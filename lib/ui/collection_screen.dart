@@ -465,8 +465,19 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
               aspectRatio: 0.75,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
+                // cacheWidth caps the decoded resolution at ~2x of the
+                // sheet's render width (~270 px on iPhone 11). Source
+                // WebPs are 1086x1448 → ~18 MB RGBA per unique sheet
+                // open; capping at 540 keeps it ~1.7 MB while leaving
+                // headroom for high-DPI displays. Flutter's image cache
+                // keys on (asset, cacheWidth), so this is sticky per
+                // card without per-card tuning.
                 child: unlocked
-                    ? Image.asset(card.assetPath, fit: BoxFit.cover)
+                    ? Image.asset(
+                        card.assetPath,
+                        fit: BoxFit.cover,
+                        cacheWidth: 540,
+                      )
                     : const _LockedSilhouette(),
               ),
             ),

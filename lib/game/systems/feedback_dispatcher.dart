@@ -118,11 +118,12 @@ class FeedbackDispatcher {
 
   void _fireRevealBurst(SmashableDef def) {
     sink.playOneShot(def.burstSound);
-    // Layer the UI reveal stinger for epic+ so the rarity tier is
-    // audibly distinct from a common burst. Pre-fix (P1.3) the
-    // stinger asset existed but was orphaned — the first mythic
-    // sounded like a louder common.
-    if (def.rarity == Rarity.epic || def.rarity == Rarity.mythic) {
+    // Layer the UI reveal stinger for every non-common reveal so the
+    // rarity tier is audibly distinct from a plain common burst.
+    // Pre-fix (P1.3) the stinger only fired on epic+; rare reveals
+    // sounded identical to commons, which is the most-frequent
+    // "wow moment" in the game.
+    if (def.rarity != Rarity.common) {
       sink.playOneShot(UiSoundRegistry.revealStinger);
     }
     sink.hapticHeavy();

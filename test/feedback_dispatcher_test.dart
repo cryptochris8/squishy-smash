@@ -112,6 +112,35 @@ void main() {
       expect(shake, 'shake:0.22:10');
     });
 
+    test('revealBurst on rare/epic/mythic layers the UI stinger', () {
+      // Rare was previously silent — only epic+ got the stinger, so a
+      // rare reveal sounded identical to a plain common burst. The
+      // stinger should now fire for any non-common revealBurst.
+      for (final rarity in [Rarity.rare, Rarity.epic, Rarity.mythic]) {
+        final sink = RecordingFeedbackSink();
+        final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+        d.dispatch(FeedbackTier.revealBurst, _def(rarity: rarity));
+        expect(
+          sink.calls,
+          contains('playOneShot:audio/ui/ui_reveal_stinger_01.mp3'),
+          reason: 'rarity=$rarity should layer the reveal stinger',
+        );
+      }
+    });
+
+    test('revealBurst on common does NOT layer the UI stinger', () {
+      // The stinger is reserved for rarity step-ups. A common-tier
+      // revealBurst (edge case path) should fire the per-object burst
+      // sound but not the UI stinger.
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.dispatch(FeedbackTier.revealBurst, _def(rarity: Rarity.common));
+      expect(
+        sink.calls,
+        isNot(contains('playOneShot:audio/ui/ui_reveal_stinger_01.mp3')),
+      );
+    });
+
     test('megaBurst uses the heaviest shake tier', () {
       final sink = RecordingFeedbackSink();
       final d = FeedbackDispatcher(sink: sink, rng: Random(1));
