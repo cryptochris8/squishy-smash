@@ -4,6 +4,11 @@ Copy-paste-ready text for App Store Connect submission. Each section
 is sized to Apple's character limits as of 2026. Replace the
 **[FILL IN]** placeholders before pasting.
 
+**Bible-aligned (v2, 2026-05-13):** all user-facing copy below now
+leads with the canonical Pact line per `book/STORY_BIBLE.md` §2.
+The previous "smash"-forward copy is preserved at the bottom of this
+file as the v1 fallback / A-B baseline.
+
 ---
 
 ## App name
@@ -16,37 +21,50 @@ Squishy Smash
 
 ---
 
-## Subtitle
+## Subtitle (v2 — Pact-line)
 
 ```
-Squish, pop, collect cards
+Every pop is a hello.
 ```
 
-*(30 char limit — currently 26. Pairs verb energy with the collection
-hook so the listing reads as both a fidget toy and a collectible.)*
+*(30 char limit — currently 20. The Squishy Smash brand line, distilled.
+Pairs with the in-game "pop" mechanic without leaning on "smash" or
+"crush" verbs that read aggressive to parent purchasers in 8-second
+thumbnail scans.)*
+
+**Fallback (v1) for A/B:** `Squish, pop, collect cards` *(26 chars —
+verb-forward, collection-emphasis. Use this if v2 underperforms in
+search algo or click-through.)*
 
 ---
 
-## Promotional text
+## Promotional text (v2 — Pact-line)
 
 ```
-48 collectible cards across 3 themed packs. Earn them through play, milestones, or save coins for the one you want — three ways to complete the album.
+Every pop is a hello. 48 squishy friends across 3 packs — find them through play, milestones, or save coins for the one you want.
 ```
 
-*(170 char limit — currently 156. This field can be updated WITHOUT
+*(170 char limit — currently 130. This field can be updated WITHOUT
 re-review, so use it for short-term promo copy. Swap in featured
 weeks, holiday events, etc.)*
 
+**Fallback (v1) for A/B:** `48 collectible cards across 3 themed packs. Earn them through play, milestones, or save coins for the one you want — three ways to complete the album.`
+
 ---
 
-## Description
+## Description (v2 — Pact-line)
 
 ```
-Soft, satisfying, and a little weird in the best way.
+Every pop is a hello. Every hello comes back.
 
-Tap to squish. Pop to collect. Every squishy reacts with a juicy
-ASMR-flavored crunch, splat, or wobble — chosen specifically because
-it sounds like the kind of thing you'd watch a TikTok video of for
+Squishy Smash is a soft, satisfying tap-to-pop game starring 48
+squishy characters — dumplings, goos, and creepy-cute creatures who
+only show up when you find them.
+
+WHAT IT FEELS LIKE
+Tap to squish. Drag to stretch. Hold to crush. Every squishy reacts
+with its own juicy ASMR-flavored crunch, splat, or wobble — chosen
+to sound like the kind of thing you'd watch a TikTok video of for
 no real reason.
 
 THE COLLECTION
@@ -59,12 +77,12 @@ Plus a hidden Keepsakes section for personal/family cards.
 
 THREE WAYS TO UNLOCK
 Every card has three independent paths:
-• Earn through play — burst the matching squishy a few times
-• Save coins and buy it — scaled prices reward real saving
+• Find them through play — pop the matching squishy a few times
+• Save coins and pick the one you want
 • Achievement rewards — streaks, combos, milestones grant bonus cards
 
-Pick whichever feels right. A kid who hates grinding can save up.
-A kid who hates spending can grind. The album fills either way.
+A kid who hates grinding can save up. A kid who hates spending can
+grind. The album fills either way.
 
 BUILT FOR FAMILIES
 • No ads in the core loop
@@ -83,10 +101,14 @@ WHAT MAKES IT FEEL GOOD
 Squishy Smash is a fidget toy you can keep in your pocket. It will
 not save the world. It will just feel nice.
 
+Every pop is a hello. Every hello comes back.
+
 Free. Forever offline-friendly. No log-ins, no follow buttons.
 ```
 
-*(4,000 char limit — currently ~1,750. Plenty of room to add or trim.)*
+*(4,000 char limit — currently ~1,850. The Pact line bookends the
+description so it lands on first read AND last read; this is the
+single most testable copy change in the entire submission.)*
 
 ---
 
@@ -376,5 +398,41 @@ You'll see commits land on `main` while you're working on this doc.
 
 ---
 
-*Generated 2026-04-25. Update this file alongside any future
-release.*
+*Generated 2026-04-25. Bible-aligned v2 added 2026-05-13. Update this
+file alongside any future release.*
+
+---
+
+## Appendix — v1 copy (preserved for A/B baseline)
+
+The original "smash"-forward copy from the v0.1.1 submission. Kept here
+as the A/B baseline against the v2 Pact-line versions above. If v2
+underperforms on click-through or conversion after a measurable
+window, revert by promoting these blocks back to the active section.
+
+### v1 subtitle
+```
+Squish, pop, collect cards
+```
+
+### v1 promotional text
+```
+48 collectible cards across 3 themed packs. Earn them through play, milestones, or save coins for the one you want — three ways to complete the album.
+```
+
+### v1 description (opening + closing differs from v2; body identical)
+```
+Soft, satisfying, and a little weird in the best way.
+
+Tap to squish. Pop to collect. Every squishy reacts with a juicy
+ASMR-flavored crunch, splat, or wobble — chosen specifically because
+it sounds like the kind of thing you'd watch a TikTok video of for
+no real reason.
+
+[... body sections identical to v2 ...]
+
+Squishy Smash is a fidget toy you can keep in your pocket. It will
+not save the world. It will just feel nice.
+
+Free. Forever offline-friendly. No log-ins, no follow buttons.
+```

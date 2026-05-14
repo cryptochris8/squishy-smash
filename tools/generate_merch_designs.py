@@ -1,9 +1,9 @@
 """
 Render the Squishy Smash merchandise print-ready designs.
 
-Outputs 12 PNGs into `commerce/print_ready/`, each at 300 DPI sized for
-the matching Printful product type (apparel, stickers, mugs, posters,
-totes). Matches the catalog in `commerce/SHOPIFY_LAUNCH_GUIDE.md`.
+Outputs print-ready PNGs into `commerce/print_ready/`, each at 300 DPI
+sized for the matching Printful product type (apparel, stickers, mugs,
+posters, totes). Matches the catalog in `commerce/SHOPIFY_LAUNCH_GUIDE.md`.
 
 Re-run any time the cards or brand assets change:
 
@@ -11,6 +11,14 @@ Re-run any time the cards or brand assets change:
 
 Patterns mirror `tools/render_x_banner.py` — same Fredoka font, same
 brand palette, same scatter-sparkles helper aesthetic.
+
+Bible alignment (per `book/STORY_BIBLE.md`, locked 2026-05-13):
+- The three Pact-line designs (`tee_pact_line`, `sticker_pact_line`,
+  `mug_pact_wrap`) lead with the canonical brand line ("Every pop is
+  a hello. Every hello comes back."). They are the most evergreen
+  pieces in the catalog — no character art, no time-bound copy.
+- The Squishkeeper is NEVER drawn — these designs use sparkle scatter
+  and typography only. Do not add silhouettes or implied figures.
 """
 
 from __future__ import annotations
@@ -219,6 +227,53 @@ def build_tee_card_hero(card_num: int, out_name: str,
     print(f"[tee] {out.name} ({canvas.size})")
 
 
+def build_tee_pact_line() -> None:
+    """The brand's most evergreen tee — canonical Pact line in two
+    color-stacked lines, no card art, sparkle scatter only.
+
+    Per `book/STORY_BIBLE.md` §2 the Pact line ("Every pop is a hello.
+    Every hello comes back.") is approved cross-surface canon. This
+    design carries the whole brand in one shirt without depending on
+    a featured character — useful for adult buyers who don't have a
+    favorite squishy yet."""
+    canvas = transparent_canvas(TEE_W, TEE_H)
+
+    # Small SQUISHY SMASH wordmark up top so the tee still reads as
+    # branded at thumbnail size.
+    draw_centered_text(canvas, int(TEE_H * 0.10),
+                       "SQUISHY SMASH",
+                       size=240, color=PINK)
+
+    # The Pact, two stacked lines, alternating cream/pink so the
+    # rhythm of "hello / comes back" reads visually as well as verbally.
+    line1_y = int(TEE_H * 0.34)
+    line2_y = int(TEE_H * 0.50)
+    draw_centered_text(canvas, line1_y,
+                       "Every pop is a hello.",
+                       size=300, color=CREAM)
+    draw_centered_text(canvas, line2_y,
+                       "Every hello comes back.",
+                       size=300, color=PINK)
+
+    # Quiet attribution line — keeps the Squishkeeper present without
+    # drawing them.
+    draw_centered_text(canvas, int(TEE_H * 0.70),
+                       "— the Squishkeeper",
+                       size=110, color=WHITE)
+
+    # Sparkle scatter clustered around the typography, not edge-to-edge,
+    # so the tee has clean negative space.
+    band = transparent_canvas(TEE_W, TEE_H)
+    scatter_sparkles(band, count=70,
+                      colors=[CREAM, PINK, JELLY_BLUE, LAVENDER],
+                      seed=42, size_range=(8, 22), alpha=180)
+    canvas.alpha_composite(band)
+
+    out = OUT_DIR / "tee_pact_line.png"
+    canvas.save(out, optimize=True)
+    print(f"[tee] {out.name} ({canvas.size})")
+
+
 def build_tote_trio() -> None:
     """Three cards arranged like the cover trio (Goo Ball rotated CCW,
     Blushy Bun Bunny center, Soft Dumpling rotated CW), with brand
@@ -339,6 +394,47 @@ def build_sticker_sheet(pack_name: str, card_nums: list[int],
     print(f"[sticker-sheet] {out.name} ({canvas.size})")
 
 
+def build_sticker_pact_line() -> None:
+    """Square 1500x1500 (5 x 5 in @ 300 DPI) Pact-line sticker. Dark
+    plum bg, two-line Pact in stacked cream/pink, sparkle scatter.
+    Per the bible §2 this is brand canon — printable anywhere."""
+    SIDE = 1500
+    canvas = dark_canvas(SIDE, SIDE)
+
+    # Top: small wordmark
+    draw_centered_text(canvas, int(SIDE * 0.12),
+                       "SQUISHY SMASH",
+                       size=80, color=PINK, track_px=4)
+
+    # The Pact
+    draw_centered_text(canvas, int(SIDE * 0.32),
+                       "Every pop",
+                       size=170, color=CREAM)
+    draw_centered_text(canvas, int(SIDE * 0.43),
+                       "is a hello.",
+                       size=170, color=CREAM)
+    draw_centered_text(canvas, int(SIDE * 0.59),
+                       "Every hello",
+                       size=170, color=PINK)
+    draw_centered_text(canvas, int(SIDE * 0.70),
+                       "comes back.",
+                       size=170, color=PINK)
+
+    # Quiet attribution
+    draw_centered_text(canvas, int(SIDE * 0.86),
+                       "— the Squishkeeper",
+                       size=58, color=WHITE)
+
+    # Sparkles
+    scatter_sparkles(canvas, count=45,
+                      colors=[CREAM, PINK, JELLY_BLUE, LAVENDER],
+                      seed=7, size_range=(6, 16), alpha=200)
+
+    out = OUT_DIR / "sticker_pact_line.png"
+    canvas.save(out, optimize=True)
+    print(f"[sticker] {out.name} ({canvas.size})")
+
+
 def build_sticker_solo(card_num: int, out_name: str,
                         rim_color: tuple[int, int, int] = CREAM) -> None:
     """Single oversized sticker — the card on a transparent bg with
@@ -391,6 +487,62 @@ def build_mug_wordmark() -> None:
                       colors=[CREAM, PINK, JELLY_BLUE, LAVENDER],
                       seed=99, size_range=(4, 12), alpha=200)
     out = OUT_DIR / "mug_wordmark_wrap.png"
+    canvas.save(out, optimize=True)
+    print(f"[mug] {out.name} ({canvas.size})")
+
+
+def build_mug_pact_wrap() -> None:
+    """11 oz mug wrap (9 x 3.75 in) with the Pact stacked on one face,
+    sparkle scatter wrapping to the other face. Single-face layout is
+    cleaner than splitting the two lines across mug sides — both lines
+    visible at one rotation, no clipping. Dark plum bg. No character
+    art — bible-canon brand piece per `STORY_BIBLE.md` §2.
+
+    Type sizes calibrated so the longer line ("Every hello comes back.")
+    stays inside the front-face safe area (~1100 px wide of the 2700 px
+    wrap)."""
+    canvas = dark_canvas(MUG_W, MUG_H)
+    d = ImageDraw.Draw(canvas)
+
+    # Mug wrap is wide and short. Center both lines on the front face
+    # (left third of the wrap is the "front" when the handle's on the
+    # right). Use size 110 — fits "Every hello comes back." in ~1050 px.
+    face_cx = int(MUG_W * 0.30)
+
+    line1 = "Every pop is a hello."
+    line2 = "Every hello comes back."
+    line_font = font(110)
+
+    bbox1 = d.textbbox((0, 0), line1, font=line_font)
+    line1_w = bbox1[2] - bbox1[0]
+    line1_x = face_cx - line1_w // 2
+    line1_y = int(MUG_H * 0.20)
+    d.text((line1_x + 3, line1_y + 3), line1, font=line_font, fill=(0, 0, 0, 160))
+    d.text((line1_x, line1_y), line1, font=line_font, fill=(*CREAM, 255))
+
+    bbox2 = d.textbbox((0, 0), line2, font=line_font)
+    line2_w = bbox2[2] - bbox2[0]
+    line2_x = face_cx - line2_w // 2
+    line2_y = int(MUG_H * 0.46)
+    d.text((line2_x + 3, line2_y + 3), line2, font=line_font, fill=(0, 0, 0, 160))
+    d.text((line2_x, line2_y), line2, font=line_font, fill=(*PINK, 255))
+
+    # Attribution in script-light below
+    attr_font = font(46)
+    attr = "— the Squishkeeper"
+    bbox3 = d.textbbox((0, 0), attr, font=attr_font)
+    attr_w = bbox3[2] - bbox3[0]
+    attr_x = face_cx - attr_w // 2
+    attr_y = int(MUG_H * 0.74)
+    d.text((attr_x, attr_y), attr, font=attr_font, fill=(*WHITE, 220))
+
+    # Sparkle scatter — wraps to the back of the mug for visual interest
+    # when the drinker rotates.
+    scatter_sparkles(canvas, count=70,
+                      colors=[CREAM, PINK, JELLY_BLUE, LAVENDER],
+                      seed=33, size_range=(4, 14), alpha=200)
+
+    out = OUT_DIR / "mug_pact_wrap.png"
     canvas.save(out, optimize=True)
     print(f"[mug] {out.name} ({canvas.size})")
 
@@ -494,6 +646,13 @@ def build_poster_grid() -> None:
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Bible-canon Pact-line trio (most evergreen pieces in the catalog).
+    # Per `book/STORY_BIBLE.md` §2 — typography + sparkle only, no
+    # character art, no Squishkeeper depiction.
+    build_tee_pact_line()
+    build_sticker_pact_line()
+    build_mug_pact_wrap()
 
     # Apparel
     build_tee_wordmark()

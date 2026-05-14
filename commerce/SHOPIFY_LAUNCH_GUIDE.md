@@ -16,17 +16,22 @@ A complete plan for opening a Squishy Smash merchandise store on Shopify using a
 
 | Product | Design | Print-ready file | Variants | Retail | Wholesale | Margin |
 |---|---|---|---|---|---|---|
+| Adult Tee — The Pact ★ | Canonical Pact line, typography only (bible-canon brand piece) | `commerce/print_ready/tee_pact_line.png` | S–3XL · Black, Heather Plum | $26.99 | ~$11 | ~$16 |
 | Adult Tee — Squishy Smash Wordmark | Brand wordmark on dark + sparkle scatter | `commerce/print_ready/tee_wordmark.png` | S–3XL · Black, Heather Plum, Cream | $24.99 | ~$11 | ~$14 |
 | Adult Tee — Mythic Plush Familiar | The legendary squishy as hero | `commerce/print_ready/tee_mythic_familiar.png` | S–3XL · Black, Cream | $26.99 | ~$11 | ~$16 |
 | Kids Tee — Blushy Bun Bunny | Cover-star squishy, kid favorite | `commerce/print_ready/tee_kids_blushy_bun.png` | 2T–YXL · Pink, Black | $21.99 | ~$10 | ~$12 |
 | Kids Tee — Soft Dumpling | Foods pack hero | `commerce/print_ready/tee_kids_soft_dumpling.png` | 2T–YXL · Cream, Pink | $21.99 | ~$10 | ~$12 |
 | Hoodie (Adult) — Wordmark | Wordmark + sparkle scatter | `commerce/print_ready/tee_wordmark.png` (reuse) | S–3XL · Black, Heather Plum | $44.99 | ~$26 | ~$19 |
+| Hoodie (Adult) — The Pact ★ | Pact line on dark, ideal for cozy/adult buyer | `commerce/print_ready/tee_pact_line.png` (reuse) | S–3XL · Black, Heather Plum | $46.99 | ~$26 | ~$21 |
 | Tote Bag — 3-Pack Mascot Trio | Goo Ball + Blushy Bun Bunny + Soft Dumpling cluster | `commerce/print_ready/tote_3_pack_trio.png` | One size · Natural canvas | $19.99 | ~$10 | ~$10 |
+
+★ = bible-canonical Pact line piece per `book/STORY_BIBLE.md` §2 — the most evergreen designs in the catalog. No character art; works regardless of which squishy is the customer's favorite.
 
 ### A.2 Stickers
 
 | Product | Design | Print-ready file | Variants | Retail | Wholesale | Margin |
 |---|---|---|---|---|---|---|
+| Sticker — The Pact ★ | Canonical Pact line on dark, sparkle scatter | `commerce/print_ready/sticker_pact_line.png` | 5 × 5 in glossy | $4.99 | ~$2 | ~$3 |
 | Sticker Sheet — Squishy Foods | All 16 Foods squishies, die-cut layout | `commerce/print_ready/sticker_sheet_squishy_foods.png` | 8.5 × 11 in glossy | $9.99 | ~$3 | ~$7 |
 | Sticker Sheet — Goo & Fidgets | All 16 Goo squishies | `commerce/print_ready/sticker_sheet_goo_fidgets.png` | 8.5 × 11 in glossy | $9.99 | ~$3 | ~$7 |
 | Sticker Sheet — Creepy-Cute Creatures | All 16 Creepy-Cute squishies | `commerce/print_ready/sticker_sheet_creepy_cute.png` | 8.5 × 11 in glossy | $9.99 | ~$3 | ~$7 |
@@ -36,6 +41,7 @@ A complete plan for opening a Squishy Smash merchandise store on Shopify using a
 
 | Product | Design | Print-ready file | Variants | Retail | Wholesale | Margin |
 |---|---|---|---|---|---|---|
+| Mug — The Pact ★ | Pact line stacked on the front face, sparkles wrap to the back | `commerce/print_ready/mug_pact_wrap.png` | 11 oz, 15 oz · Black or Dark ceramic | $17.99 | ~$8 | ~$10 |
 | Mug — Soft Dumpling | Side-wrap design with mascot + tagline | `commerce/print_ready/mug_soft_dumpling_wrap.png` | 11 oz, 15 oz · White ceramic | $17.99 | ~$8 | ~$10 |
 | Mug — Squishy Smash Wordmark | Brand wrap | `commerce/print_ready/mug_wordmark_wrap.png` | 11 oz, 15 oz · White ceramic | $17.99 | ~$8 | ~$10 |
 
@@ -298,15 +304,18 @@ Similar to plushies — meaningful upfront tooling. Same Kickstarter validation 
 commerce/
 ├── SHOPIFY_LAUNCH_GUIDE.md       (this file)
 └── print_ready/
+    ├── tee_pact_line.png         (4500 × 5400) — ★ canonical Pact-line tee + hoodie
     ├── tee_wordmark.png          (4500 × 5400) — adult + hoodie wordmark
     ├── tee_mythic_familiar.png   (4500 × 5400) — adult mythic tee
     ├── tee_kids_blushy_bun.png   (4500 × 5400) — kids Blushy Bun Bunny
     ├── tee_kids_soft_dumpling.png (4500 × 5400) — kids Soft Dumpling
     ├── tote_3_pack_trio.png      (4200 × 4200) — tote bag trio
+    ├── sticker_pact_line.png     (1500 × 1500) — ★ canonical Pact-line sticker
     ├── sticker_sheet_squishy_foods.png    (2550 × 3300)
     ├── sticker_sheet_goo_fidgets.png      (2550 × 3300)
     ├── sticker_sheet_creepy_cute.png      (2550 × 3300)
     ├── sticker_solo_mythic_familiar.png   (1500 × 1500) — holographic single
+    ├── mug_pact_wrap.png         (2700 × 1125) — ★ canonical Pact-line mug
     ├── mug_soft_dumpling_wrap.png         (2700 × 1125)
     ├── mug_wordmark_wrap.png              (2700 × 1125)
     └── poster_all_48_grid.png             (5400 × 7200)
