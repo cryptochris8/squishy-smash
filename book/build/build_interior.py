@@ -116,7 +116,7 @@ PAGE_RENDERERS = [
     (45, lambda: T10_mythic_finale(48, 45)),    # Mythic Plush Familiar
 
     # 46: Back matter
-    (46, lambda: T_tracker()),
+    (46, lambda: T_tracker(46)),
 ]
 
 

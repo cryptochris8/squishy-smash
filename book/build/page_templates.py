@@ -1434,7 +1434,7 @@ def T_gallery() -> Image.Image:
 # Page 32 — Squishy Tracker (48-cell checklist)
 # ---------------------------------------------------------------------------
 
-def T_tracker() -> Image.Image:
+def T_tracker(page_num: int) -> Image.Image:
     canvas = _new_canvas(PALETTE["bg"])
 
     draw_text(canvas, PAGE_W // 2, SAFE + 60,
@@ -1515,7 +1515,10 @@ def T_tracker() -> Image.Image:
               "See you on the next bounce.\n— The Squishkeeper",
               style_name="flavor", max_width=PAGE_W - SAFE * 2)
 
-    _folio(canvas, 32)
+    _folio(canvas, page_num)
+    # Edge vignette to match every other template's bleed treatment
+    # (T_gallery also uses 0.25 for similar grid-heavy pages).
+    _vignette(canvas, intensity=0.25)
     return canvas
 
 
