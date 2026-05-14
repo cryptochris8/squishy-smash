@@ -1248,14 +1248,21 @@ def T9_premium_duo(num_a: int, num_b: int, page_num: int,
 
     # Mid-pack rest beat (Phase 5b). One of the three packs gets a
     # single italic line per pack from the Squishkeeper to break
-    # the long T9 run. Bottom-right corner, in the Squishkeeper's
-    # accent script so it reads as a quiet aside, not chrome.
+    # the long T9 run. Anchored to the right-side text column (same
+    # column each per-character entry uses) so the pink rose-dust
+    # line sits clear of the bottom entry's card on the left. Pre-fix
+    # this anchored at PAGE_W // 2 — when `flavor` style was promoted
+    # to center-aligned (2026-05-13) the centered line started
+    # bleeding back over the bottom card, which the user flagged on
+    # pages 16, 29, and 42.
     if mid_pack_note:
-        draw_text(canvas, PAGE_W // 2,
+        rest_text_x = card_x + card_w + 80
+        rest_text_w = PAGE_W - SAFE - 40 - rest_text_x
+        draw_text(canvas, rest_text_x + rest_text_w // 2,
                   PAGE_H - SAFE - 90,
                   mid_pack_note,
                   style_name="flavor",
-                  max_width=PAGE_W - SAFE * 2)
+                  max_width=rest_text_w)
 
     _stamp_pack_corners(canvas, pack, size=180, alpha=160)
     _folio(canvas, page_num, pack_color=tint)
