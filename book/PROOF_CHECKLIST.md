@@ -136,10 +136,13 @@ KDP also needs:
 
 ## Open decisions still pending
 
-These don't block the proof step but should be locked before final upload:
+These are the only remaining decisions before final upload. Everything else has been locked.
 
-1. **Author byline** — personal name or "Squishy Smash" only?
-2. **ISBN** — KDP free vs purchased?
-3. **Title page mascot** — confirm the 3-mascot cluster (alternative: single Soft Dumpling hero)
-4. **Background mode** — current dark `#120B17` matches in-app; light pastel variant possible
-5. **Section dividers** — currently the pack-intro spreads (9–10, 19–20, 27–28) act as dividers. Stronger separation = trim one premium card per pack to budget a dedicated divider page.
+1. **Author byline** — personal name or "Squishy Smash" only? (Current default per `cover/cover_copy.md` §3: publisher-only "Squishy Smash". Personal name can be added later; KDP metadata is independent of cover art so this only blocks the KDP form, not the cover PDF.)
+2. **ISBN** — KDP free vs purchased? (Walkthrough recommends free KDP ISBN for Volume 1. Buy a Bowker ISBN only if you plan to distribute the same edition off-Amazon.)
+
+### Resolved (no longer pending)
+
+- ✅ **Title page mascot** — 3-mascot cluster (Soft Dumpling / Goo Ball / Blushy Bun Bunny) is locked. Front cover mirrors the interior title page composition per `cover/cover_copy.md` §4.
+- ✅ **Background mode** — dark `#120B17` starry-night locked across cover + interior per `cover/cover_copy.md` §4.
+- ⏸ **Section dividers** — current pack-intro spreads (T5 + T6) act as dividers. Adding dedicated divider pages would require trimming a premium card per pack. Parked as a v1.1 elevation; not a v1 blocker.
