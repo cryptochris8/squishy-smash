@@ -1,4 +1,4 @@
-import { APP_STORE_URL } from '../constants/links'
+import { APP_STORE_URL, AMAZON_BOOK_URL } from '../constants/links'
 import { squishies } from '../data/squishies'
 
 /* Six hero-companion sprites — hand-picked to show off tier variety:
@@ -57,6 +57,23 @@ export function Hero() {
             </a>
           </div>
 
+          {/* Companion book CTA — secondary surface so it doesn't
+              compete with the app install. Live on Amazon since
+              2026-05-16. */}
+          <a
+            href={AMAZON_BOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 text-sm text-white/75 hover:text-cream-300 transition-colors animate-fade-in-up-delayed"
+          >
+            <BookIcon />
+            <span>
+              <span className="font-bold text-cream-300">New:</span>{' '}
+              the paperback book is live on Amazon
+            </span>
+            <span aria-hidden="true">→</span>
+          </a>
+
           <div className="mt-10 flex items-center gap-5 text-sm text-white/70">
             <Stat number="48" label="cards" />
             <span className="h-8 w-px bg-white/20" />
@@ -86,6 +103,24 @@ function AppleLogo() {
       aria-hidden="true"
     >
       <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
+  )
+}
+
+function BookIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-4 h-4"
+      aria-hidden="true"
+    >
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
     </svg>
   )
 }

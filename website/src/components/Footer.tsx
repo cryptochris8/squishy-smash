@@ -1,4 +1,4 @@
-import { APP_STORE_URL } from '../constants/links'
+import { APP_STORE_URL, AMAZON_BOOK_URL } from '../constants/links'
 
 export function Footer() {
   return (
@@ -24,6 +24,7 @@ export function Footer() {
           <FooterLink href="#collection">Collection</FooterLink>
           <FooterLink href="#packs">Packs</FooterLink>
           <FooterLink href={APP_STORE_URL} external>App Store</FooterLink>
+          <FooterLink href={AMAZON_BOOK_URL} external>Book on Amazon</FooterLink>
         </FooterColumn>
 
         <FooterColumn title="About">
