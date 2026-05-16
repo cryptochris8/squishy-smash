@@ -74,7 +74,16 @@ class SquishyGame extends FlameGame {
     this.onFirstRareReveal,
   });
 
-  final void Function(int score, int combo, int coinsEarned)? onRoundEnd;
+  /// Fires once per round end with the round's final tallies plus the
+  /// player's `bestScore` *as of the moment the round started* — the
+  /// results screen diffs this against `score` to decide whether to
+  /// celebrate a new personal best.
+  final void Function(
+    int score,
+    int combo,
+    int coinsEarned,
+    int previousBest,
+  )? onRoundEnd;
 
   /// Fires immediately after a mythic burst resolves, so the surrounding
   /// Flutter UI can show a "Save this clip?" prompt. Always called on
@@ -596,6 +605,12 @@ class SquishyGame extends FlameGame {
     // pity updates) before the results screen pulls the profile, so
     // the displayed totals and the on-disk totals match.
     await ServiceLocator.progression.flushPending();
+    // Capture the previous personal best BEFORE recordRound runs —
+    // it mutates `profile.bestScore` in-place when the round beats
+    // the prior high, so reading after would always say "not a new
+    // best." The results screen needs the pre-mutation value to
+    // decide whether to show the NEW BEST celebration.
+    final previousBest = ServiceLocator.progression.profile.bestScore;
     await ServiceLocator.progression.recordRound(
       score: score.total,
       combo: combo.peak,
@@ -619,6 +634,6 @@ class SquishyGame extends FlameGame {
     for (final achievement in eligible) {
       await ServiceLocator.progression.grantAchievement(achievement);
     }
-    onRoundEnd?.call(score.total, combo.peak, _coinsEarned);
+    onRoundEnd?.call(score.total, combo.peak, _coinsEarned, previousBest);
   }
 }

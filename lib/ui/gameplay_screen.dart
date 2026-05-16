@@ -91,12 +91,28 @@ class _GameplayScreenState extends State<GameplayScreen>
     });
   }
 
-  void _handleRoundEnd(int score, int combo, int coinsEarned) {
+  void _handleRoundEnd(
+    int score,
+    int combo,
+    int coinsEarned,
+    int previousBest,
+  ) {
     if (!mounted) return;
     Navigator.pushReplacementNamed(
       context,
       AppRoutes.results,
-      arguments: ResultsArgs(score: score, combo: combo, coinsEarned: coinsEarned),
+      arguments: ResultsArgs(
+        score: score,
+        combo: combo,
+        coinsEarned: coinsEarned,
+        // `bestScore` is the post-round value (recordRound already
+        // ran), so it's max(previousBest, score). `isNewBest` is
+        // derived here rather than at the screen so the boundary
+        // condition (score == previousBest) is decided once, in the
+        // place that knows the semantics: ties don't celebrate.
+        bestScore: score > previousBest ? score : previousBest,
+        isNewBest: score > previousBest,
+      ),
     );
   }
 
@@ -270,8 +286,16 @@ class _GameplayScreenState extends State<GameplayScreen>
 }
 
 class ResultsArgs {
-  const ResultsArgs({required this.score, required this.combo, required this.coinsEarned});
+  const ResultsArgs({
+    required this.score,
+    required this.combo,
+    required this.coinsEarned,
+    required this.bestScore,
+    required this.isNewBest,
+  });
   final int score;
   final int combo;
   final int coinsEarned;
+  final int bestScore;
+  final bool isNewBest;
 }
