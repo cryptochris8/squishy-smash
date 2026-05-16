@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../core/routes.dart';
 import '../core/service_locator.dart';
 import '../data/achievement_registry.dart';
 import '../data/card_unlock.dart';
 import '../data/models/achievement.dart';
 import '../data/models/card_entry.dart';
 import '../data/models/rarity.dart';
+import 'widgets/big_button.dart';
 import 'widgets/card_album_widgets.dart';
 import '../core/constants.dart';
 
@@ -78,6 +80,15 @@ class _CollectionScreenState extends State<CollectionScreen> {
             unlocked: unlockedTotal,
             total: cards.length,
           ),
+          // GAME_POLISH_AUDIT.md UX-4: when the album is fully locked
+          // (brand-new player tapped COLLECTION before playing) the
+          // screen used to be a wall of 48 lock silhouettes with no
+          // explanation. Now we render an empty-state banner with a
+          // PLAY shortcut so the dead end becomes a funnel.
+          if (unlockedTotal == 0) ...[
+            const SizedBox(height: 16),
+            const _EmptyAlbumBanner(),
+          ],
           const SizedBox(height: 16),
           _PackFilterRow(
             value: _packFilter,
@@ -349,10 +360,15 @@ class _CardTile extends StatelessWidget {
             Text(
               card.cardNumber,
               textAlign: TextAlign.center,
+              // GAME_POLISH_AUDIT.md UI-1: previous treatment (9 sp,
+              // alpha 0.5 on near-black bg) was ≈ 4.2:1 — under WCAG
+              // 2.1 AA's 4.5:1 minimum for small text. Bumped to
+              // 11 sp at white70 (≈ 9.4:1) so the info-dense card
+              // grid stays legible for tired-parent eyes.
               style: TextStyle(
-                fontSize: 9,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: Colors.white.withValues(alpha: 0.5),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -732,6 +748,57 @@ class _EmptyState extends StatelessWidget {
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.7),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rendered above the card grid when the player hasn't unlocked any
+/// cards yet — converts the wall-of-locks dead end into a funnel
+/// straight to the gameplay route. GAME_POLISH_AUDIT.md UX-4.
+class _EmptyAlbumBanner extends StatelessWidget {
+  const _EmptyAlbumBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Palette.pink.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Palette.pink.withValues(alpha: 0.45),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Tap PLAY to start smashing.',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Cards unlock as you burst squishies. Three paths to '
+            'every card — earn, achieve, or save.',
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.4,
+              color: Colors.white.withValues(alpha: 0.75),
+            ),
+          ),
+          const SizedBox(height: 14),
+          BigButton(
+            label: 'PLAY',
+            color: Palette.pink,
+            onTap: () => Navigator.pushNamed(context, AppRoutes.play),
           ),
         ],
       ),

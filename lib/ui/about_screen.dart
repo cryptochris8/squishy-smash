@@ -14,10 +14,14 @@ import '../core/constants.dart';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  // Bumped manually with each pubspec.yaml `version:` change. Kept
-  // separate from a runtime PackageInfo lookup so this widget stays
-  // pure-Flutter and unit-testable without channel mocking.
-  static const String _kAppVersion = '0.1.1';
+  // GAME_POLISH_AUDIT.md UI-4: the hardcoded '0.1.1' string lagged
+  // the live App Store build (0.1.2) — and would have lagged again
+  // on every release. Now reads APP_VERSION from --dart-define so a
+  // release build can pass `--dart-define=APP_VERSION=$VERSION` and
+  // the value matches what shipped. Default tracks the in-flight
+  // pubspec version so local dev/test still sees a plausible string.
+  static const String _kAppVersion =
+      String.fromEnvironment('APP_VERSION', defaultValue: '0.1.3');
   static const String _kSupportEmail = 'support@squishysmash.com';
   static const String _kWebsite = 'https://squishysmash.com';
   static const String _kPrivacyUrl = 'https://squishysmash.com/privacy';
@@ -28,7 +32,12 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Palette.bgDeep,
       appBar: AppBar(
-        backgroundColor: Palette.bgSurface,
+        // GAME_POLISH_AUDIT.md UI-2: only screen with an opaque
+        // bgSurface AppBar — every other (collection, shop, settings)
+        // uses Colors.transparent. Pre-fix the About screen read as
+        // a different product surface. Now matches the rest.
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('About'),
         titleTextStyle: const TextStyle(
           color: Colors.white,
