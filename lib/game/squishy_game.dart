@@ -29,6 +29,7 @@ import 'systems/combo_sound_registry.dart';
 import 'systems/feedback_dispatcher.dart';
 import 'systems/flame_feedback_sink.dart';
 import 'systems/haptics_manager.dart';
+import 'systems/idle_voice_trigger.dart';
 import 'systems/pack_progression_gate.dart';
 import 'systems/rarity_pity_selector.dart';
 import 'systems/reward_event.dart';
@@ -110,6 +111,10 @@ class SquishyGame extends FlameGame {
   late final SkyboxComponent skybox;
   late final GameEvents events;
   late final FeedbackDispatcher feedback;
+  /// Plays ASMR idle whispers after a beat of silence — the "ooh" /
+  /// "squeeze me" hook for new installs who haven't tapped yet. See
+  /// GAME_POLISH_AUDIT.md P1-A for context.
+  late final IdleVoiceTrigger _idleVoice;
   late final RarityPitySelector pitySelector;
   late final PackProgressionGate packGate;
   late final List<GatedObject> _pool;
@@ -215,6 +220,15 @@ class SquishyGame extends FlameGame {
       ..voiceLines.addAll(VoiceLineRegistry.dispatcherMap)
       ..comboChimes.addAll(ComboSoundRegistry.dispatcherMap);
 
+    // Idle VO bucket lives outside the dispatcher map (no FeedbackTier
+    // maps to it) so we trigger it manually from update(dt). Reuses
+    // the game's RNG so test seeding stays deterministic across all
+    // probabilistic systems.
+    _idleVoice = IdleVoiceTrigger(
+      lines: VoiceLineRegistry.asmrIdle,
+      rng: _rng,
+    );
+
     final featured = ServiceLocator.packs.schedule.currentWeek(DateTime.now());
     _activePackId = featured?.featuredPack ??
         (ServiceLocator.progression.profile.unlockedPackIds.isNotEmpty
@@ -279,6 +293,8 @@ class SquishyGame extends FlameGame {
     if (_ended) return;
     combo.tick(dt);
     _roundTimer -= dt;
+    final idleLine = _idleVoice.tick(dt);
+    if (idleLine != null) ServiceLocator.sounds.play(idleLine);
     _publishHud();
     if (_roundTimer <= 0) _endRound();
   }
@@ -357,6 +373,7 @@ class SquishyGame extends FlameGame {
   }
 
   void _handleImpact(SmashableComponent c, double force) {
+    _idleVoice.reset();
     final milestone = combo.bump();
     final base = (5 * force).round();
     score.addHit(base, multiplier: combo.multiplier);
@@ -377,6 +394,7 @@ class SquishyGame extends FlameGame {
   }
 
   void _handleBurst(SmashableComponent c) {
+    _idleVoice.reset();
     final profile = ServiceLocator.progression.profile;
     final outcome = const BurstResolver().resolve(
       def: c.def,
