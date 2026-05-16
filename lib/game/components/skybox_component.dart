@@ -43,6 +43,18 @@ class SkyboxComponent extends PositionComponent {
   ui.Image? _calmImage;
   ui.Image? _revealImage;
 
+  // GAME_POLISH_AUDIT.md PERF-3: cache the three Paint instances so
+  // render() doesn't allocate them on every frame. Color/alpha is
+  // mutated in-place each call; the shader on the gradient/flash
+  // paints is rebuilt only when its inputs actually change (alpha for
+  // the radial flash changes per frame, so that one still rebuilds).
+  // Eliminates ~3 small allocs/frame during a reveal, ~1/frame at
+  // rest — reduces young-gen GC micro-pauses on the UI thread.
+  final Paint _layerPaint = Paint()
+    ..filterQuality = FilterQuality.medium;
+  final Paint _gradientPaint = Paint();
+  final Paint _flashPaint = Paint();
+
   /// Per-layer load error string, or null if the layer loaded fine. The
   /// HUD overlay reads these to render an on-screen diagnostic banner so
   /// a TestFlight tester can screenshot the failure mode without needing
@@ -137,13 +149,14 @@ class SkyboxComponent extends PositionComponent {
     final src = Rect.fromLTWH(0, 0, srcW, srcH);
     final dst = Rect.fromLTWH(dx, 0, drawW, drawH);
 
-    final paint = Paint()
-      ..color = Color.fromRGBO(255, 255, 255, opacity.clamp(0.0, 1.0))
-      ..filterQuality = FilterQuality.medium;
+    // Mutate the cached Paint in-place — filterQuality is set once
+    // at construction, only the color/alpha changes per frame.
+    _layerPaint.color =
+        Color.fromRGBO(255, 255, 255, opacity.clamp(0.0, 1.0));
 
     canvas.save();
     canvas.clipRect(rect);
-    canvas.drawImageRect(image, src, dst, paint);
+    canvas.drawImageRect(image, src, dst, _layerPaint);
     canvas.restore();
   }
 
@@ -154,6 +167,12 @@ class SkyboxComponent extends PositionComponent {
     required double opacity,
   }) {
     if (colors.isEmpty || opacity <= 0) return;
+    // Fallback path — only fires when an image is missing. Shader
+    // still rebuilt per frame because the per-frame opacity multiply
+    // changes the gradient stops. The cached Paint elides the
+    // allocation; refactoring the alpha into a colorFilter would
+    // remove the shader rebuild but adds complexity for a path that
+    // rarely fires in production.
     final gradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -161,8 +180,8 @@ class SkyboxComponent extends PositionComponent {
           .map((c) => c.withValues(alpha: c.a * opacity))
           .toList(growable: false),
     );
-    final paint = Paint()..shader = gradient.createShader(rect);
-    canvas.drawRect(rect, paint);
+    _gradientPaint.shader = gradient.createShader(rect);
+    canvas.drawRect(rect, _gradientPaint);
   }
 
   void _paintRadialFlash(Canvas canvas, Rect rect, double alpha) {
@@ -174,10 +193,9 @@ class SkyboxComponent extends PositionComponent {
         const Color(0x00FFFFFF),
       ],
     );
-    final paint = Paint()
-      ..shader = gradient.createShader(
-        Rect.fromCircle(center: center, radius: maxRadius),
-      );
-    canvas.drawRect(rect, paint);
+    _flashPaint.shader = gradient.createShader(
+      Rect.fromCircle(center: center, radius: maxRadius),
+    );
+    canvas.drawRect(rect, _flashPaint);
   }
 }

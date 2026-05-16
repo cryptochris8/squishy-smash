@@ -22,6 +22,13 @@ class RevealBloom extends PositionComponent {
 
   double _elapsed = 0;
 
+  // GAME_POLISH_AUDIT.md PERF-3: cache the Paint instance so render()
+  // doesn't allocate one per frame. The color (alpha) is mutated in-
+  // place each frame; that's the only thing that changes. A reveal
+  // bloom lasts 400–700 ms = 24–42 frames, so this is 24–42 alloc-
+  // free renders per reveal instead of 24–42 fresh Paint objects.
+  final Paint _paint = Paint();
+
   /// Pure triangle-curve helper (exposed static so tests can verify
   /// the alpha envelope without instantiating the component).
   static double bloomShape(double t) {
@@ -47,9 +54,10 @@ class RevealBloom extends PositionComponent {
     final shape = bloomShape(t);
     final alpha = (shape * peakOpacity * 255).round().clamp(0, 255);
     if (alpha == 0) return;
+    _paint.color = Color.fromARGB(alpha, 255, 255, 255);
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.x, size.y),
-      Paint()..color = Color.fromARGB(alpha, 255, 255, 255),
+      _paint,
     );
   }
 }
