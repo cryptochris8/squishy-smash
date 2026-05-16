@@ -50,6 +50,12 @@ class FlameFeedbackSink implements FeedbackSink {
   void hapticSelection() => haptics.selection();
 
   @override
+  void hapticDoublePulse() => haptics.doublePulse();
+
+  @override
+  void hapticTriplePulse() => haptics.triplePulse();
+
+  @override
   void screenShake({double duration = 0.18, double intensity = 8}) {
     shaker.shake(duration: duration, intensity: intensity);
   }

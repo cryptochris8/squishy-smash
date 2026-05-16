@@ -29,6 +29,13 @@ abstract class FeedbackSink {
   void hapticMedium();
   void hapticHeavy();
   void hapticSelection();
+  /// Two heavy impacts spaced ~80 ms apart — fired for rare/epic
+  /// reveals. Distinct from heavy so the player can feel which
+  /// tier just dropped (P1-C).
+  void hapticDoublePulse();
+  /// Three heavy impacts spaced ~80 ms apart — reserved for the
+  /// rarest beats (mythic reveals + mega bursts).
+  void hapticTriplePulse();
   void screenShake({double duration, double intensity});
 }
 
@@ -126,7 +133,22 @@ class FeedbackDispatcher {
     if (def.rarity != Rarity.common) {
       sink.playOneShot(UiSoundRegistry.revealStinger);
     }
-    sink.hapticHeavy();
+    // P1-C: tier the haptic so a mythic doesn't feel identical to a
+    // common burst. Pre-fix every reveal fired the same hapticHeavy()
+    // — three pulses for mythic, two for rare/epic, one for any
+    // unexpected common fall-through (defensive, shouldn't occur).
+    switch (def.rarity) {
+      case Rarity.mythic:
+        sink.hapticTriplePulse();
+        break;
+      case Rarity.rare:
+      case Rarity.epic:
+        sink.hapticDoublePulse();
+        break;
+      case Rarity.common:
+        sink.hapticHeavy();
+        break;
+    }
     sink.screenShake(duration: 0.22, intensity: 10);
 
     final key = switch (def.rarity) {
@@ -167,7 +189,10 @@ class FeedbackDispatcher {
 
   void _fireMegaBurst(SmashableDef def) {
     sink.playOneShot(def.burstSound);
-    sink.hapticHeavy();
+    // P1-C: mega bursts are even rarer than mythic reveals — triple
+    // pulse so the player physically feels they crossed a threshold
+    // most rounds never touch.
+    sink.hapticTriplePulse();
     sink.screenShake(duration: 0.28, intensity: 12);
 
     final megaLines = voiceLines['mega'];

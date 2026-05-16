@@ -17,6 +17,7 @@ class ComboController {
   int _streak = 0;
   int peak = 0;
   double _decayLeft = 0;
+  bool _wasLostThisTick = false;
 
   int get streak => _streak;
 
@@ -35,6 +36,14 @@ class ComboController {
   /// particle accents.
   ComboTier get currentTier => comboTierFor(_streak);
 
+  /// True for exactly the tick in which the decay timer just expired
+  /// and zeroed the streak. Cleared at the top of the next [tick] so
+  /// callers (SquishyGame → selection haptic, HUD → multiplier flash)
+  /// get a one-shot signal per loss event — GAME_POLISH_AUDIT.md P1-F.
+  /// Pre-fix the streak silently reset to 0 with no visual or haptic
+  /// cue, so players never learned that timing was a skill.
+  bool get wasLostThisTick => _wasLostThisTick;
+
   /// Register a successful hit. Returns the tier just crossed if this
   /// bump moved the streak into a higher milestone (so callers can
   /// fire a one-shot feedback stinger), or null if the tier didn't
@@ -49,9 +58,16 @@ class ComboController {
   }
 
   void tick(double dt) {
+    // Clear the one-shot loss flag at the top of each tick so the
+    // caller sees it true for exactly one frame and false thereafter.
+    _wasLostThisTick = false;
     if (_decayLeft > 0) {
       _decayLeft -= dt;
       if (_decayLeft <= 0) {
+        // Only flag a loss if there was actually a streak to lose —
+        // ticking a freshly reset controller (streak already 0) is a
+        // no-op, not a loss event.
+        if (_streak > 0) _wasLostThisTick = true;
         _streak = 0;
         _decayLeft = 0;
       }
@@ -61,5 +77,6 @@ class ComboController {
   void reset() {
     _streak = 0;
     _decayLeft = 0;
+    _wasLostThisTick = false;
   }
 }

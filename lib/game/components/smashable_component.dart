@@ -40,7 +40,18 @@ class SmashableComponent extends PositionComponent
   Future<void> onLoad() async {
     anchor = Anchor.center;
     size = Vector2.all(_baseRadius * 2);
-    scale = _baseScale;
+    // P1-E: pop into existence instead of materialising at full size.
+    // Start at zero scale and ride an elasticOut curve to _baseScale
+    // over 220 ms — the overshoot at the tail gives the squishy a
+    // "boing" arrival that reads as a physical object dropping in,
+    // not a sprite snapping on. Pre-fix the very first squishy on a
+    // new install was a static object sitting on the screen with no
+    // hook moment; this animates every spawn including the first.
+    scale = Vector2.zero();
+    add(ScaleEffect.to(
+      _baseScale.clone(),
+      EffectController(duration: 0.22, curve: Curves.elasticOut),
+    ));
     _sprite = await _tryLoadSprite(def.sprite);
   }
 

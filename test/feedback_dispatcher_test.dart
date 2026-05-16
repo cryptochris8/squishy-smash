@@ -34,6 +34,12 @@ class RecordingFeedbackSink implements FeedbackSink {
   void hapticSelection() => calls.add('hapticSelection');
 
   @override
+  void hapticDoublePulse() => calls.add('hapticDoublePulse');
+
+  @override
+  void hapticTriplePulse() => calls.add('hapticTriplePulse');
+
+  @override
   void screenShake({double duration = 0.18, double intensity = 8}) =>
       calls.add('shake:${duration.toStringAsFixed(2)}:${intensity.toInt()}');
 
@@ -147,6 +153,53 @@ void main() {
       d.dispatch(FeedbackTier.megaBurst, _def());
       final shake = sink.calls.firstWhere((c) => c.startsWith('shake:'));
       expect(shake, 'shake:0.28:12');
+    });
+
+    // GAME_POLISH_AUDIT.md P1-C tier-haptic routing — pre-fix every
+    // reveal fired the identical hapticHeavy() so a mythic felt the
+    // same as a common burst, killing the rarest moment in the game.
+    test('revealBurst rare/epic fires hapticDoublePulse (not heavy)', () {
+      for (final rarity in [Rarity.rare, Rarity.epic]) {
+        final sink = RecordingFeedbackSink();
+        final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+        d.dispatch(FeedbackTier.revealBurst, _def(rarity: rarity));
+        expect(sink.calls, contains('hapticDoublePulse'),
+            reason: '$rarity must fire the two-pulse haptic tier');
+        expect(sink.calls, isNot(contains('hapticTriplePulse')));
+        expect(sink.calls, isNot(contains('hapticHeavy')));
+      }
+    });
+
+    test('revealBurst mythic fires hapticTriplePulse (rarest tier)', () {
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.dispatch(FeedbackTier.revealBurst, _def(rarity: Rarity.mythic));
+      expect(sink.calls, contains('hapticTriplePulse'));
+      expect(sink.calls, isNot(contains('hapticDoublePulse')));
+      expect(sink.calls, isNot(contains('hapticHeavy')));
+    });
+
+    test('megaBurst fires hapticTriplePulse (was heavy, pre-P1-C)', () {
+      // Mega bursts are even rarer than mythic reveals — the player
+      // should physically feel they crossed a threshold most rounds
+      // never touch.
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.dispatch(FeedbackTier.megaBurst, _def());
+      expect(sink.calls, contains('hapticTriplePulse'));
+      expect(sink.calls, isNot(contains('hapticHeavy')));
+    });
+
+    test('plain burst (non-reveal) keeps the single hapticHeavy', () {
+      // P1-C tiers the *reveal* haptic; the common-tier burst path
+      // (FeedbackTier.burst, not revealBurst) intentionally stays
+      // on hapticHeavy so the rarity gradient is preserved.
+      final sink = RecordingFeedbackSink();
+      final d = FeedbackDispatcher(sink: sink, rng: Random(1));
+      d.dispatch(FeedbackTier.burst, _def());
+      expect(sink.calls, contains('hapticHeavy'));
+      expect(sink.calls, isNot(contains('hapticDoublePulse')));
+      expect(sink.calls, isNot(contains('hapticTriplePulse')));
     });
   });
 

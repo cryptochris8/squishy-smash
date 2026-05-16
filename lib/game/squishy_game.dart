@@ -278,7 +278,12 @@ class SquishyGame extends FlameGame {
       onSpawn: _spawnNext,
     );
     await add(spawner);
-    spawner.requestSpawn(0);
+    // P1-E: 0.5 s buffer before the first spawn so the skybox finishes
+    // settling and the player gets a half-beat of "the world is loading"
+    // before a squishy materialises. Pre-fix the very first squishy
+    // appeared on the same frame as the arena, with no anticipation —
+    // new installers had no "ohhh" moment between load and first tap.
+    spawner.requestSpawn(0.5);
   }
 
   @override
@@ -292,6 +297,12 @@ class SquishyGame extends FlameGame {
     super.update(dt);
     if (_ended) return;
     combo.tick(dt);
+    // P1-F: surface the silent combo-decay reset as a one-shot
+    // selection haptic so the player learns that timing matters.
+    // The visible flash on the multiplier text can be layered on
+    // top later; the haptic alone closes the "what just happened?"
+    // gap for the most-frequent player-skill moment in the game.
+    if (combo.wasLostThisTick) haptics.selection();
     _roundTimer -= dt;
     final idleLine = _idleVoice.tick(dt);
     if (idleLine != null) ServiceLocator.sounds.play(idleLine);
