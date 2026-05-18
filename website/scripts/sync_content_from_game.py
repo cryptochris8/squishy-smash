@@ -13,7 +13,19 @@ import json
 import shutil
 from pathlib import Path
 
+from PIL import Image
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
+# Web-tier card art targets. Source cards under assets/cards/final_48
+# are ~1024-1086 px wide / ~250-450 KB each (15 MB total) — far larger
+# than the Collection grid renders. We downscale on sync to a max width
+# that still looks sharp at 2x DPR (display up to ~350 px wide), then
+# re-encode WebP at q78 / method=6. Typical output: 40-90 KB per card,
+# ~3 MB total. Source files stay untouched as the print/IAP master.
+CARD_MAX_WIDTH = 700
+CARD_WEBP_QUALITY = 78
+CARD_WEBP_METHOD = 6
 GAME_PACKS = REPO_ROOT / "assets" / "data" / "packs"
 GAME_SPRITES = REPO_ROOT / "assets" / "images" / "objects"
 GAME_THUMBS = REPO_ROOT / "assets" / "images" / "thumbnails"
@@ -64,6 +76,26 @@ def copy_if_exists(src: Path, dst: Path) -> bool:
     return True
 
 
+def copy_card_resized(src: Path, dst: Path) -> bool:
+    """Downscale + re-encode a card WebP into the web-tier public dir.
+    No-op if src doesn't exist. Skips re-encoding when the source is
+    already at or below the target width."""
+    if not src.exists():
+        return False
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    with Image.open(src) as im:
+        if im.width > CARD_MAX_WIDTH:
+            new_h = round(im.height * (CARD_MAX_WIDTH / im.width))
+            im = im.resize((CARD_MAX_WIDTH, new_h), Image.LANCZOS)
+        im.save(
+            dst,
+            "WEBP",
+            quality=CARD_WEBP_QUALITY,
+            method=CARD_WEBP_METHOD,
+        )
+    return True
+
+
 def main():
     assert GAME_PACKS.exists(), f"Missing {GAME_PACKS}"
 
@@ -110,7 +142,7 @@ def main():
             if card_number and card_number in card_art_by_number:
                 fname = card_art_by_number[card_number]
                 card_src = GAME_CARDS / fname
-                if copy_if_exists(card_src, SITE_PUBLIC / "cards" / fname):
+                if copy_card_resized(card_src, SITE_PUBLIC / "cards" / fname):
                     copied_cards += 1
                 card_image_path = f"/cards/{fname}"
 

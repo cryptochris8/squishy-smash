@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../analytics/events.dart';
+import '../../core/feature_flags.dart';
 import '../../core/service_locator.dart';
 import '../../monetization/iap_service.dart';
 import '../../monetization/product_catalog.dart';
@@ -18,6 +19,10 @@ class StarterBundlePopup extends StatefulWidget {
   /// dismissed. Fires all the analytics events the monetization spec
   /// requires for the starter-bundle funnel.
   static Future<bool> show(BuildContext context) async {
+    // No-op when IAPs are flag-disabled — opening this popup without a
+    // configured IAP backend would render a broken price and a purchase
+    // button that fails. Caller treats the dismiss return as "not shown".
+    if (!FeatureFlags.iapsEnabled) return false;
     final events = GameEvents(ServiceLocator.analytics);
     final progress = _collectionProgressPct();
     events.starterBundleViewed(
@@ -61,6 +66,10 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
   }
 
   Future<void> _loadPrice() async {
+    // Defense in depth — show() already gates on the flag, but if the
+    // widget is ever instantiated directly we still skip the App Store
+    // query rather than ship a half-loaded paywall. Mirrors shop_screen.
+    if (!FeatureFlags.iapsEnabled) return;
     final prices = await ServiceLocator.iap.loadProducts(
       [ProductIds.starterBundle],
     );
