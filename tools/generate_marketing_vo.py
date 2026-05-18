@@ -221,6 +221,29 @@ SCRIPTS = {
         ],
     },
 
+    # One-line album-parody read. Adam voice (deep, deadpan) — sells the
+    # contrast-format Iceman-night drop without ever naming Drake. Settings
+    # override the global VOICE_SETTINGS so style drops to ~0 for full
+    # deadpan; stability bumps to 0.6 so a 6-word read doesn't waver.
+    "iceman_vo": {
+        "filename_prefix": "vo_marketing_iceman",
+        "voice_id":   "pNInz6obpgDQGcFmaJgB",  # Adam
+        "voice_name": "adam",
+        "voice_settings": {
+            "stability": 0.60,
+            "similarity_boost": 0.75,
+            "style": 0.05,
+            "use_speaker_boost": True,
+        },
+        "segments": [
+            (
+                "01_tracks",
+                "0:00-0:05",
+                "Forty-eight tracks. No features. Just squish.",
+            ),
+        ],
+    },
+
     # Third-person ad copy. Hook -> what -> chase -> collection -> CTA.
     # Tone: modern toy ad, clean, energetic. NOT in-character narration.
     "ad": {
@@ -262,7 +285,8 @@ SCRIPTS = {
 }
 
 
-def synthesize(api_key: str, voice_id: str, text: str) -> bytes:
+def synthesize(api_key: str, voice_id: str, text: str,
+               voice_settings: dict | None = None) -> bytes:
     """POST to ElevenLabs TTS, return MP3 bytes."""
     url = (
         f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
@@ -271,7 +295,7 @@ def synthesize(api_key: str, voice_id: str, text: str) -> bytes:
     body = json.dumps({
         "text": text,
         "model_id": MODEL_ID,
-        "voice_settings": VOICE_SETTINGS,
+        "voice_settings": voice_settings or VOICE_SETTINGS,
     }).encode("utf-8")
     req = urllib.request.Request(
         url,
@@ -312,6 +336,7 @@ def main() -> int:
     segments = cfg["segments"]
     out_dir = cfg.get("output_dir", OUT_DIR)
     output_pattern = cfg.get("output_pattern")
+    voice_settings = cfg.get("voice_settings", VOICE_SETTINGS)
 
     api_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     if not args.dry_run and not api_key:
@@ -323,7 +348,7 @@ def main() -> int:
     print(f"Output dir: {out_dir}")
     print(f"Voice:      {voice_name} ({voice_id})")
     print(f"Model:      {MODEL_ID}")
-    print(f"Settings:   {VOICE_SETTINGS}")
+    print(f"Settings:   {voice_settings}")
     print()
 
     total_chars = sum(len(text) for _, _, text in segments)
@@ -341,7 +366,7 @@ def main() -> int:
         if args.dry_run:
             print(f"    -> would write {out_path.relative_to(REPO_ROOT)}")
             continue
-        audio = synthesize(api_key, voice_id, text)
+        audio = synthesize(api_key, voice_id, text, voice_settings)
         out_path.write_bytes(audio)
         kb = len(audio) / 1024
         print(f"    -> wrote {out_path.relative_to(REPO_ROOT)} ({kb:.1f} KB)")
