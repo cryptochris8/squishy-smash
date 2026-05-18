@@ -245,9 +245,13 @@ def _folio(canvas: Image.Image, page_num: int, *,
     # mirroring left/right pages since the build is symmetrical
     # (8.75x8.75 with full bleed both sides).
     cx = PAGE_W - SAFE - 60
-    cy = PAGE_H - SAFE - 50
+    # cy bumped up 50 -> 70 in lockstep with the 22 -> 30 font size
+    # so the larger glyph circle still clears the bottom safe edge.
+    cy = PAGE_H - SAFE - 70
     draw = ImageDraw.Draw(canvas)
-    f = font("display", 22)
+    # 2026-05-14: bumped 22 -> 30 to clear KDP's 7 pt minimum.
+    # At 300 DPI render, 1 px = 0.24 pt, so 22 px ≈ 5.3 pt.
+    f = font("display", 30)
     text = str(page_num)
     bbox = draw.textbbox((0, 0), text, font=f)
     tw = bbox[2] - bbox[0]
@@ -1304,7 +1308,15 @@ MYTHIC_COPY = {
         # mythic doesn't look identical to the first two. #16 has a
         # pronunciation guide; #32 has a sense prompt embedded in
         # the stinger; #48 gets a "find the trail" prompt.
-        "guide": "Look back through the book. Did you spot any pawprints?",
+        # 2026-05-14: original wording was "Look back through the
+        # book. Did you spot any pawprints?" — a treasure-hunt
+        # prompt with no payoff (zero pawprint visuals actually
+        # rendered anywhere in v1). Softened to an open-ended
+        # Squishkeeper-knowing line that primes a v1.1 reveal
+        # (pawprint visual pass + iOS game code-redemption unlock)
+        # as a kept promise rather than a retcon. See
+        # ~/.claude/projects/D--squishy-smash/memory/pawprint_hunt_cross_media.md.
+        "guide": "Watch for the pawprints. The trail isn't finished yet.",
     },
 }
 
@@ -1444,14 +1456,20 @@ def T_gallery() -> Image.Image:
 def T_tracker(page_num: int) -> Image.Image:
     canvas = _new_canvas(PALETTE["bg"])
 
-    draw_text(canvas, PAGE_W // 2, SAFE + 60,
+    # 2026-05-14: KDP rejected the original layout (page 46) — the
+    # closing flavor line extended past the 0.375"/9.52 mm trim
+    # margin. Every vertical position below is pulled toward the
+    # top so the bottom block lands cleanly inside the safe area.
+    # Card grid keeps its original height (cell_h = 200) — only the
+    # whole block shifts up.
+    draw_text(canvas, PAGE_W // 2, SAFE + 10,
               "THE SQUISHY TRACKER", style_name="title")
     # Phase 5b — one verb only ("star your favorites"). Earlier
     # version had both a checkbox AND a star which was one verb too
     # many for a 5-year-old. Picking star because it's more
     # emotional than ownership ("which is your favorite?" beats
     # "have you met").
-    draw_text(canvas, PAGE_W // 2, SAFE + 220,
+    draw_text(canvas, PAGE_W // 2, SAFE + 130,
               "Star the squishies you love most.\n"
               "Find a friend you might have missed.",
               style_name="tagline", max_width=PAGE_W - SAFE * 2)
@@ -1462,8 +1480,8 @@ def T_tracker(page_num: int) -> Image.Image:
     )
     cols = 6
     rows = 8
-    grid_top = SAFE + 480
-    grid_bottom = PAGE_H - SAFE - 240
+    grid_top = SAFE + 280
+    grid_bottom = PAGE_H - SAFE - 440
     cell_w = (PAGE_W - SAFE * 2) // cols
     cell_h = (grid_bottom - grid_top) // rows
 
@@ -1514,13 +1532,27 @@ def T_tracker(page_num: int) -> Image.Image:
             width=3,
         )
 
-    # Closing line
-    draw_text(canvas, PAGE_W // 2, PAGE_H - SAFE - 160,
+    # Closing line — side-by-side below the grid. Two reasons for
+    # the split: (1) stacked vertically the tagline overlapped the
+    # bottom row of cards because cells render at cell_h=180 but
+    # card thumbs are square at thumb_h=thumb_w=351, so card art
+    # visually overflows ~170 px below the cell box; (2) splitting
+    # into columns lets the right-hand Squishkeeper sign-off sit
+    # at signature weight without crowding the descriptive line.
+    # closing_y must clear the real card tail at y≈2200; the right
+    # column's bounds (≈x=1640–2145) clear the folio circle (≈x=2361+)
+    # by 200+ px so the flavor block can sit at folio vertical level
+    # without colliding.
+    half_w = (PAGE_W - SAFE * 2) // 2
+    left_cx = SAFE + half_w // 2
+    right_cx = PAGE_W // 2 + half_w // 2
+    closing_y = PAGE_H - SAFE - 265
+    draw_text(canvas, left_cx, closing_y,
               "48 squishies. Three packs.\nOne soft, silly, sparkly world.",
-              style_name="tagline", max_width=PAGE_W - SAFE * 2)
-    draw_text(canvas, PAGE_W // 2, PAGE_H - SAFE - 60,
+              style_name="tagline", max_width=half_w)
+    draw_text(canvas, right_cx, closing_y,
               "See you on the next bounce.\n— The Squishkeeper",
-              style_name="flavor", max_width=PAGE_W - SAFE * 2)
+              style_name="flavor", max_width=half_w)
 
     _folio(canvas, page_num)
     # Edge vignette to match every other template's bleed treatment

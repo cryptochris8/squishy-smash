@@ -94,11 +94,11 @@ STYLES: dict[str, TextStyle] = {
     "pack_portal":   TextStyle("display",  140, 156, -3, "cream",    "left"),
     "pack_subtitle": TextStyle("body_italic", 42, 52, 0, "soft_white","left"),
     "section_label": TextStyle("display",   38,  44, 4, "cream",     "left"),
-    "section_kicker":TextStyle("display",   28,  32, 8, "rose_dust", "center"),
+    "section_kicker":TextStyle("display",   32,  38, 8, "rose_dust", "center"),
 
     # Body prose + bios.
     "body":          TextStyle("body",      30,  44, 0, "soft_white","left"),
-    "body_dim":      TextStyle("body",      28,  42, 0, "soft_white","left"),
+    "body_dim":      TextStyle("body",      30,  44, 0, "soft_white","left"),
     "lede":          TextStyle("body",      36,  48, 0, "soft_white","center"),
 
     # Squishkeeper narrator voice — italic + cream so it reads
@@ -121,21 +121,26 @@ STYLES: dict[str, TextStyle] = {
     "char_name_mythic": TextStyle("display", 96, 110, -3, "gold_hi", "center"),
     # Bumped field_label up 18->26 + tightened tracking 6->4 for
     # legibility on the dark plum bg (the previous size felt dim
-    # and small even at 300 DPI render).
-    "field_label":   TextStyle("display",   26,  32, 4,  "cream",    "left"),
+    # and small even at 300 DPI render). 2026-05-14: bumped 26->30
+    # to clear KDP's 7 pt minimum (1 px = 0.24 pt at 300 DPI).
+    "field_label":   TextStyle("display",   30,  36, 4,  "cream",    "left"),
     "field_value":   TextStyle("body",      30,  40, 0,  "soft_white","left"),
     "rarity_stars":  TextStyle("display",   30,  36, 4,  "cream",    "left"),
 
-    # Page chrome.
-    "folio":         TextStyle("display",   16,  18, 4,  "soft_white","center"),
-    "imprint":       TextStyle("body",      18,  26, 0,  "soft_white","center"),
-    "imprint_dim":   TextStyle("body_italic", 16, 22, 0, "soft_white","center"),
+    # Page chrome. 2026-05-14: KDP rejected page 2 for illegible
+    # small print — at 300 DPI render, 1 px ≈ 0.24 pt, so any
+    # `size` below 30 falls under KDP's 7 pt minimum. folio,
+    # imprint, imprint_dim were all 16–18 (≈ 4 pt); bumped to ≥ 30.
+    "folio":         TextStyle("display",   30,  34, 4,  "soft_white","center"),
+    "imprint":       TextStyle("body",      32,  40, 0,  "soft_white","center"),
+    "imprint_dim":   TextStyle("body_italic", 30, 38, 0, "soft_white","center"),
 
-    # Map labels (page 4).
+    # Map labels (page 4). Bumped landmark + landmark_lg above the
+    # 30 px / 7 pt KDP threshold (was 22 / 28).
     "map_region":    TextStyle("display",   42,  48, 4,  "cream",    "center"),
     "map_region_lg": TextStyle("display",   56,  62, 6,  "cream",    "center"),
-    "map_landmark":  TextStyle("body_italic", 22, 28, 0, "soft_white","center"),
-    "map_landmark_lg": TextStyle("body_italic", 28, 36, 0, "soft_white","center"),
+    "map_landmark":  TextStyle("body_italic", 30, 38, 0, "soft_white","center"),
+    "map_landmark_lg": TextStyle("body_italic", 32, 40, 0, "soft_white","center"),
 
     # Phase 5b — dark variants used when the text sits on a parchment
     # plate (T3 narrator, T8 right column, T10 fairy-tale paragraph).
@@ -143,7 +148,7 @@ STYLES: dict[str, TextStyle] = {
     # hardcover" instead of cream-on-cream-confusion.
     "char_name_lg_dark":     TextStyle("display",   88,  96, -3, "deep_plum", "left"),
     "rarity_stars_dark":     TextStyle("display",   30,  36, 4,  "deep_plum", "left"),
-    "field_label_dark":      TextStyle("display",   26,  32, 4,  "shadow_warm","left"),
+    "field_label_dark":      TextStyle("display",   30,  36, 4,  "shadow_warm","left"),
     "field_value_dark":      TextStyle("body",      30,  40, 0,  "deep_plum", "left"),
     "narrator_dark":         TextStyle("body_italic", 32, 46, 0, "shadow_warm", "left"),
     "narrator_lg_dark":      TextStyle("body_italic", 42, 56, 0, "deep_plum", "left"),

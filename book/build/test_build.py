@@ -229,5 +229,60 @@ class ManuscriptV2Tests(unittest.TestCase):
             self.assertIn(region, text)
 
 
+class TextLegibilityTests(unittest.TestCase):
+    """KDP rejected page 2 (T2_imprint) on 2026-05-14: text below
+    7 pt is illegible. The book renders at 300 DPI so 1 px ≈ 0.24 pt;
+    every registered TextStyle must therefore use a `size` of at
+    least 30 px (= 7.2 pt) to clear the threshold."""
+
+    def test_all_styles_meet_kdp_min_point_size(self) -> None:
+        from typography import STYLES
+        # 7 pt at 300 DPI render = 7 / 72 * 300 = 29.17 px. Round up
+        # to 30 px so we have ~1 px of margin against the threshold.
+        MIN_PX = 30
+        offenders = [
+            (name, s.size) for name, s in STYLES.items() if s.size < MIN_PX
+        ]
+        self.assertEqual(
+            offenders, [],
+            "These styles fall below KDP's 7 pt minimum at 300 DPI "
+            f"(< {MIN_PX} px): {offenders}",
+        )
+
+
+class TrackerPageSafeAreaTests(unittest.TestCase):
+    """KDP rejected page 46 (T_tracker) on 2026-05-14: the closing
+    flavor line crossed the 0.375"/9.52 mm trim margin. Pin the fix
+    by rendering the page and asserting no foreground pixels sit in
+    the outer 150 px (0.5 in) safety strip on any side. The page bg
+    is #120B17 and the only edge effect is a darkening vignette, so
+    any pixel with a notably brighter channel in the strip is real
+    content that violates KDP's margin requirement."""
+
+    def test_t_tracker_content_inside_safe_area(self) -> None:
+        import page_templates as pt
+        canvas = pt.T_tracker(46).convert("RGB")
+        w, h = canvas.size
+        safe = pt.SAFE
+        # bg ≈ (18, 11, 23). Anything ≥ 60 on any channel is fg text
+        # or card art — vignette only darkens, never brightens.
+        threshold = 60
+        strips = {
+            "top":    canvas.crop((0,        0,        w,    safe)),
+            "bottom": canvas.crop((0,        h - safe, w,    h)),
+            "left":   canvas.crop((0,        0,        safe, h)),
+            "right":  canvas.crop((w - safe, 0,        w,    h)),
+        }
+        for side, strip in strips.items():
+            extrema = strip.getextrema()
+            max_bright = max(ch[1] for ch in extrema)
+            self.assertLess(
+                max_bright, threshold,
+                f"{side} margin has foreground content "
+                f"(max channel {max_bright} >= {threshold}); KDP "
+                "requires 0.375 in / 9.52 mm clear of trim on bleed books",
+            )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
