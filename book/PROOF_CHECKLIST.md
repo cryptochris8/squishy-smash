@@ -102,7 +102,7 @@ If KDP flags page 1 as starting on the wrong side: that's because KDP forces pag
 KDP also needs:
 
 - [ ] **Title:** Squishy Smash: Meet the Squishies
-- [ ] **Subtitle:** A Character Adventure Book
+- [ ] **Subtitle:** Meet the Squishies
 - [ ] **Series:** Squishy Smash (Book One) — opt in if you want to seed sequels
 - [ ] **Author:** [TBD — confirm whether to use a personal name or "Squishy Smash"]
 - [ ] **Description:** ~150-word back-cover blurb (reuse the back cover body + headline)

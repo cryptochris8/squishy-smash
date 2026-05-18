@@ -144,16 +144,27 @@ class RarityTunable<T extends num> {
     required RarityTunable<T> fallback,
   }) {
     if (json == null) return fallback;
+    // Normalize the JSON num to the concrete numeric subtype T
+    // resolves to. Dart can't pattern-match the type parameter
+    // directly, so we probe via the fallback's runtime type. Without
+    // this, a JSON int-as-double (`5.0` in a field declared
+    // RarityTunable<int>) would throw on `raw as T` and silently drop
+    // to the fallback.
+    T coerce(num raw, T fallbackValue) {
+      if (fallbackValue is int) return raw.toInt() as T;
+      return raw.toDouble() as T;
+    }
     T pick(String key, T fallbackValue) {
       final raw = json[key];
-      if (raw is num) return raw as T;
+      if (raw is num) return coerce(raw, fallbackValue);
       return fallbackValue;
     }
 
     // Top-tier alias: prefer `legendary`, fall back to `mythic`,
     // then to the const default.
     final topRaw = json['legendary'] ?? json['mythic'];
-    final topTier = topRaw is num ? topRaw as T : fallback.legendary;
+    final topTier =
+        topRaw is num ? coerce(topRaw, fallback.legendary) : fallback.legendary;
 
     return RarityTunable<T>(
       common: pick('common', fallback.common),

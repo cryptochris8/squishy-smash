@@ -196,6 +196,11 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Future<void> _restore() async {
+    // Defensive: the Restore button is only rendered inside the
+    // FeatureFlags.iapsEnabled block, but if the surface is ever
+    // reached another way we skip the IAP call rather than hit the
+    // store with no products configured. Mirrors _loadPrices.
+    if (!FeatureFlags.iapsEnabled) return;
     setState(() => _restoring = true);
     final restored = await ServiceLocator.iap.restore();
     for (final sku in restored) {

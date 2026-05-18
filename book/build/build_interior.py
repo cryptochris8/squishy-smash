@@ -54,6 +54,16 @@ INTERIOR_PDF = OUT_DIR / "interior.pdf"
 PDF_PAGE_W_PT = 8.75 * 72
 PDF_PAGE_H_PT = 8.75 * 72
 
+# Pages whose art carries fine high-frequency detail (gold halos,
+# sparkle scatter, mythic glow) where JPEG q88 ringing is visible and
+# can trip KDP's previewer "<300 DPI" warning. Bumped to q95 so the
+# encoder spends bits on the edges; ~30% larger per page is acceptable
+# for 3 of 46. Page numbers match the T10_mythic_finale entries in
+# PAGE_RENDERERS below.
+MYTHIC_PAGES = {19, 32, 45}
+DEFAULT_JPEG_QUALITY = 88
+MYTHIC_JPEG_QUALITY = 95
+
 # 46-page sequence per the Phase-4 expansion. Every character gets a
 # real entry: 5 solo (T8) + 5 T9 duos + 1 mythic finale per pack =
 # 13 character pages × 3 packs = 39, plus 6 front matter + 1 tracker = 46.
@@ -120,7 +130,12 @@ PAGE_RENDERERS = [
 ]
 
 
-def _stamp_page(c: canvas_mod.Canvas, image: Image.Image) -> None:
+def _stamp_page(
+    c: canvas_mod.Canvas,
+    image: Image.Image,
+    *,
+    quality: int = DEFAULT_JPEG_QUALITY,
+) -> None:
     """Convert a Pillow RGBA image to PNG bytes and drawImage it
     full-bleed onto the current ReportLab page. Uses an in-memory
     buffer so we never touch disk for the per-page rasters."""
@@ -135,7 +150,7 @@ def _stamp_page(c: canvas_mod.Canvas, image: Image.Image) -> None:
     rgb = Image.new("RGB", image.size, (18, 11, 23))  # bg #120B17
     rgb.paste(image, mask=image.split()[-1] if image.mode == "RGBA" else None)
     buf = io.BytesIO()
-    rgb.save(buf, "JPEG", quality=88, optimize=True)
+    rgb.save(buf, "JPEG", quality=quality, optimize=True)
     buf.seek(0)
     c.drawImage(
         ImageReader(buf), 0, 0,
@@ -152,9 +167,13 @@ def build(out_path: Path = INTERIOR_PDF) -> Path:
     c.setSubject("Character book — KDP paperback, 8.5x8.5 trim")
     for page_num, render_fn in PAGE_RENDERERS:
         img = render_fn()
-        _stamp_page(c, img)
+        quality = (
+            MYTHIC_JPEG_QUALITY if page_num in MYTHIC_PAGES
+            else DEFAULT_JPEG_QUALITY
+        )
+        _stamp_page(c, img, quality=quality)
         c.showPage()
-        print(f"  page {page_num:>2}  done")
+        print(f"  page {page_num:>2}  done  (q={quality})")
     c.save()
     return out_path
 

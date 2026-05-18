@@ -210,7 +210,7 @@ class PackProgression {
 }
 
 class ContentPack {
-  const ContentPack({
+  ContentPack({
     required this.packId,
     required this.displayName,
     required this.themeTag,
@@ -222,7 +222,7 @@ class ContentPack {
     this.unlockCost = 0,
     this.releaseWindow,
     this.progression = const PackProgression(),
-  });
+  }) : _tierCounts = _computeTierCounts(objects);
 
   final String packId;
   final String displayName;
@@ -239,11 +239,23 @@ class ContentPack {
   /// fields default to the tuning-doc values in [PackProgression].
   final PackProgression progression;
 
+  // Per-tier count cache. Computed once at construction so the pity
+  // selector's hot path (called per pool entry per spawn) reads O(1)
+  // instead of O(n) over `objects` on every weight calc.
+  final Map<Rarity, int> _tierCounts;
+
+  static Map<Rarity, int> _computeTierCounts(List<SmashableDef> objects) {
+    final counts = <Rarity, int>{};
+    for (final o in objects) {
+      counts[o.rarity] = (counts[o.rarity] ?? 0) + 1;
+    }
+    return counts;
+  }
+
   /// Number of objects in this pack at the given rarity tier. The
   /// pity selector uses this to derive per-object weight from each
   /// tier's share: object_weight = (tier_share / tier_count) * scale.
-  int countAtTier(Rarity r) =>
-      objects.where((o) => o.rarity == r).length;
+  int countAtTier(Rarity r) => _tierCounts[r] ?? 0;
 
   factory ContentPack.fromJson(Map<String, dynamic> json) => ContentPack(
         packId: json['packId'] as String,

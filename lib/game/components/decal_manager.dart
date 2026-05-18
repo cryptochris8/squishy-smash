@@ -21,6 +21,10 @@ class _DecalSplat extends PositionComponent with HasPaint {
 
   final double _radius;
   final ui.Image? _image;
+  // PERF: alpha is the only thing that changes per-frame (driven by
+  // the fade-out OpacityEffect), so we cache the image-render paint
+  // and mutate .color in place instead of allocating per render.
+  final Paint _imgPaint = Paint()..filterQuality = FilterQuality.medium;
 
   @override
   Future<void> onLoad() async {
@@ -38,10 +42,9 @@ class _DecalSplat extends PositionComponent with HasPaint {
     if (img != null) {
       final src = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
       final dst = Rect.fromLTWH(0, 0, _radius * 2, _radius * 2);
-      final imgPaint = Paint()
-        ..color = const Color(0xFFFFFFFF).withValues(alpha: paint.color.a)
-        ..filterQuality = FilterQuality.medium;
-      canvas.drawImageRect(img, src, dst, imgPaint);
+      _imgPaint.color =
+          const Color(0xFFFFFFFF).withValues(alpha: paint.color.a);
+      canvas.drawImageRect(img, src, dst, _imgPaint);
     } else {
       canvas.drawCircle(Offset(_radius, _radius), _radius, paint);
     }

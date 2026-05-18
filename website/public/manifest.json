@@ -1,0 +1,22 @@
+{
+  "name": "Squishy Smash",
+  "short_name": "Squishy Smash",
+  "description": "The cozy kawaii collectible tap game. 48 cards across three pastel packs.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1E0E2A",
+  "theme_color": "#FF8FB8",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

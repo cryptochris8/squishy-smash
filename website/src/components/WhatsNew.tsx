@@ -14,7 +14,7 @@ const HIGHLIGHTS = [
     title: 'Pack milestones',
     body:
       'Crossing 25 / 50 / 75 / 100% in a pack drops a coin reward into your wallet — a "you made progress" beat between rare drops.',
-    accent: 'from-cream-300 to-toxic-lime',
+    accent: 'from-cream-300 to-lime-300',
   },
   {
     icon: '🛡️',

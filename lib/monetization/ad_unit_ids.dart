@@ -39,6 +39,17 @@ abstract final class AdUnitIds {
   /// on non-mobile platforms so the ad layer can early-out cleanly.
   static String? get rewarded {
     final useProd = _useProductionIds && !kDebugMode;
+    // Production safety: if someone flipped _useProductionIds on but
+    // forgot to populate both _prodRewarded* constants, fail loudly
+    // rather than silently fall back to Google's test ads (which
+    // would also be a Google policy violation if monetized).
+    if (useProd &&
+        (_prodRewardedIos == null || _prodRewardedAndroid == null)) {
+      throw StateError(
+        'AdUnitIds: _useProductionIds is true but a _prodRewarded* '
+        'constant is null. Set both iOS + Android IDs before shipping.',
+      );
+    }
     try {
       if (Platform.isIOS) {
         return useProd ? _prodRewardedIos : _testRewardedIos;
