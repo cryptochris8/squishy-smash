@@ -11,6 +11,7 @@ import 'widgets/coin_badge.dart';
 import 'widgets/iap_product_card.dart';
 import 'widgets/pack_card.dart';
 import '../core/constants.dart';
+import 'theme/app_theme.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -60,13 +61,13 @@ class _ShopScreenState extends State<ShopScreen> {
             style: TextStyle(fontWeight: FontWeight.w900)),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: AppSpacing.lg),
             child: Center(child: CoinBadge(coins: progression.profile.coins)),
           ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           // IAP "Offers" section is gated behind FeatureFlags.iapsEnabled.
           // App Store Connect has no IAPs configured for v0.1.1, so
@@ -77,7 +78,7 @@ class _ShopScreenState extends State<ShopScreen> {
           // back up.
           if (FeatureFlags.iapsEnabled) ...[
             const _SectionHeader('Offers'),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             for (final product in ProductCatalog.launch) ...[
               IapProductCard(
                 product: product,
@@ -86,7 +87,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 purchasing: _purchasingSkus.contains(product.sku),
                 onPurchase: () => _buy(product),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
             ],
             TextButton.icon(
               onPressed: _restoring ? null : _restore,
@@ -103,10 +104,10 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
               style: TextButton.styleFrom(foregroundColor: Colors.white70),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.xl),
           ],
           const _SectionHeader('Object Packs'),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           for (final pack in packs) ...[
             PackCard(
               pack: pack,
@@ -115,11 +116,11 @@ class _ShopScreenState extends State<ShopScreen> {
                   ? null
                   : () => _attemptUnlockPack(pack),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           const _SectionHeader('Arenas'),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           for (final theme in standaloneArenas) ...[
             _ArenaSkuCard(
               theme: theme,
@@ -128,7 +129,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   ? null
                   : () => _attemptUnlockArena(theme),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ],
         ],
       ),
@@ -272,7 +273,7 @@ class _ShopScreenState extends State<ShopScreen> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.black.withValues(alpha: 0.75),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(AppRadii.full),
             side: const BorderSide(color: Palette.cream, width: 1.2),
           ),
           content: Text(
@@ -343,10 +344,10 @@ class _ArenaSkuCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: swatchTop, width: 1.4),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
         children: [
           Container(
@@ -358,10 +359,10 @@ class _ArenaSkuCard extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: theme.calmColors,
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadii.sm),
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +376,7 @@ class _ArenaSkuCard extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   // UX-8: "switch in Settings" used to push the player
                   // off-screen to actually use what they'd just paid
@@ -403,14 +404,14 @@ class _ArenaSkuCard extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: AppSpacing.sm),
             ElevatedButton(
               onPressed: onUnlock,
               style: ElevatedButton.styleFrom(
                 backgroundColor: swatchTop,
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppRadii.sm),
                 ),
               ),
               child: const Text(

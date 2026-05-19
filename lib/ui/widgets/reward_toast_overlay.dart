@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../game/systems/reward_event.dart';
 import 'reward_toast.dart';
+import '../theme/app_theme.dart';
 
 /// Listens to a [Stream] of `RewardEvent`s and renders each as a
 /// floating `RewardToast`. Multiple in-flight toasts stack vertically
@@ -69,7 +70,7 @@ class _RewardToastOverlayState extends State<RewardToastOverlay> {
               for (final event in _active)
                 Padding(
                   key: ValueKey<int>(event.id),
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
                   child: RewardToast(
                     event: event,
                     onComplete: () => _onToastComplete(event.id),

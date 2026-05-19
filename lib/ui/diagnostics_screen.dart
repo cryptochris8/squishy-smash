@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../core/diagnostics.dart';
 import '../core/service_locator.dart';
 import '../core/constants.dart';
+import 'theme/app_theme.dart';
 
 /// In-app log viewer for the global error buffer. Critical given the
 /// no-Mac-access constraint — without Xcode, this is the only way to
@@ -60,9 +61,9 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       body: entries.isEmpty
           ? const _EmptyState()
           : ListView.separated(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.md),
               itemCount: entries.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
               itemBuilder: (_, i) => _EntryTile(entry: entries[i]),
             ),
     );
@@ -110,10 +111,10 @@ class _EntryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadii.xs),
         border: Border.all(
           color: _sourceColor.withValues(alpha: 0.4),
           width: 1.2,
@@ -126,10 +127,10 @@ class _EntryTile extends StatelessWidget {
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs2),
                 decoration: BoxDecoration(
                   color: _sourceColor.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(999),
+                  borderRadius: BorderRadius.circular(AppRadii.full),
                 ),
                 child: Text(
                   entry.source.toUpperCase(),
@@ -141,7 +142,7 @@ class _EntryTile extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   entry.timestamp.toIso8601String(),
@@ -154,7 +155,7 @@ class _EntryTile extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             entry.message,
             style: const TextStyle(
@@ -165,7 +166,7 @@ class _EntryTile extends StatelessWidget {
             ),
           ),
           if (entry.stack != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               entry.stack.toString(),
               style: TextStyle(
@@ -189,7 +190,7 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xxxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -198,7 +199,7 @@ class _EmptyState extends StatelessWidget {
               size: 56,
               color: Palette.toxicLime.withValues(alpha: 0.7),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             const Text(
               'No errors recorded.',
               style: TextStyle(
@@ -207,7 +208,7 @@ class _EmptyState extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'The buffer captures the most recent 50 errors caught by '
               'Flutter, the platform dispatcher, the global zone, or '

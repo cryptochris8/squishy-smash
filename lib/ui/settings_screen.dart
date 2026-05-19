@@ -4,6 +4,7 @@ import '../core/routes.dart';
 import '../core/service_locator.dart';
 import '../game/systems/arena_registry.dart';
 import '../core/constants.dart';
+import 'theme/app_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -25,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('SETTINGS', style: TextStyle(fontWeight: FontWeight.w900)),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           SwitchListTile(
             title: const Text('Haptics'),
@@ -44,9 +45,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() => _muted = v);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
             child: Text(
               'Arena',
               style: TextStyle(
@@ -57,7 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           _ArenaPicker(onSelected: () => setState(() {})),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xxl),
           ListTile(
             leading: const Icon(Icons.bug_report_outlined,
                 color: Colors.white70),
@@ -114,9 +115,9 @@ class _ArenaPicker extends StatelessWidget {
       height: 132,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         itemCount: themes.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, i) {
           final theme = themes[i];
           final unlocked = progression.isArenaUnlocked(theme.key);
@@ -195,7 +196,7 @@ class _ArenaTile extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: theme.calmColors,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadii.sm),
                 border: Border.all(
                   color: borderColor,
                   width: isActive ? 3 : 1.2,
@@ -214,7 +215,7 @@ class _ArenaTile extends StatelessWidget {
                       ),
                     ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               theme.displayName,
               maxLines: 2,

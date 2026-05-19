@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/models/content_pack.dart';
 import '../../core/constants.dart';
+import '../theme/app_theme.dart';
 
 class PackCard extends StatelessWidget {
   const PackCard({
@@ -32,10 +33,10 @@ class PackCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: primary, width: 1.4),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -64,10 +65,10 @@ class PackCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
           Wrap(
-            spacing: 6,
-            runSpacing: 6,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: pack.objects
                 .take(6)
                 .map((o) => Chip(
@@ -78,13 +79,13 @@ class PackCard extends StatelessWidget {
                 .toList(),
           ),
           if (!unlocked && onUnlock != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             ElevatedButton(
               onPressed: onUnlock,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primary,
                 foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.sm)),
               ),
               child: const Text('UNLOCK', style: TextStyle(fontWeight: FontWeight.w900)),
             ),

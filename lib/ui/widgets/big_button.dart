@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/service_locator.dart';
+import '../theme/app_theme.dart';
 
 class BigButton extends StatelessWidget {
   const BigButton({
@@ -45,7 +46,7 @@ class BigButton extends StatelessWidget {
           height: 64,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(AppRadii.lg),
             boxShadow: [
               BoxShadow(
                 color: color.withValues(alpha: 0.5),

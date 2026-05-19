@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../monetization/product_catalog.dart';
 import '../../core/constants.dart';
+import '../theme/app_theme.dart';
 
 /// Premium IAP card used in the Shop's "Offers" section. Matches the
 /// pastel-gradient language of PackCard so the shop reads consistently.
@@ -37,10 +38,10 @@ class IapProductCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: gradient,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: Palette.pink, width: 1.4),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -59,10 +60,10 @@ class IapProductCard extends StatelessWidget {
               if (product.badge != null)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: Palette.cream,
-                    borderRadius: BorderRadius.circular(999),
+                    borderRadius: BorderRadius.circular(AppRadii.full),
                   ),
                   child: Text(
                     product.badge!.toUpperCase(),
@@ -76,7 +77,7 @@ class IapProductCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             product.tagline,
             style: TextStyle(
@@ -84,9 +85,9 @@ class IapProductCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.85),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.md),
           _RewardList(product: product),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
@@ -112,7 +113,7 @@ class _OwnedBadge extends StatelessWidget {
     return Row(
       children: [
         const Icon(Icons.check_circle, color: Palette.toxicLime),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.sm),
         Text(
           'Owned',
           style: TextStyle(
@@ -156,7 +157,7 @@ class _PriceAndCta extends StatelessWidget {
             backgroundColor: Palette.pink,
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadii.sm),
             ),
             minimumSize: const Size(120, 44),
           ),
@@ -193,7 +194,7 @@ class _RewardList extends StatelessWidget {
       children: [
         for (final line in lines)
           Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

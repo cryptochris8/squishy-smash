@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../squishy_game.dart';
 import '../systems/combo_controller.dart';
 import '../../core/constants.dart';
+import '../../ui/theme/app_theme.dart';
 
 /// Thin Flutter overlay for the score/multiplier/fill bar. Listens to
 /// `SquishyGame.hudNotifier` so it only rebuilds on real state changes
@@ -75,10 +76,10 @@ class HudOverlay extends StatelessWidget {
         if (sky.revealError != null) 'reveal: ${sky.revealError}',
       ];
       return Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(AppSpacing.sm),
         decoration: BoxDecoration(
           color: const Color(0xCC8B0000),
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(AppRadii.chip),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +113,7 @@ class HudOverlay extends StatelessWidget {
         final barHeight = data.tier == ComboTier.mega ? 12.0 : 8.0;
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -133,7 +134,7 @@ class HudOverlay extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
                     Semantics(
@@ -150,10 +151,10 @@ class HudOverlay extends StatelessWidget {
                         child: Text('x${data.mult}'),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(AppRadii.xs),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           height: barHeight,
@@ -169,7 +170,7 @@ class HudOverlay extends StatelessWidget {
                   ],
                 ),
                 if (diag != null) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   diag,
                 ],
               ],

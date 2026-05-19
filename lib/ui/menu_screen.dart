@@ -7,6 +7,7 @@ import 'widgets/coin_badge.dart';
 import 'widgets/floating_mascot.dart';
 import 'widgets/how_it_works_overlay.dart';
 import '../core/constants.dart';
+import 'theme/app_theme.dart';
 
 /// Hero image shown idling on the menu's dead space. Picked from the
 /// launch pack's Legendary tier — splashy art that signals "rare
@@ -45,7 +46,7 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -65,19 +66,19 @@ class _MenuScreenState extends State<MenuScreen> {
                   CoinBadge(coins: ServiceLocator.progression.profile.coins),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               if (featured != null)
                 Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(AppRadii.md),
                     border: Border.all(color: Palette.pink, width: 1.5),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.local_fire_department, color: Palette.cream),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           'Featured: ${featured.promoLabel}',
@@ -103,26 +104,26 @@ class _MenuScreenState extends State<MenuScreen> {
                 color: Palette.pink,
                 onTap: () => Navigator.pushNamed(context, AppRoutes.play),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               BigButton(
                 label: 'SHOP',
                 color: Palette.cream,
                 onTap: () => Navigator.pushNamed(context, AppRoutes.shop),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               BigButton(
                 label: 'COLLECTION',
                 color: Palette.lavender,
                 onTap: () =>
                     Navigator.pushNamed(context, AppRoutes.collection),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               BigButton(
                 label: 'SETTINGS',
                 color: Palette.jellyBlue,
                 onTap: () => Navigator.pushNamed(context, AppRoutes.settings),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xxl),
             ],
           ),
         ),

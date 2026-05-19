@@ -13,6 +13,7 @@ import '../game/squishy_game.dart';
 import 'widgets/first_card_overlay.dart';
 import 'widgets/reward_toast_overlay.dart';
 import 'widgets/starter_bundle_popup.dart';
+import 'theme/app_theme.dart';
 import '../core/constants.dart';
 
 class GameplayScreen extends StatefulWidget {
@@ -156,7 +157,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         backgroundColor: Colors.black.withValues(alpha: 0.55),
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(AppRadii.full),
           side: const BorderSide(color: Palette.cream, width: 1.4),
         ),
         showCloseIcon: true,
@@ -164,7 +165,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         content: const Row(
           children: <Widget>[
             Icon(Icons.auto_awesome, color: Palette.cream),
-            SizedBox(width: 10),
+            SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
                 'Mythic! Save this clip?',
@@ -277,16 +278,16 @@ class _GameplayScreenState extends State<GameplayScreen>
                     iconSize: 32,
                     color: Colors.white,
                     tooltip: 'Share this moment',
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     onPressed: () => _shareNow(Rarity.common),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppSpacing.lg),
                   IconButton(
                     icon: const Icon(Icons.close),
                     iconSize: 32,
                     color: Colors.white,
                     tooltip: 'Close this round',
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     onPressed: _handleClosePressed,
                   ),
                 ],

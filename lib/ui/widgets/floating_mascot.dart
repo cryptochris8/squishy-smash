@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import '../../core/constants.dart';
+import '../theme/app_theme.dart';
 
 /// Idle hero image that bobs gently on the menu screen so the empty
 /// space between the title and the action buttons doesn't read as
@@ -124,7 +125,7 @@ class _FloatingMascotState extends State<FloatingMascot>
           aspectRatio: 3 / 4,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(AppRadii.lg),
               boxShadow: [
                 BoxShadow(
                   color: widget.glowColor.withValues(alpha: 0.30),
@@ -135,7 +136,7 @@ class _FloatingMascotState extends State<FloatingMascot>
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(AppRadii.lg),
               child: Image.asset(
                 widget.assetPath,
                 fit: BoxFit.cover,

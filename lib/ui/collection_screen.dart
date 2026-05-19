@@ -10,6 +10,7 @@ import '../data/models/rarity.dart';
 import 'widgets/big_button.dart';
 import 'widgets/card_album_widgets.dart';
 import '../core/constants.dart';
+import 'theme/app_theme.dart';
 
 /// Card-album collection screen. Shows all 48 cards from the manifest
 /// in a pack-grouped grid; locked cards render as silhouettes, unlocked
@@ -74,7 +75,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           _AlbumHeader(
             unlocked: unlockedTotal,
@@ -86,20 +87,20 @@ class _CollectionScreenState extends State<CollectionScreen> {
           // explanation. Now we render an empty-state banner with a
           // PLAY shortcut so the dead end becomes a funnel.
           if (unlockedTotal == 0) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             const _EmptyAlbumBanner(),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           _PackFilterRow(
             value: _packFilter,
             onChanged: (v) => setState(() => _packFilter = v),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           _RarityFilterRow(
             value: _rarityFilter,
             onChanged: (v) => setState(() => _rarityFilter = v),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
           // UX-7: cognitive-load relief on the filter row. The
           // "Showing X of Y" readout gives an at-a-glance status,
           // and a single Clear pill collapses two reset actions
@@ -115,7 +116,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
               _rarityFilter = null;
             }),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           if (filtered.isEmpty)
             const _EmptyState()
           else
@@ -127,7 +128,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                   _showCardDetail(context, card, unlockedFromAch),
             ),
           if (custom.isNotEmpty) ...[
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.xxl),
             _CustomFamilySection(custom: custom),
           ],
         ],
@@ -164,10 +165,10 @@ class _AlbumHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = total == 0 ? 0.0 : unlocked / total;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: Palette.pink, width: 1.5),
       ),
       child: Column(
@@ -182,9 +183,9 @@ class _AlbumHeader extends StatelessWidget {
               letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           ClipRRect(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(AppRadii.chip),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
@@ -236,17 +237,17 @@ class _FilterStatusRow extends StatelessWidget {
             onTap: onClear,
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
               decoration: BoxDecoration(
                 color: Palette.pink.withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(AppRadii.full),
                 border: Border.all(color: Palette.pink, width: 1),
               ),
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.close, size: 12, color: Palette.pink),
-                  SizedBox(width: 4),
+                  SizedBox(width: AppSpacing.xs),
                   Text(
                     'Clear filters',
                     style: TextStyle(
@@ -283,7 +284,7 @@ class _PackFilterRow extends StatelessWidget {
             onTap: () => onChanged(null),
           ),
           for (final p in CardPack.values) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             FilterPill(
               label: p.displayLabel.toUpperCase(),
               selected: value == p,
@@ -314,7 +315,7 @@ class _RarityFilterRow extends StatelessWidget {
             onTap: () => onChanged(null),
           ),
           for (final r in Rarity.values) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             FilterPill(
               label: r.displayLabel.toUpperCase(),
               selected: value == r,
@@ -397,16 +398,16 @@ class _CardTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.04),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadii.md),
           border: Border.all(color: borderColor, width: 1.4),
         ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(AppSpacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppRadii.xs),
                 // cacheWidth keeps each thumbnail decoded at ~grid
                 // resolution rather than the source 1086x1448 RGBA.
                 // 48 cards x ~6 MB decoded = ~290 MB resident on
@@ -424,7 +425,7 @@ class _CardTile extends StatelessWidget {
                     : const _LockedSilhouette(),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               unlocked ? card.name : '???',
               textAlign: TextAlign.center,
@@ -535,7 +536,7 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -556,12 +557,12 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
                 RarityPill(rarity: card.rarity),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             // Card art (or silhouette).
             AspectRatio(
               aspectRatio: 0.75,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(AppRadii.md),
                 // cacheWidth caps the decoded resolution at ~2x of the
                 // sheet's render width (~270 px on iPhone 11). Source
                 // WebPs are 1086x1448 → ~18 MB RGBA per unique sheet
@@ -578,7 +579,7 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
                     : const _LockedSilhouette(),
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: AppSpacing.md),
             Text(
               unlocked ? card.name : '???',
               style: const TextStyle(
@@ -594,12 +595,12 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
                 color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: AppSpacing.lg),
             if (unlocked)
               _UnlockedBadge(source: source, color: rarityColor)
             else ...[
               BurstProgressBar(bursts: bursts, required: required),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               _PurchaseButton(
                 price: price,
                 canAfford: canAffordPrice,
@@ -608,7 +609,7 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
                 onPressed: _purchaseInFlight ? null : _attemptPurchase,
               ),
             ],
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
           ],
         ),
       ),
@@ -658,9 +659,9 @@ class _PurchaseButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Palette.cream,
             disabledBackgroundColor: Colors.white.withValues(alpha: 0.1),
-            padding: const EdgeInsets.symmetric(vertical: 14),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadii.sm),
             ),
           ),
           child: inFlight
@@ -684,7 +685,7 @@ class _PurchaseButton extends StatelessWidget {
                 ),
         ),
         if (error != null) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             error!,
             style: const TextStyle(
@@ -713,17 +714,17 @@ class _UnlockedBadge extends StatelessWidget {
       CardUnlockSource.locked => 'LOCKED',
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadii.xs),
         border: Border.all(color: color, width: 1.4),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check_circle, size: 18, color: color),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             label,
             style: TextStyle(
@@ -747,10 +748,10 @@ class _CustomFamilySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.15),
           width: 1,
@@ -768,7 +769,7 @@ class _CustomFamilySection extends StatelessWidget {
               letterSpacing: 1.4,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             'Custom family cards. Not part of the 48-card set.',
             style: TextStyle(
@@ -776,7 +777,7 @@ class _CustomFamilySection extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -790,7 +791,7 @@ class _CustomFamilySection extends StatelessWidget {
             itemBuilder: (_, i) {
               final c = custom[i];
               return ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(AppRadii.xs),
                 child: Image.asset(
                   c.assetPath,
                   fit: BoxFit.cover,
@@ -813,7 +814,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.huge),
       child: Column(
         children: [
           Icon(
@@ -821,7 +822,7 @@ class _EmptyState extends StatelessWidget {
             size: 48,
             color: Colors.white.withValues(alpha: 0.4),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Text(
             'No cards match those filters.',
             textAlign: TextAlign.center,
@@ -845,10 +846,10 @@ class _EmptyAlbumBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: Palette.pink.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(
           color: Palette.pink.withValues(alpha: 0.45),
           width: 1.5,
@@ -865,7 +866,7 @@ class _EmptyAlbumBanner extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'Cards unlock as you burst squishies. Three paths to '
             'every card — earn, achieve, or save.',
@@ -875,7 +876,7 @@ class _EmptyAlbumBanner extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.75),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.md),
           BigButton(
             label: 'PLAY',
             color: Palette.pink,

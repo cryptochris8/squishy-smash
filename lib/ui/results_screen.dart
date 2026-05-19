@@ -5,6 +5,7 @@ import '../core/routes.dart';
 import 'gameplay_screen.dart';
 import 'widgets/big_button.dart';
 import 'widgets/floating_mascot.dart';
+import 'theme/app_theme.dart';
 
 /// Round-end summary. Three-agent convergence in GAME_POLISH_AUDIT.md
 /// (game-feel P1-D, UX #4, UI #1) flagged the previous version as the
@@ -53,19 +54,19 @@ class ResultsScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const _Headline(),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               if (isNewBest)
                 _NewBestBadge(reduceMotion: reduceMotion)
               else
-                const SizedBox(height: 32),
-              const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.md),
               _ScoreDisplay(score: score, reduceMotion: reduceMotion),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xxl),
               Expanded(
                 child: Center(
                   child: FloatingMascot(
@@ -75,16 +76,16 @@ class ResultsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               _StatStrip(combo: combo, coins: coins, best: best),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.xl),
               BigButton(
                 label: 'PLAY AGAIN',
                 color: Palette.pink,
                 onTap: () =>
                     Navigator.pushReplacementNamed(context, AppRoutes.play),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               BigButton(
                 label: 'MENU',
                 color: Palette.jellyBlue,
@@ -95,7 +96,7 @@ class ResultsScreen extends StatelessWidget {
                 ),
               ),
               if (newCards > 0) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.sm),
                 _SeeCollectionLink(newCards: newCards),
               ],
               if (coins > 0) ...[
@@ -105,7 +106,7 @@ class ResultsScreen extends StatelessWidget {
                 SizedBox(height: newCards > 0 ? 0 : 6),
                 _SeeShopLink(coins: coins),
               ] else if (newCards == 0)
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
             ],
           ),
         ),
@@ -157,10 +158,10 @@ class _NewBestBadge extends StatelessWidget {
     // cream surfaces fighting. Warm celebration accent still lives
     // on the mascot glow tint (cream when isNewBest).
     final pill = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       decoration: BoxDecoration(
         color: Palette.jellyBlue,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(AppRadii.full),
         boxShadow: [
           BoxShadow(
             color: Palette.jellyBlue.withValues(alpha: 0.55),
@@ -242,7 +243,7 @@ class _ScoreDisplay extends StatelessWidget {
     return Column(
       children: [
         number,
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         const Text(
           'SCORE',
           style: TextStyle(
@@ -299,7 +300,7 @@ class _StatCell extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: AppSpacing.xs2),
         Text(
           label,
           style: const TextStyle(
@@ -349,7 +350,7 @@ class _SeeCollectionLink extends StatelessWidget {
               Navigator.pushNamed(context, AppRoutes.collection),
           style: TextButton.styleFrom(
             foregroundColor: Palette.lavender,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
           ),
           child: Text(
             label,
@@ -380,7 +381,7 @@ class _SeeShopLink extends StatelessWidget {
           onPressed: () => Navigator.pushNamed(context, AppRoutes.shop),
           style: TextButton.styleFrom(
             foregroundColor: Palette.cream,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
           ),
           child: Text(
             'See the Shop (+$coins) →',

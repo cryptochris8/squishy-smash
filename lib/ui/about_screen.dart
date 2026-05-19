@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/constants.dart';
+import 'theme/app_theme.dart';
 
 /// Reachable from Settings → About. Shows version, credits, support
 /// links, and the privacy / support web URLs in a single quiet
@@ -48,39 +49,39 @@ class AboutScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         children: <Widget>[
           const _Brand(),
-          const SizedBox(height: 28),
+          const SizedBox(height: AppSpacing.xxl),
           const _Section('Version'),
           const _PlainRow(label: 'App version', value: _kAppVersion),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xxl),
           const _Section('Support'),
           _LinkRow(
             label: 'Email',
             value: _kSupportEmail,
             uri: 'mailto:$_kSupportEmail',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           const _LinkRow(
             label: 'Help + how-to',
             value: 'squishysmash.com/support',
             uri: _kSupportUrl,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xxl),
           const _Section('Legal'),
           const _LinkRow(
             label: 'Privacy policy',
             value: 'squishysmash.com/privacy',
             uri: _kPrivacyUrl,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           const _LinkRow(
             label: 'Website',
             value: 'squishysmash.com',
             uri: _kWebsite,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xxxl),
           Center(
             child: Text(
               '© 2026 Squishy Smash',
@@ -90,7 +91,7 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Center(
             child: Text(
               'Made with care for soft, silly, sparkly humans.',
@@ -129,7 +130,7 @@ class _Brand extends StatelessWidget {
             size: 56,
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: AppSpacing.md),
         const Text(
           'Squishy Smash',
           style: TextStyle(
@@ -138,7 +139,7 @@ class _Brand extends StatelessWidget {
             fontSize: 24,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           'A soft, sparkly world',
           style: TextStyle(
@@ -159,7 +160,7 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
@@ -181,7 +182,7 @@ class _PlainRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Row(
         children: <Widget>[
           Text(
@@ -241,7 +242,7 @@ class _LinkRow extends StatelessWidget {
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.black.withValues(alpha: 0.7),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(AppRadii.full),
             side: const BorderSide(color: Palette.cream, width: 1.2),
           ),
           content: Text(
@@ -255,10 +256,10 @@ class _LinkRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppRadii.xs),
       onTap: () => _copy(context),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
         child: Row(
           children: <Widget>[
             Text(
@@ -281,7 +282,7 @@ class _LinkRow extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.sm),
             Icon(
               Icons.copy_outlined,
               size: 16,

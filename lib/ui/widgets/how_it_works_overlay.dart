@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../analytics/events.dart';
 import '../../core/constants.dart';
 import '../../core/service_locator.dart';
+import '../theme/app_theme.dart';
 
 /// First-run "How it works" overlay — a single dismissible frame shown
 /// once on first launch, then never again on this device.
@@ -36,7 +37,7 @@ class HowItWorksOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xxxl),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 380),
         decoration: BoxDecoration(
@@ -45,7 +46,7 @@ class HowItWorksOverlay extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [Palette.pink, Palette.lavender, Palette.jellyBlue],
           ),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(AppRadii.dialog),
           boxShadow: const [
             BoxShadow(
               color: Color(0x66FF8FB8),
@@ -54,13 +55,13 @@ class HowItWorksOverlay extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(AppSpacing.xs2),
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0xFF1A0F23),
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(AppRadii.dialogInner),
           ),
-          padding: const EdgeInsets.fromLTRB(28, 28, 28, 22),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -69,7 +70,7 @@ class HowItWorksOverlay extends StatelessWidget {
                 color: Palette.cream,
                 size: 40,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               const Text(
                 'Welcome to Squishy Smash',
                 textAlign: TextAlign.center,
@@ -80,7 +81,7 @@ class HowItWorksOverlay extends StatelessWidget {
                   height: 1.15,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               const Text(
                 'Tap squishies to smash them. The faster you tap, the bigger your combo.',
                 textAlign: TextAlign.center,
@@ -90,7 +91,7 @@ class HowItWorksOverlay extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               const Text(
                 'Every burst can unlock a new card — there are 48 to collect.',
                 textAlign: TextAlign.center,
@@ -100,7 +101,7 @@ class HowItWorksOverlay extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: AppSpacing.xl),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -115,9 +116,9 @@ class HowItWorksOverlay extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Palette.cream,
                     foregroundColor: const Color(0xFF1A0F23),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadii.md),
                     ),
                     elevation: 0,
                   ),

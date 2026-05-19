@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants.dart';
 import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
+import '../theme/app_theme.dart';
 
 /// Once-per-profile celebration shown the very first time a player
 /// discovers ANY card. Addresses GAME_POLISH_AUDIT.md UX-3 — previously
@@ -77,7 +78,7 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xxxl),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 380),
         decoration: BoxDecoration(
@@ -86,7 +87,7 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
             end: Alignment.bottomRight,
             colors: [_accent, Palette.pink, Palette.lavender],
           ),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(AppRadii.dialog),
           boxShadow: [
             BoxShadow(
               color: _accent.withValues(alpha: 0.45),
@@ -95,18 +96,18 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(AppSpacing.xs2),
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0xFF1A0F23),
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(AppRadii.dialogInner),
           ),
-          padding: const EdgeInsets.fromLTRB(28, 26, 28, 22),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.auto_awesome, color: Palette.cream, size: 36),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               const Text(
                 'YOUR FIRST SQUISHY!',
                 style: TextStyle(
@@ -116,7 +117,7 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
                   letterSpacing: 2.5,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 widget.def.name,
                 textAlign: TextAlign.center,
@@ -127,13 +128,13 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
                   height: 1.1,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: _accent.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(999),
+                  borderRadius: BorderRadius.circular(AppRadii.full),
                   border: Border.all(color: _accent, width: 1.4),
                 ),
                 child: Text(
@@ -146,7 +147,7 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               const Text(
                 'Keep tapping to collect them all.',
                 textAlign: TextAlign.center,
@@ -156,7 +157,7 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: AppSpacing.lg),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants.dart';
 import '../../data/models/rarity.dart';
+import '../theme/app_theme.dart';
 
 /// Album-local alias for [Palette.rarityColor]. Kept around so existing
 /// album call sites don't need to be rewritten — but new code should
@@ -32,12 +33,12 @@ class FilterPill extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         decoration: BoxDecoration(
           color: selected
               ? color.withValues(alpha: 0.20)
               : Colors.white.withValues(alpha: 0.04),
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(AppRadii.full),
           border: Border.all(
             color: selected ? color : Colors.white.withValues(alpha: 0.15),
             width: 1.4,
@@ -68,10 +69,10 @@ class RarityPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = cardRarityColor(rarity);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(AppRadii.full),
         border: Border.all(color: color, width: 1.2),
       ),
       child: Text(
@@ -124,9 +125,9 @@ class BurstProgressBar extends StatelessWidget {
             letterSpacing: 1.2,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: AppSpacing.sm),
         ClipRRect(
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(AppRadii.chip),
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 8,

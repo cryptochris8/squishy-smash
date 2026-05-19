@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../game/systems/reward_event.dart';
+import '../theme/app_theme.dart';
 
 /// Brief floating "+N coins · reason!" callout. Drifts up ~40 px,
 /// fades to transparent, auto-removes itself after [lifetime].
@@ -89,10 +90,10 @@ class _RewardToastState extends State<RewardToast>
             opacity: _opacity.value,
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(AppRadii.full),
                 border: Border.all(color: tint, width: 1.4),
                 boxShadow: [
                   BoxShadow(
@@ -106,7 +107,7 @@ class _RewardToastState extends State<RewardToast>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.monetization_on, color: tint, size: 18),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     '+${widget.event.coinAmount}',
                     style: TextStyle(
@@ -116,7 +117,7 @@ class _RewardToastState extends State<RewardToast>
                       letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     widget.event.label,
                     style: const TextStyle(

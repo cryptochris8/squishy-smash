@@ -6,6 +6,7 @@ import '../../core/service_locator.dart';
 import '../../monetization/iap_service.dart';
 import '../../monetization/product_catalog.dart';
 import '../../core/constants.dart';
+import '../theme/app_theme.dart';
 
 /// Celebratory Starter Bundle paywall shown once, after the player's
 /// very first rare (or better) burst. Treated as an offer — not a
@@ -141,7 +142,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
         _livePrice?.formattedPrice ?? product.fallbackPrice;
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xxxl),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 420),
         decoration: BoxDecoration(
@@ -150,7 +151,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
             end: Alignment.bottomRight,
             colors: [Palette.pink, Palette.lavender, Palette.jellyBlue],
           ),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(AppRadii.dialog),
           boxShadow: const [
             BoxShadow(
               color: Color(0x66FF8FB8),
@@ -159,13 +160,13 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(AppSpacing.xs2),
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0xFF1A0F23),
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(AppRadii.dialogInner),
           ),
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -174,7 +175,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                 color: Palette.cream,
                 size: 40,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               const Text(
                 'First rare unlocked!',
                 style: TextStyle(
@@ -184,7 +185,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                   letterSpacing: 2,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: AppSpacing.sm),
               const Text(
                 'Kickstart your collection',
                 textAlign: TextAlign.center,
@@ -195,12 +196,12 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                   height: 1.1,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               Container(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.06),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppRadii.md),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.12),
                   ),
@@ -216,7 +217,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -224,9 +225,9 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Palette.cream,
                     foregroundColor: const Color(0xFF1A0F23),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadii.md),
                     ),
                     elevation: 0,
                   ),
@@ -248,7 +249,7 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
                         ),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: AppSpacing.sm),
               TextButton(
                 onPressed: _purchasing ? null : _dismiss,
                 child: const Text(
@@ -274,13 +275,13 @@ class _BundleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(Icons.check_circle,
               color: Palette.toxicLime, size: 18),
-          const SizedBox(width: 10),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               text,

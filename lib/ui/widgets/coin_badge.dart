@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants.dart';
+import '../theme/app_theme.dart';
 
 /// Coin balance badge used in the menu + shop top bar.
 ///
@@ -21,10 +22,10 @@ class CoinBadge extends StatelessWidget {
       label: '$coins coins',
       excludeSemantics: true, // suppress the inner Text's bare-number announce
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         decoration: BoxDecoration(
           color: Palette.cream.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadii.lg),
           border: Border.all(color: Palette.cream, width: 1.4),
         ),
         child: Row(
@@ -32,7 +33,7 @@ class CoinBadge extends StatelessWidget {
           children: [
             const Icon(Icons.monetization_on,
                 color: Palette.cream, size: 18),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               '$coins',
               style: const TextStyle(
