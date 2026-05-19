@@ -13,8 +13,8 @@ import '../systems/skybox_reveal_controller.dart';
 /// is the active pack's ambient sky; the reveal layer crossfades in
 /// briefly when a rare+ burst fires.
 ///
-/// Prefers equirectangular PNG sprites (2048×1024) at
-/// `assets/images/arenas/skybox_{theme}_{calm|reveal}.png`. Falls back
+/// Prefers equirectangular WebP sprites (2048×1024) at
+/// `assets/images/arenas/skybox_{theme}_{calm|reveal}.webp`. Falls back
 /// to a vertical gradient built from [ArenaTheme.calmColors] /
 /// [revealColors] if the sprite isn't on disk yet — the game stays
 /// playable even with partial art coverage.

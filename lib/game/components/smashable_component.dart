@@ -56,7 +56,7 @@ class SmashableComponent extends PositionComponent
   }
 
   /// Flame.images caches by path relative to `assets/images/`. Pack JSONs
-  /// reference `assets/images/objects/X.png`; strip the prefix so the
+  /// reference `assets/images/objects/X.webp`; strip the prefix so the
   /// cache resolves correctly. Returns null on any load failure so the
   /// procedural [ObjectPainter] fallback renders instead.
   Future<Sprite?> _tryLoadSprite(String assetPath) async {

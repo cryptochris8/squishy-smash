@@ -5,9 +5,10 @@ import '../../core/constants.dart';
 /// (sans directory prefix) and the fallback gradient palette used when
 /// the sprites aren't on disk yet.
 ///
-/// Skybox PNGs live under `assets/images/arenas/` as
-/// `skybox_{stem}_calm.png` and `skybox_{stem}_reveal.png` — the stem
-/// matches an `ArenaTheme.key`.
+/// Skybox sprites live under `assets/images/arenas/` as
+/// `skybox_{stem}_calm.webp` and `skybox_{stem}_reveal.webp` — the
+/// stem matches an `ArenaTheme.key`. WebP (lossy q90) since v0.1.3
+/// per GAME_POLISH_AUDIT.md PERF-1; ~70% smaller than the PNG masters.
 class ArenaTheme {
   const ArenaTheme({
     required this.key,
@@ -36,8 +37,8 @@ class ArenaTheme {
   /// arena-with-pack as a single transaction.
   final String? bundledWithPack;
 
-  String get calmSpritePath => 'arenas/skybox_${key}_calm.png';
-  String get revealSpritePath => 'arenas/skybox_${key}_reveal.png';
+  String get calmSpritePath => 'arenas/skybox_${key}_calm.webp';
+  String get revealSpritePath => 'arenas/skybox_${key}_reveal.webp';
 
   /// True when this arena is buyable as its own SKU (not a pack
   /// bundle). The shop's Arenas section lists these.

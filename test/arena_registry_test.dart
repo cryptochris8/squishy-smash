@@ -32,12 +32,12 @@ void main() {
       }
     });
 
-    test('sprite paths use arenas/ prefix and .png', () {
+    test('sprite paths use arenas/ prefix and .webp', () {
       for (final t in ArenaRegistry.all) {
         expect(t.calmSpritePath, startsWith('arenas/skybox_'));
-        expect(t.calmSpritePath, endsWith('_calm.png'));
+        expect(t.calmSpritePath, endsWith('_calm.webp'));
         expect(t.revealSpritePath, startsWith('arenas/skybox_'));
-        expect(t.revealSpritePath, endsWith('_reveal.png'));
+        expect(t.revealSpritePath, endsWith('_reveal.webp'));
       }
     });
   });

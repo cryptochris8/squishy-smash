@@ -329,14 +329,14 @@ void main() {
   });
 
   group('Pack sprite assets exist on disk', () {
-    // After P1.16 downsample 1024->512, real sprites compress to
-    // ~50-150 KB depending on art complexity (a few simple shapes
-    // can dip into the 80s). 256x256 thumbnails are ~30-45 KB. The
-    // floor's job is to catch stubs / accidental empty PNGs, not
-    // pin a specific byte count — 30 KB is well above any
-    // reasonable empty-stub size.
-    const int kSpriteMinBytes = 30 * 1024;
-    const int kThumbMinBytes = 10 * 1024;
+    // After P1.16 downsample 1024->512 and the PERF-2 WebP
+    // re-encode, real sprites land at ~10-30 KB and 256x256
+    // thumbnails at ~3-9 KB. The floor's job is just to catch
+    // stubs / accidental empty files — anything under a couple KB
+    // is almost certainly a 1x1 placeholder. Tighter than that
+    // would re-flag real assets the moment art complexity changes.
+    const int kSpriteMinBytes = 5 * 1024;
+    const int kThumbMinBytes = 2 * 1024;
 
     for (final path in ContentLoader.bundledPackPaths) {
       test('all sprites referenced by $path are present and non-stub', () {
