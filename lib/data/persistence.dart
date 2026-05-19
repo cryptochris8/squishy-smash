@@ -103,6 +103,11 @@ class Persistence {
   // device-level preferences that survive profile migrations.
   static const String _hapticsKey = 'settings.haptics';
   static const String _muteKey = 'settings.mute';
+  // First-run "How it works" overlay dismissal. Device-level (not
+  // profile) on purpose: a player reinstalling on a new device gets
+  // the intro again, since the goal is to onboard the device's player
+  // session, not the saved-game identity.
+  static const String _howItWorksSeenKey = 'settings.how_it_works_seen';
 
   final SharedPreferences _prefs;
 
@@ -207,6 +212,10 @@ class Persistence {
 
   bool get muted => _prefs.getBool(_muteKey) ?? false;
   Future<void> setMuted(bool v) => _prefs.setBool(_muteKey, v);
+
+  bool get howItWorksSeen => _prefs.getBool(_howItWorksSeenKey) ?? false;
+  Future<void> setHowItWorksSeen(bool v) =>
+      _prefs.setBool(_howItWorksSeenKey, v);
 
   // ---------------------------------------------------------------- v3 blob
 

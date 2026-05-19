@@ -5,6 +5,7 @@ import '../core/service_locator.dart';
 import 'widgets/big_button.dart';
 import 'widgets/coin_badge.dart';
 import 'widgets/floating_mascot.dart';
+import 'widgets/how_it_works_overlay.dart';
 import '../core/constants.dart';
 
 /// Hero image shown idling on the menu's dead space. Picked from the
@@ -14,8 +15,29 @@ import '../core/constants.dart';
 const String _kMenuMascotAsset =
     'assets/cards/final_48/016_Celestial_Dumpling_Core.webp';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // First-launch onboarding (UX-1). Defer past the first frame so the
+    // menu paints behind the overlay rather than the overlay appearing
+    // over a blank screen, and so the dialog has a built-out
+    // BuildContext to mount on. The persisted flag means this only
+    // fires once per install.
+    if (!ServiceLocator.persistence.howItWorksSeen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        HowItWorksOverlay.show(context);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

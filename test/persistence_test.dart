@@ -59,6 +59,11 @@ void main() {
       expect(p.hapticsEnabled, isTrue);
       expect(p.muted, isFalse);
     });
+
+    test('howItWorksSeen defaults false on fresh install', () async {
+      final p = await Persistence.open();
+      expect(p.howItWorksSeen, isFalse);
+    });
   });
 
   group('Persistence round-trip', () {
@@ -179,9 +184,11 @@ void main() {
       final p = await Persistence.open();
       await p.setHapticsEnabled(false);
       await p.setMuted(true);
+      await p.setHowItWorksSeen(true);
       final reloaded = await Persistence.open();
       expect(reloaded.hapticsEnabled, isFalse);
       expect(reloaded.muted, isTrue);
+      expect(reloaded.howItWorksSeen, isTrue);
     });
   });
 
