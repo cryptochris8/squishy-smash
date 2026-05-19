@@ -243,13 +243,56 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Future<void> _attemptUnlockArena(ArenaTheme theme) async {
+    // UX-8: auto-activate the new arena and surface an Undo affordance
+    // instead of telling the player "switch in Settings." That broke
+    // the reward moment — you just paid coins for a thing, and the
+    // game's response was "now go to a different screen to actually
+    // see it." Now the arena swaps in immediately; an Undo snackbar
+    // catches the rare case of an accidental tap.
+    final previousActiveArena =
+        ServiceLocator.progression.profile.activeArenaKey;
     final ok = await ServiceLocator.progression.tryUnlockArena(theme.key);
     if (!mounted) return;
+    if (ok) {
+      await ServiceLocator.progression.setActiveArena(theme.key);
+    }
+    if (!mounted) return;
     setState(() {});
-    final msg = ok
-        ? 'Unlocked ${theme.displayName}! Set as active in Settings.'
-        : 'Need ${theme.cost} coins (you have ${ServiceLocator.progression.profile.coins})';
-    _showSnack(msg);
+    if (!ok) {
+      _showSnack('Need ${theme.cost} coins (you have '
+          '${ServiceLocator.progression.profile.coins})');
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.black.withValues(alpha: 0.75),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
+            side: const BorderSide(color: Palette.cream, width: 1.2),
+          ),
+          content: Text(
+            '${theme.displayName} unlocked & active',
+            style: const TextStyle(color: Colors.white),
+          ),
+          action: previousActiveArena == theme.key
+              ? null
+              : SnackBarAction(
+                  label: 'UNDO',
+                  textColor: Palette.cream,
+                  onPressed: () async {
+                    await ServiceLocator.progression
+                        .setActiveArena(previousActiveArena);
+                    if (!mounted) return;
+                    setState(() {});
+                  },
+                ),
+        ),
+      );
   }
 }
 
@@ -334,9 +377,13 @@ class _ArenaSkuCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  unlocked
-                      ? 'Owned — switch in Settings'
-                      : 'Standalone arena',
+                  // UX-8: "switch in Settings" used to push the player
+                  // off-screen to actually use what they'd just paid
+                  // for. With auto-activate-on-unlock now in place,
+                  // owned arenas live behind a quiet "Owned" — the
+                  // Settings switcher is still the canonical place to
+                  // change later but not a required next step.
+                  unlocked ? 'Owned' : 'Standalone arena',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.7),
