@@ -23,6 +23,25 @@ class SquishySmashApp extends StatelessWidget {
       ),
       scaffoldBackgroundColor: Palette.bgDeep,
       useMaterial3: true,
+      // DS-4: brand the SwitchListTile at the theme level so every
+      // toggle (currently Settings → haptics, mute; the future
+      // toggles will inherit too) reads as Squishy Smash rather than
+      // the default Material teal/grey. toxicLime is the on-state
+      // accent used elsewhere for "active" / "earned" affordances.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return Palette.cream;
+          return Colors.white70;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return Palette.toxicLime;
+          return Colors.white.withValues(alpha: 0.18);
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return Palette.toxicLime;
+          return Colors.white24;
+        }),
+      ),
     );
     return MaterialApp(
       title: 'Squishy Smash',

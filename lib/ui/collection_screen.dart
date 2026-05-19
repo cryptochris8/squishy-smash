@@ -99,7 +99,23 @@ class _CollectionScreenState extends State<CollectionScreen> {
             value: _rarityFilter,
             onChanged: (v) => setState(() => _rarityFilter = v),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
+          // UX-7: cognitive-load relief on the filter row. The
+          // "Showing X of Y" readout gives an at-a-glance status,
+          // and a single Clear pill collapses two reset actions
+          // (clear pack + clear rarity) into one tap when any filter
+          // is active.
+          _FilterStatusRow(
+            shownCount: filtered.length,
+            totalCount: cards.length,
+            anyFilterActive:
+                _packFilter != null || _rarityFilter != null,
+            onClear: () => setState(() {
+              _packFilter = null;
+              _rarityFilter = null;
+            }),
+          ),
+          const SizedBox(height: 12),
           if (filtered.isEmpty)
             const _EmptyState()
           else
@@ -180,6 +196,71 @@ class _AlbumHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// UX-7: filter-row status + clear action. Renders a quiet
+/// "Showing X of Y" readout always; surfaces a brand-pink "Clear"
+/// pill only when at least one filter is active so the affordance
+/// only exists when it can do something.
+class _FilterStatusRow extends StatelessWidget {
+  const _FilterStatusRow({
+    required this.shownCount,
+    required this.totalCount,
+    required this.anyFilterActive,
+    required this.onClear,
+  });
+
+  final int shownCount;
+  final int totalCount;
+  final bool anyFilterActive;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          'Showing $shownCount of $totalCount',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.55),
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.4,
+          ),
+        ),
+        const Spacer(),
+        if (anyFilterActive)
+          GestureDetector(
+            onTap: onClear,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                color: Palette.pink.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: Palette.pink, width: 1),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.close, size: 12, color: Palette.pink),
+                  SizedBox(width: 4),
+                  Text(
+                    'Clear filters',
+                    style: TextStyle(
+                      color: Palette.pink,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

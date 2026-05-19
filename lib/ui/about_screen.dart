@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/constants.dart';
 
@@ -212,6 +213,12 @@ class _PlainRow extends StatelessWidget {
 /// requires no external-link handlers from gameplay (4+ rating).
 /// Settings is the one allowed surface, but staying clipboard-only
 /// keeps the rating risk at zero.
+///
+/// UX-9: pre-fix this rendered as plain text with no tap target — the
+/// existing doc-comment promised clipboard behavior the code didn't
+/// implement. Now wraps in InkWell + a Material copy icon affordance
+/// so the tap surface is discoverable, and a snackbar confirms the
+/// paste-into-Safari step actually happened.
 class _LinkRow extends StatelessWidget {
   const _LinkRow({
     required this.label,
@@ -223,33 +230,65 @@ class _LinkRow extends StatelessWidget {
   final String value;
   final String uri;
 
+  Future<void> _copy(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: uri));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(milliseconds: 1800),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.black.withValues(alpha: 0.7),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
+            side: const BorderSide(color: Palette.cream, width: 1.2),
+          ),
+          content: Text(
+            'Copied: $uri',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: <Widget>[
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 14,
-            ),
-          ),
-          const Spacer(),
-          Flexible(
-            child: Text(
-              value,
-              textAlign: TextAlign.right,
-              overflow: TextOverflow.ellipsis,
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: () => _copy(context),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: <Widget>[
+            Text(
+              label,
               style: TextStyle(
-                color: Palette.cream,
-                fontWeight: FontWeight.w600,
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 14,
               ),
             ),
-          ),
-        ],
+            const Spacer(),
+            Flexible(
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Palette.cream,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Icon(
+              Icons.copy_outlined,
+              size: 16,
+              color: Colors.white.withValues(alpha: 0.55),
+            ),
+          ],
+        ),
       ),
     );
   }
