@@ -87,11 +87,21 @@ void main() {
   });
 
   group('BurstProgressBar', () {
-    testWidgets('shows "BURSTS X / Y" header text', (tester) async {
+    testWidgets('shows kid-friendly remaining-count header (UX-6)',
+        (tester) async {
       await tester.pumpWidget(_wrap(
         const BurstProgressBar(bursts: 4, required: 7),
       ));
-      expect(find.text('BURSTS  4 / 7'), findsOneWidget);
+      // 7 required - 4 done = 3 remaining; plural form
+      expect(find.text('SMASH IT 3 MORE TIMES'), findsOneWidget);
+    });
+
+    testWidgets('singular copy when exactly 1 remaining', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const BurstProgressBar(bursts: 6, required: 7),
+      ));
+      expect(find.text('SMASH IT 1 MORE TIME'), findsOneWidget,
+          reason: 'singular form avoids "1 more times" awkwardness');
     });
 
     testWidgets('progress bar value matches bursts/required ratio',

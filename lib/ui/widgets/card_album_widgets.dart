@@ -104,11 +104,19 @@ class BurstProgressBar extends StatelessWidget {
     final progress = required == 0
         ? 1.0
         : (bursts / required).clamp(0.0, 1.0).toDouble();
+    // UX-6: kid-readable copy. "Bursts" is internal jargon; "smash it
+    // N more times" is concrete and matches the verb a five-year-old
+    // already learned in the first second of playing. The numeric
+    // progress bar below still gives the at-a-glance read.
+    final remaining = (required - bursts).clamp(0, required);
+    final label = remaining == 1
+        ? 'SMASH IT 1 MORE TIME'
+        : 'SMASH IT $remaining MORE TIMES';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'BURSTS  $bursts / $required',
+          label,
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w900,

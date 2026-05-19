@@ -139,6 +139,15 @@ class _FloatingMascotState extends State<FloatingMascot>
               child: Image.asset(
                 widget.assetPath,
                 fit: BoxFit.cover,
+                // PERF-7: cap the decoded buffer to the rendered
+                // pixel width × DPR instead of the source asset's
+                // native 1086 px. On a 3x display at the default
+                // 180-px logical width, this is 540 px decoded
+                // vs. 1086 px source — ~4x less RGBA in memory per
+                // mascot instance (~1.2 MB -> ~300 KB).
+                cacheWidth: (widget.width *
+                        MediaQuery.devicePixelRatioOf(context))
+                    .round(),
                 errorBuilder: (_, __, ___) => const SizedBox.shrink(),
               ),
             ),

@@ -32,10 +32,15 @@ void main() {
       ));
       expect(find.byType(Image), findsOneWidget);
       final image = tester.widget<Image>(find.byType(Image));
-      // The asset wiring should reach Image.asset's AssetImage provider.
-      expect(image.image, isA<AssetImage>());
+      // PERF-7 wraps the AssetImage in a ResizeImage so the decoded
+      // buffer matches the rendered pixel width × DPR (no more
+      // decoding the 1086-px source every time). Unwrap to verify the
+      // underlying asset wiring is still right.
+      expect(image.image, isA<ResizeImage>());
+      final resize = image.image as ResizeImage;
+      expect(resize.imageProvider, isA<AssetImage>());
       expect(
-        (image.image as AssetImage).assetName,
+        (resize.imageProvider as AssetImage).assetName,
         'assets/cards/final_48/016_Celestial_Dumpling_Core.webp',
       );
     });

@@ -71,11 +71,18 @@ class SkyboxComponent extends PositionComponent {
     final revealResult = await _tryLoad(theme.revealSpritePath);
     _revealImage = revealResult.image;
     revealError = revealResult.error;
-    debugPrint(
-      'SkyboxComponent[${theme.key}]: '
-      'calm=${_calmImage != null ? "${_calmImage!.width}x${_calmImage!.height}" : "FALLBACK-GRADIENT"}, '
-      'reveal=${_revealImage != null ? "${_revealImage!.width}x${_revealImage!.height}" : "FALLBACK-GRADIENT"}',
-    );
+    // P3-C: dev-only diagnostics. The flutter/foundation `debugPrint`
+    // is a no-op in release per its own contract, but wrapping in
+    // kDebugMode also lets the compiler tree-shake the message
+    // interpolation away so release builds don't pay the string-build
+    // cost on every arena load.
+    if (kDebugMode) {
+      debugPrint(
+        'SkyboxComponent[${theme.key}]: '
+        'calm=${_calmImage != null ? "${_calmImage!.width}x${_calmImage!.height}" : "FALLBACK-GRADIENT"}, '
+        'reveal=${_revealImage != null ? "${_revealImage!.width}x${_revealImage!.height}" : "FALLBACK-GRADIENT"}',
+      );
+    }
   }
 
   Future<({ui.Image? image, String? error})> _tryLoad(

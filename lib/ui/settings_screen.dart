@@ -222,7 +222,7 @@ class _ArenaTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 11,
-                fontWeight: isActive ? FontWeight.w800 : FontWeight.w500,
+                fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                 color: unlocked ? Colors.white : Colors.white60,
               ),
             ),

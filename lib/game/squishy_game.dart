@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:flutter/painting.dart';
 
 import '../analytics/events.dart';
+import '../core/constants.dart';
 import '../core/service_locator.dart';
 import '../data/achievement_detector.dart';
 import '../data/achievement_registry.dart';
@@ -626,6 +627,15 @@ class SquishyGame extends FlameGame {
         arenaSize: arena.arenaSize.clone(),
         peakOpacity: outcome.bloomPeakOpacity,
         duration: outcome.bloomDuration,
+        // P3-A: tint the bloom by rarity so the reveal flash has a
+        // color-coded payoff. Rare keeps the original white (the
+        // flash already feels distinct against the calm skybox);
+        // epic bleeds lavender, mythic bleeds cream/gold.
+        tintColor: switch (outcome.rarity) {
+          Rarity.epic => Palette.lavender,
+          Rarity.mythic => Palette.cream,
+          _ => const Color(0xFFFFFFFF),
+        },
       ));
       if (outcome.triggersMythicShake) {
         shaker.shake(duration: 0.28, intensity: 14);

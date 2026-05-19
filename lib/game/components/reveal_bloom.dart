@@ -1,24 +1,30 @@
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
-/// Full-screen white bloom flash triggered on a reveal-tier burst.
-/// Opacity ramps 0 -> [peakOpacity] -> 0 over [duration] using a
-/// triangle curve with an early peak (t≈0.22) so the flash feels
-/// punchy rather than lingering.
+/// Full-screen bloom flash triggered on a reveal-tier burst. Opacity
+/// ramps 0 -> [peakOpacity] -> 0 over [duration] using a triangle curve
+/// with an early peak (t≈0.22) so the flash feels punchy rather than
+/// lingering.
 ///
 /// Scales by rarity at the caller:
-///   rare    -> 0.35 peak, 400ms
-///   epic    -> 0.50 peak, 500ms
-///   mythic  -> 0.65 peak, 700ms (adds an emotional "held" beat)
+///   rare    -> 0.35 peak, 400ms, white
+///   epic    -> 0.50 peak, 500ms, lavender tint (P3-A)
+///   mythic  -> 0.65 peak, 700ms, cream/gold tint (P3-A)
+///
+/// [tintColor] is the RGB the flash bleeds into; alpha is computed
+/// from `peakOpacity * bloomShape(t)` and overrides the color's own
+/// alpha each frame. Defaults to opaque white for back-compat.
 class RevealBloom extends PositionComponent {
   RevealBloom({
     required Vector2 arenaSize,
     required this.peakOpacity,
     required this.duration,
+    this.tintColor = const Color(0xFFFFFFFF),
   }) : super(size: arenaSize, priority: 9999);
 
   final double peakOpacity;
   final Duration duration;
+  final Color tintColor;
 
   double _elapsed = 0;
 
@@ -54,7 +60,12 @@ class RevealBloom extends PositionComponent {
     final shape = bloomShape(t);
     final alpha = (shape * peakOpacity * 255).round().clamp(0, 255);
     if (alpha == 0) return;
-    _paint.color = Color.fromARGB(alpha, 255, 255, 255);
+    _paint.color = Color.fromARGB(
+      alpha,
+      (tintColor.r * 255).round(),
+      (tintColor.g * 255).round(),
+      (tintColor.b * 255).round(),
+    );
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.x, size.y),
       _paint,
