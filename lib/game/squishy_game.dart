@@ -356,8 +356,18 @@ class SquishyGame extends FlameGame {
     // Consumed one per spawn; rarest-queued wins. We read synchronously
     // from the in-memory profile and let the repo persist the decrement
     // in the background, same as the boost path above.
+    //
+    // Token preservation: only consume the token (and pass forcedRarity
+    // through to the selector) when the current pool actually carries a
+    // candidate at-or-above the forced tier. Otherwise the selector
+    // would fall through to a weighted pick and the token would
+    // silently vanish into a common — matches the selector's "rescues
+    // up" semantics where `candidates = pool entries at or above
+    // forcedRarity`.
     final forcedRarity = _peekForcedRarity(profile.guaranteedRevealTokens);
-    if (forcedRarity != null) {
+    final canForce = forcedRarity != null &&
+        effectivePool.any((e) => e.def.rarity.index >= forcedRarity.index);
+    if (canForce) {
       ServiceLocator.progression.consumeGuaranteedReveal();
     }
     return pitySelector.pick(
@@ -367,7 +377,7 @@ class SquishyGame extends FlameGame {
       legendaryDryByPack: profile.legendaryDryByPack,
       comboMultiplier: combo.multiplier,
       boostActive: boost,
-      forcedRarity: forcedRarity,
+      forcedRarity: canForce ? forcedRarity : null,
       rng: _rng,
     );
   }

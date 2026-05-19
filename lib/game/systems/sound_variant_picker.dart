@@ -23,10 +23,16 @@ class SoundVariantPicker {
       return options[0];
     }
     final lastIdx = _lastIndexByKey[key];
-    int idx = _rng.nextInt(options.length);
-    if (lastIdx != null && idx == lastIdx) {
-      // Shift by 1 (wrapped) to guarantee a different choice.
-      idx = (idx + 1) % options.length;
+    int idx;
+    if (lastIdx == null) {
+      idx = _rng.nextInt(options.length);
+    } else {
+      // Uniform pick from the (length - 1) non-last options. Roll in
+      // the shorter range and offset at-or-above the last index — the
+      // previous (idx + 1) % length wrap doubled the probability of
+      // whatever lived immediately after the last-played index.
+      idx = _rng.nextInt(options.length - 1);
+      if (idx >= lastIdx) idx += 1;
     }
     _lastIndexByKey[key] = idx;
     return options[idx];

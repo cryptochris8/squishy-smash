@@ -121,6 +121,15 @@ void main() {
             options.enableUserInteractionBreadcrumbs = false;
             options.attachScreenshot = false;
             options.sendDefaultPii = false;
+            // Defense in depth — the diagnostics layer forwards
+            // arbitrary errors, some of whose .toString() embeds
+            // user-input fragments (pack names, asset paths). Clear
+            // the event message so only the exception type + stack
+            // frame addresses leave the device. Matches the "Crash
+            // Data only" nutrition-label scope. Single seam for any
+            // future allow/block-list scrubbing.
+            options.beforeSend = (event, hint) =>
+                event.copyWith(message: null);
           },
           appRunner: () => runApp(const SquishySmashApp()),
         );

@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap');
+/* Google Fonts are loaded via <link rel="preconnect"> + stylesheet in
+   index.html so the browser can open the CDN socket in parallel with
+   parsing this file — @import here would block CSS parsing until the
+   request returned. The actual font allowance is still governed by
+   the CSP entries in netlify.toml. */
 
 @tailwind base;
 @tailwind components;

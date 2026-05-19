@@ -109,10 +109,38 @@ workflows:
         script: keychain add-certificates
       - name: Apply Xcode provisioning profiles
         script: xcode-project use-profiles
+      - name: Sanity-check export options plist
+        # `xcode-project use-profiles` writes export_options.plist to
+        # the Codemagic-internal runner path below; the Flutter build
+        # step later passes it via --export-options-plist. The path is
+        # undocumented codemagic-cli-tools internals — if the runner
+        # image ever moves it, the build fails downstream with a
+        # cryptic "Runner.app requires a provisioning profile" error.
+        # Failing here points at the real cause + guard line to update.
+        script: |
+          if [ ! -f /Users/builder/export_options.plist ]; then
+            echo "ERROR: /Users/builder/export_options.plist not found."
+            echo "Expected to be written by the prior 'use-profiles' step."
+            echo "If Codemagic changed the runner image path, update both this"
+            echo "guard and the --export-options-plist flag below."
+            exit 1
+          fi
       - name: Set build number
+        # Distinguish "API call failed" (transient — fail loudly so we
+        # don't silently restart numbering at 1 and get rejected by
+        # ASC for a duplicate build) from "API call succeeded, returned
+        # empty" (the genuine first-build path, where 0 is the right
+        # baseline). The old `2>/dev/null || echo 0` conflated both
+        # cases and would mask a real outage.
         script: |
           cd $CM_BUILD_DIR/ios
-          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          set -e
+          if ! LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>&1); then
+            echo "ERROR: app-store-connect API call failed:"
+            echo "$LATEST"
+            exit 1
+          fi
+          LATEST=${LATEST:-0}
           BUILD_NUMBER=$((LATEST + 1))
           echo "Setting CFBundleVersion to $BUILD_NUMBER (previous TestFlight build: $LATEST)"
           agvtool new-version -all "$BUILD_NUMBER"

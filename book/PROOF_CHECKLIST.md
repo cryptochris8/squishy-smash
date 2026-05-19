@@ -75,7 +75,7 @@ Open `cover_wrap.pdf`:
 - [ ] Back cover headline and 80-word blurb are legible
 - [ ] Three pack callouts each show: tinted panel + card thumbnail + pack name + short blurb
 - [ ] "Ages 4 and up — squishysmash.com — © 2026" footer is present
-- [ ] **Dashed barcode safe zone** is visible at lower-right of back cover. KDP will overlay the real barcode here. Confirm nothing important sits inside that box.
+- [ ] **Barcode safe zone** at lower-right of back cover contains no art or text (the dashed outline is hidden in production; KDP overlays the real barcode here at print time). To re-enable the outline as a designer aid, uncomment the marked block in `build_cover.py` `draw_back_cover` — but ship with it hidden.
 - [ ] Spine is a thin pink band, no text (correct — 46 pages is still under KDP's ~80-page threshold for spine text)
 - [ ] Total cover width is ~17.358 in (8.5 + 0.108 + 8.5 + 0.25), height 8.75 in (printed at the bottom of the test output)
 

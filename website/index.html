@@ -6,6 +6,12 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="canonical" href="https://www.squishysmash.com/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FF8FB8" />
     <meta
@@ -55,6 +61,27 @@
     />
 
     <title>Squishy Smash — Tap. Squish. Pop. Collect.</title>
+
+    <!-- Structured data for SEO + rich-result eligibility on Google.
+         Schema.org/MobileApplication is the canonical fit for an
+         App Store-distributed iOS game. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        "name": "Squishy Smash",
+        "alternateName": "Squishy Smash: Tap. Squish. Pop. Collect.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "iOS",
+        "url": "https://www.squishysmash.com/",
+        "description": "The cozy kawaii collectible tap game. 48 cards across three pastel packs. Three ways to unlock every card: play, save coins, or earn through achievements.",
+        "image": "https://www.squishysmash.com/social-card.jpg",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Athlete Domains"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

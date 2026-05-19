@@ -50,11 +50,20 @@ class StreakCalculator {
 
   bool _isConsecutive(String yesterday, String today) {
     // Defensive parse; if either string is malformed, treat as reset.
+    // Compare strictly in calendar-date space — Duration.inDays uses
+    // fixed 86400s units, so a 23h DST-forward or 25h DST-back gap
+    // could read as 0 or 2 days for a real one-calendar-day delta and
+    // bork the streak silently.
     try {
-      final y = DateTime.parse(yesterday);
-      final t = DateTime.parse(today);
-      final diff = t.difference(y).inDays;
-      return diff == 1;
+      final yParts = yesterday.split('-').map(int.parse).toList();
+      final tParts = today.split('-').map(int.parse).toList();
+      if (yParts.length != 3 || tParts.length != 3) return false;
+      // DateTime(y, m, d + 1) normalizes month/year overflow, so this
+      // is safe across month and year boundaries (Apr 31 -> May 1).
+      final yNext = DateTime(yParts[0], yParts[1], yParts[2] + 1);
+      return yNext.year == tParts[0] &&
+          yNext.month == tParts[1] &&
+          yNext.day == tParts[2];
     } catch (_) {
       return false;
     }
