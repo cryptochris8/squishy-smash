@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:flutter/painting.dart';
@@ -290,6 +291,14 @@ class SquishyGame extends FlameGame {
       // PackRepository.objectsForPacksWithContext ordering.
       _defIdToPackId.putIfAbsent(entry.def.id, () => entry.packId);
     }
+    // PERF-6: pre-warm the sprite cache so the first encounter with
+    // each squishy doesn't hitch on a 5-20 ms WebP decode on the
+    // main thread (SmashableComponent.onLoad calls Flame.images.load
+    // on demand otherwise). Fire-and-forget — Flame.images is a
+    // shared cache so the per-spawn load becomes a no-op hit. Errors
+    // are swallowed because SmashableComponent already falls back to
+    // the procedural ObjectPainter when a sprite is missing.
+    unawaited(_prewarmSpriteCache(_pool));
     pitySelector = const RarityPitySelector();
     packGate = const PackProgressionGate();
     _antiSpam = AntiSpamCooldown(
@@ -685,6 +694,26 @@ class SquishyGame extends FlameGame {
   Future<void> finalizeRoundIfActive() async {
     if (_ended) return;
     await _endRound();
+  }
+
+  /// Walk the pool and pre-decode every sprite into Flame's image
+  /// cache so the per-spawn `Flame.images.load` later resolves
+  /// synchronously. Strips the "assets/images/" prefix to match the
+  /// loader contract used by SmashableComponent._tryLoadSprite. A
+  /// missing or broken sprite swallows quietly — the procedural
+  /// ObjectPainter fallback covers the visual either way.
+  Future<void> _prewarmSpriteCache(List<GatedObject> pool) async {
+    const prefix = 'assets/images/';
+    for (final entry in pool) {
+      final asset = entry.def.sprite;
+      final normalized =
+          asset.startsWith(prefix) ? asset.substring(prefix.length) : asset;
+      try {
+        await Flame.images.load(normalized);
+      } catch (_) {
+        // Already covered by SmashableComponent fallback.
+      }
+    }
   }
 
   Future<void> _endRound() async {
