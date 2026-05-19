@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
 import '../../core/constants.dart';
@@ -31,7 +32,16 @@ class _DecalSplat extends PositionComponent with HasPaint {
     anchor = Anchor.center;
     size = Vector2.all(_radius * 2);
     add(OpacityEffect.fadeOut(
-      EffectController(duration: Tunables.decalFade.inMilliseconds / 1000),
+      EffectController(
+        duration: Tunables.decalFade.inMilliseconds / 1000,
+        // P2-B: ease-in on the fade means alpha drops slowly at first
+        // then accelerates. A linear fade reads as "wiping the floor"
+        // — the splat shrinks visibly the moment it lands. Ease-in
+        // holds the splat at full opacity longer so the arena keeps
+        // the "you've been here a while" texture, then disappears
+        // when the player has moved on visually.
+        curve: Curves.easeIn,
+      ),
       onComplete: removeFromParent,
     ));
   }

@@ -406,7 +406,14 @@ class SquishyGame extends FlameGame {
 
   void _spawnNext(SmashableDef def) {
     final size = arena.arenaSize;
-    final pos = Vector2(size.x * 0.5, size.y * 0.55);
+    // P2-A: jitter the spawn point so consecutive squishies don't
+    // stack at the exact same pixel. ±20% X, ±8% Y around the
+    // center-low anchor — wide enough to read as variety, tight
+    // enough that the player still expects "roughly under my last
+    // tap" so the tap-rhythm stays predictable.
+    final jitterX = (_rng.nextDouble() - 0.5) * 0.4 * size.x;
+    final jitterY = (_rng.nextDouble() - 0.5) * 0.16 * size.y;
+    final pos = Vector2(size.x * 0.5 + jitterX, size.y * 0.55 + jitterY);
     final smashable = SmashableComponent(
       def: def,
       onImpact: _handleImpact,
