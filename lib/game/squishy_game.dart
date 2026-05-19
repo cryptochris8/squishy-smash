@@ -73,6 +73,7 @@ class SquishyGame extends FlameGame {
     this.onRoundEnd,
     this.onMythicReveal,
     this.onFirstRareReveal,
+    this.onFirstCardEver,
   });
 
   /// Fires once per round end with the round's final tallies plus the
@@ -99,6 +100,26 @@ class SquishyGame extends FlameGame {
   /// round.
   final VoidCallback? onFirstRareReveal;
   bool _hasFiredFirstRareReveal = false;
+
+  /// Fires once-per-profile, the first time the player ever discovers
+  /// any card (across all sessions). The Flutter UI shows a
+  /// celebration overlay so the most meaningful moment of onboarding
+  /// doesn't read as a duplicate-burst toast. Addresses UX-3 from
+  /// GAME_POLISH_AUDIT.md. Caller must defer to next frame before
+  /// touching the widget tree.
+  final void Function(SmashableDef def, Rarity rarity)? onFirstCardEver;
+
+  /// Smashable IDs the player discovered for the first time in this
+  /// round. Drives the results-screen "See your N new cards" link
+  /// (CV-2 from GAME_POLISH_AUDIT.md). Reset implicitly per round —
+  /// `SquishyGame` is reconstructed for each gameplay session.
+  final List<String> _discoveredThisRound = <String>[];
+
+  /// Read-only view of cards discovered during the current round. The
+  /// results-screen bridge reads this at round end to know whether to
+  /// surface the "See your new card(s)" CTA.
+  List<String> get discoveredThisRound =>
+      List.unmodifiable(_discoveredThisRound);
 
   late final ArenaWorld arena;
   late final ScoreController score;
@@ -473,6 +494,17 @@ class SquishyGame extends FlameGame {
         smashableId: outcome.def.id,
         rarity: outcome.rarity,
       );
+      _discoveredThisRound.add(outcome.def.id);
+      // UX-3: fire the once-per-profile first-card celebration the
+      // instant the player's discovered set crosses from 0 -> 1. The
+      // markDiscovered call above mutates the in-memory set
+      // synchronously (only the persistence schedule is async), so
+      // the size check here sees the post-discovery count.
+      final discoveredTotal = ServiceLocator.progression
+          .profile.discoveredSmashableIds.length;
+      if (discoveredTotal == 1) {
+        onFirstCardEver?.call(outcome.def, outcome.rarity);
+      }
       if (owningPackId != null) {
         events.collectionDiscovery(
           objectId: outcome.def.id,

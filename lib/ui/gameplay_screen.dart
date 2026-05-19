@@ -6,9 +6,11 @@ import '../core/routes.dart';
 import '../core/service_locator.dart';
 import '../analytics/events.dart';
 import '../data/models/rarity.dart';
+import '../data/models/smashable_def.dart';
 import '../game/components/hud_overlay.dart';
 import '../game/share_capture.dart';
 import '../game/squishy_game.dart';
+import 'widgets/first_card_overlay.dart';
 import 'widgets/reward_toast_overlay.dart';
 import 'widgets/starter_bundle_popup.dart';
 import '../core/constants.dart';
@@ -36,6 +38,7 @@ class _GameplayScreenState extends State<GameplayScreen>
       onRoundEnd: _handleRoundEnd,
       onMythicReveal: _handleMythicReveal,
       onFirstRareReveal: _handleFirstRareReveal,
+      onFirstCardEver: _handleFirstCardEver,
     );
     // Observe iOS lifecycle so a force-quit / Cmd-swipe / OS-kill
     // mid-round doesn't drop the in-flight progression. Pre-fix
@@ -112,6 +115,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         // place that knows the semantics: ties don't celebrate.
         bestScore: score > previousBest ? score : previousBest,
         isNewBest: score > previousBest,
+        cardsDiscoveredThisRound: _game.discoveredThisRound.length,
       ),
     );
   }
@@ -122,6 +126,16 @@ class _GameplayScreenState extends State<GameplayScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _showMythicShareSheet();
+    });
+  }
+
+  void _handleFirstCardEver(SmashableDef def, Rarity rarity) {
+    // UX-3 first-card celebration. Fires once per profile from the
+    // Flame tick; defer to next frame before mounting the overlay so
+    // we don't build during the burst-resolve phase.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      FirstCardOverlay.show(context, def: def, rarity: rarity);
     });
   }
 
@@ -292,10 +306,17 @@ class ResultsArgs {
     required this.coinsEarned,
     required this.bestScore,
     required this.isNewBest,
+    this.cardsDiscoveredThisRound = 0,
   });
   final int score;
   final int combo;
   final int coinsEarned;
   final int bestScore;
   final bool isNewBest;
+
+  /// Count of smashables the player discovered for the first time
+  /// during this round. Drives the results-screen "See your N new
+  /// cards" bridge (CV-2 from GAME_POLISH_AUDIT.md). Default 0 keeps
+  /// existing test fixtures working without churn.
+  final int cardsDiscoveredThisRound;
 }

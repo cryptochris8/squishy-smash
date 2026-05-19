@@ -46,6 +46,7 @@ class ResultsScreen extends StatelessWidget {
     final coins = args?.coinsEarned ?? 0;
     final best = args?.bestScore ?? 0;
     final isNewBest = args?.isNewBest ?? false;
+    final newCards = args?.cardsDiscoveredThisRound ?? 0;
     final reduceMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
@@ -93,10 +94,17 @@ class ResultsScreen extends StatelessWidget {
                   (_) => false,
                 ),
               ),
+              if (newCards > 0) ...[
+                const SizedBox(height: 6),
+                _SeeCollectionLink(newCards: newCards),
+              ],
               if (coins > 0) ...[
-                const SizedBox(height: 8),
+                // Tighter gap when stacked under the Collection bridge
+                // so the two-link stack stays inside the safe area on
+                // smaller screens (iPhone SE class).
+                SizedBox(height: newCards > 0 ? 0 : 6),
                 _SeeShopLink(coins: coins),
-              ] else
+              ] else if (newCards == 0)
                 const SizedBox(height: 12),
             ],
           ),
@@ -313,6 +321,46 @@ class _StatDivider extends StatelessWidget {
       width: 1,
       height: 32,
       color: Colors.white.withValues(alpha: 0.18),
+    );
+  }
+}
+
+/// CV-2 bridge — surfaces the Collection screen as the natural next
+/// destination when the round produced new discoveries. Without this,
+/// the emotional peak of "I just found new squishies" ended at a
+/// dead-end results screen and the player had no path to inspect the
+/// thing they just earned.
+class _SeeCollectionLink extends StatelessWidget {
+  const _SeeCollectionLink({required this.newCards});
+  final int newCards;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = newCards == 1
+        ? 'See your new squishy →'
+        : 'See your $newCards new squishies →';
+    return Semantics(
+      button: true,
+      label: 'See your collection. You discovered $newCards this round.',
+      excludeSemantics: true,
+      child: Center(
+        child: TextButton(
+          onPressed: () =>
+              Navigator.pushNamed(context, AppRoutes.collection),
+          style: TextButton.styleFrom(
+            foregroundColor: Palette.lavender,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

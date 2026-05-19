@@ -38,6 +38,7 @@ ResultsArgs _args({
   int coinsEarned = 42,
   int bestScore = 1250,
   bool isNewBest = false,
+  int cardsDiscoveredThisRound = 0,
 }) {
   return ResultsArgs(
     score: score,
@@ -45,6 +46,7 @@ ResultsArgs _args({
     coinsEarned: coinsEarned,
     bestScore: bestScore,
     isNewBest: isNewBest,
+    cardsDiscoveredThisRound: cardsDiscoveredThisRound,
   );
 }
 
@@ -152,6 +154,54 @@ void main() {
       expect(find.text('COMBO'), findsOneWidget);
       expect(find.text('COINS'), findsOneWidget);
       expect(find.text('BEST'), findsOneWidget);
+    });
+  });
+
+  group('ResultsScreen — Collection bridge (CV-2)', () {
+    // Coins set to 0 in these cases so the Shop bridge doesn't share
+    // vertical space with the Collection bridge inside the test
+    // viewport (~552h). The both-bridges-stacked case is exercised
+    // by the layout fix in results_screen.dart and visually verified
+    // on device.
+    testWidgets('singular copy when exactly 1 card discovered',
+        (tester) async {
+      await _pumpResults(
+        tester,
+        args: _args(cardsDiscoveredThisRound: 1, coinsEarned: 0),
+        disableAnimations: true,
+      );
+      expect(
+        find.text('See your new squishy →'),
+        findsOneWidget,
+        reason: 'singular form for 1 discovery reads naturally to a kid',
+      );
+    });
+
+    testWidgets('plural copy with count when >1 card discovered',
+        (tester) async {
+      await _pumpResults(
+        tester,
+        args: _args(cardsDiscoveredThisRound: 3, coinsEarned: 0),
+        disableAnimations: true,
+      );
+      expect(
+        find.text('See your 3 new squishies →'),
+        findsOneWidget,
+        reason: 'plural form surfaces the count so the win feels concrete',
+      );
+    });
+
+    testWidgets('hidden when zero cards discovered', (tester) async {
+      await _pumpResults(
+        tester,
+        args: _args(cardsDiscoveredThisRound: 0),
+        disableAnimations: true,
+      );
+      expect(
+        find.textContaining('See your'),
+        findsNothing,
+        reason: 'no bridge when there is no new discovery to inspect',
+      );
     });
   });
 
