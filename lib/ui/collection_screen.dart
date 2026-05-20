@@ -46,19 +46,27 @@ class _CollectionScreenState extends State<CollectionScreen> {
     );
 
     final economy = ServiceLocator.economy;
-    int unlockedTotal = 0;
-    for (final c in cards) {
-      if (isCardUnlocked(
-        card: c,
-        cardBurstCounts: profile.cardBurstCounts,
-        cardsPurchased: profile.cardsPurchased,
-        unlockedFromAchievements: unlockedFromAch,
-        grandfatheredCards: profile.grandfatheredCards,
-        config: economy,
-      )) {
-        unlockedTotal++;
-      }
-    }
+    // PERF-8: resolve every card's unlock state once per build. The
+    // album header count and every grid tile both need it — doing it
+    // in a single pass here, instead of the header loop AND each tile
+    // re-resolving, removes the redundant second pass. Recomputed
+    // fresh each build, so an in-sheet purchase (which triggers a
+    // rebuild) is always reflected — there is no cross-build cache to
+    // go stale.
+    final unlockSources = <String, CardUnlockSource>{
+      for (final c in cards)
+        c.cardNumber: resolveCardUnlock(
+          card: c,
+          cardBurstCounts: profile.cardBurstCounts,
+          cardsPurchased: profile.cardsPurchased,
+          unlockedFromAchievements: unlockedFromAch,
+          grandfatheredCards: profile.grandfatheredCards,
+          config: economy,
+        ),
+    };
+    final unlockedTotal = unlockSources.values
+        .where((s) => s != CardUnlockSource.locked)
+        .length;
 
     final filtered = cards.where((c) {
       if (_packFilter != null && c.pack != _packFilter) return false;
@@ -123,8 +131,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
           else
             _CardGrid(
               cards: filtered,
-              profile: profile,
-              unlockedFromAch: unlockedFromAch,
+              unlockSources: unlockSources,
               onTap: (card) =>
                   _showCardDetail(context, card, unlockedFromAch),
             ),
@@ -333,14 +340,16 @@ class _RarityFilterRow extends StatelessWidget {
 class _CardGrid extends StatelessWidget {
   const _CardGrid({
     required this.cards,
-    required this.profile,
-    required this.unlockedFromAch,
+    required this.unlockSources,
     required this.onTap,
   });
 
   final List<CardEntry> cards;
-  final dynamic profile; // PlayerProfile — keep loose to avoid an import cycle
-  final Set<String> unlockedFromAch;
+
+  /// Per-card unlock state, resolved once by the parent's build (PERF-8)
+  /// and keyed by `cardNumber`. Tiles read from this rather than each
+  /// re-resolving.
+  final Map<String, CardUnlockSource> unlockSources;
   final ValueChanged<CardEntry> onTap;
 
   @override
@@ -357,17 +366,9 @@ class _CardGrid extends StatelessWidget {
       itemCount: cards.length,
       itemBuilder: (_, i) {
         final card = cards[i];
-        final source = resolveCardUnlock(
-          card: card,
-          cardBurstCounts: profile.cardBurstCounts,
-          cardsPurchased: profile.cardsPurchased,
-          unlockedFromAchievements: unlockedFromAch,
-          grandfatheredCards: profile.grandfatheredCards,
-          config: ServiceLocator.economy,
-        );
         return _CardTile(
           card: card,
-          source: source,
+          source: unlockSources[card.cardNumber] ?? CardUnlockSource.locked,
           onTap: () => onTap(card),
         );
       },
