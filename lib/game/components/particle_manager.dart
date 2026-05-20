@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/painting.dart';
 import '../../core/constants.dart';
+import '../../data/models/rarity.dart';
 
 class ParticleManager extends Component {
   final Random _rng = Random();
@@ -28,6 +29,41 @@ class ParticleManager extends Component {
           speed: velocity,
           child: CircleParticle(
             radius: 3 + _rng.nextDouble() * 5,
+            paint: sharedPaint,
+          ),
+        );
+      },
+    );
+    parent?.add(ParticleSystemComponent(particle: particle, position: position));
+  }
+
+  /// Extra burst layer stacked on top of the object's normal preset
+  /// burst for rare-or-better pops. P2-C from GAME_POLISH_AUDIT.md:
+  /// the common→mythic step was imperceptible because the base burst's
+  /// intensity tracks `gooLevel`, never rarity. This layer escalates
+  /// count, spread, and lifespan by tier and is colored with the
+  /// rarity tint, so a mythic pop reads visibly bigger than a common.
+  /// No-op for common — keeps the call site unconditional.
+  void rarityBurst(Vector2 position, {required Rarity rarity}) {
+    final tier = rarity.index; // common 0, rare 1, epic 2, mythic 3
+    if (tier < Rarity.rare.index) return;
+    final sharedPaint = _paintForColor(Palette.rarityColor(rarity));
+    final count = 18 + tier * 16;
+    final particle = Particle.generate(
+      count: count,
+      lifespan: 0.9 + tier * 0.2,
+      generator: (i) {
+        final angle = _rng.nextDouble() * pi * 2;
+        // Wider, faster spread than the base burst — higher tiers
+        // fling particles further and the lighter gravity lets them
+        // hang, so the accent reads as a distinct escalating layer.
+        final speed = 200 + _rng.nextDouble() * (200 + tier * 140);
+        final velocity = Vector2(cos(angle), sin(angle)) * speed;
+        return AcceleratedParticle(
+          acceleration: Vector2(0, 340),
+          speed: velocity,
+          child: CircleParticle(
+            radius: 2 + _rng.nextDouble() * (3 + tier),
             paint: sharedPaint,
           ),
         );

@@ -710,6 +710,9 @@ class SquishyGame extends FlameGame {
       preset: outcome.def.particlePreset,
       intensity: outcome.def.gooLevel,
     );
+    // P2-C: rare+ pops get a second, tier-colored burst so rarity is
+    // visible in the burst itself, not just the skybox/shake reveal.
+    particles.rarityBurst(position, rarity: outcome.rarity);
     decals.spawn(position, preset: outcome.def.decalPreset);
   }
 
