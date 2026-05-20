@@ -68,7 +68,7 @@ class IapProductCard extends StatelessWidget {
                   child: Text(
                     product.badge!.toUpperCase(),
                     style: const TextStyle(
-                      color: Color(0xFF1E0E2A),
+                      color: Palette.bgDeep,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.2,

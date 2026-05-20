@@ -58,7 +58,7 @@ class HowItWorksOverlay extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.xs2),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1A0F23),
+            color: Palette.bgSurface,
             borderRadius: BorderRadius.circular(AppRadii.dialogInner),
           ),
           padding: const EdgeInsets.fromLTRB(AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xl),
@@ -115,7 +115,7 @@ class HowItWorksOverlay extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Palette.cream,
-                    foregroundColor: const Color(0xFF1A0F23),
+                    foregroundColor: Palette.bgDeep,
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadii.md),

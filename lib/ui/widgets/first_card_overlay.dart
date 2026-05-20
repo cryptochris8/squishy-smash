@@ -99,7 +99,7 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
         padding: const EdgeInsets.all(AppSpacing.xs2),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1A0F23),
+            color: Palette.bgSurface,
             borderRadius: BorderRadius.circular(AppRadii.dialogInner),
           ),
           padding: const EdgeInsets.fromLTRB(AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xxl, AppSpacing.xl),

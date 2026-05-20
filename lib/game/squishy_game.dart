@@ -190,7 +190,7 @@ class SquishyGame extends FlameGame {
   }
 
   @override
-  Color backgroundColor() => const Color(0xFF1A1320);
+  Color backgroundColor() => Palette.bgSurface;
 
   @override
   Future<void> onLoad() async {
