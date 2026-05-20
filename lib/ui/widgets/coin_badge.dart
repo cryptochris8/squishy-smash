@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 /// Coin balance badge used in the menu + shop top bar.
 ///
@@ -31,7 +32,7 @@ class CoinBadge extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.monetization_on,
+            const BrandGlyphIcon(BrandGlyph.coin,
                 color: Palette.cream, size: 18),
             const SizedBox(width: AppSpacing.sm),
             Text(

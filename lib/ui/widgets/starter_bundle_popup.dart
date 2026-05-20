@@ -7,6 +7,7 @@ import '../../monetization/iap_service.dart';
 import '../../monetization/product_catalog.dart';
 import '../../core/constants.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 /// Celebratory Starter Bundle paywall shown once, after the player's
 /// very first rare (or better) burst. Treated as an offer — not a
@@ -170,8 +171,8 @@ class _StarterBundlePopupState extends State<StarterBundlePopup> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.auto_awesome,
+              const BrandGlyphIcon(
+                BrandGlyph.sparkle,
                 color: Palette.cream,
                 size: 40,
               ),
@@ -279,7 +280,7 @@ class _BundleRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle,
+          const BrandGlyphIcon(BrandGlyph.check,
               color: Palette.toxicLime, size: 18),
           const SizedBox(width: AppSpacing.sm),
           Expanded(

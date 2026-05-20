@@ -64,6 +64,7 @@ flutter:
     - assets/images/decals/
     - assets/images/arenas/
     - assets/images/ui/
+    - assets/images/glyphs/
     - assets/audio/food/
     - assets/audio/goo/
     - assets/audio/creature/

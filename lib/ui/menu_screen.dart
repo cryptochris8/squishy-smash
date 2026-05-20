@@ -8,6 +8,7 @@ import 'widgets/floating_mascot.dart';
 import 'widgets/how_it_works_overlay.dart';
 import '../core/constants.dart';
 import 'theme/app_theme.dart';
+import 'widgets/brand_glyph.dart';
 
 /// Hero image shown idling on the menu's dead space. Picked from the
 /// launch pack's Legendary tier — splashy art that signals "rare
@@ -77,7 +78,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.local_fire_department, color: Palette.cream),
+                      const BrandGlyphIcon(BrandGlyph.fire, color: Palette.cream),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(

@@ -6,6 +6,7 @@ import '../../core/constants.dart';
 import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 /// Once-per-profile celebration shown the very first time a player
 /// discovers ANY card. Addresses GAME_POLISH_AUDIT.md UX-3 — previously
@@ -106,7 +107,8 @@ class _FirstCardOverlayState extends State<FirstCardOverlay> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.auto_awesome, color: Palette.cream, size: 36),
+              const BrandGlyphIcon(BrandGlyph.sparkle,
+                  color: Palette.cream, size: 36),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 'YOUR FIRST SQUISHY!',

@@ -12,6 +12,7 @@ import 'widgets/iap_product_card.dart';
 import 'widgets/pack_card.dart';
 import '../core/constants.dart';
 import 'theme/app_theme.dart';
+import 'widgets/brand_glyph.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -406,7 +407,7 @@ class _ArenaSkuCard extends StatelessWidget {
             ),
           ),
           if (unlocked)
-            const Icon(Icons.check_circle, color: Palette.toxicLime)
+            const BrandGlyphIcon(BrandGlyph.check, color: Palette.toxicLime)
           else ...[
             Text(
               '${theme.cost}',

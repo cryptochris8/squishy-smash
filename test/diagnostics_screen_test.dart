@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:squishy_smash/core/diagnostics.dart';
 import 'package:squishy_smash/ui/diagnostics_screen.dart';
+import 'package:squishy_smash/ui/widgets/brand_glyph.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
       theme: ThemeData.dark(),
@@ -17,7 +18,11 @@ void main() {
       await tester
           .pumpWidget(_wrap(DiagnosticsScreen(service: svc)));
       expect(find.text('No errors recorded.'), findsOneWidget);
-      expect(find.byIcon(Icons.check_circle_outline), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+            (w) => w is BrandGlyphIcon && w.glyph == BrandGlyph.check),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Copy and Clear actions are disabled when empty',

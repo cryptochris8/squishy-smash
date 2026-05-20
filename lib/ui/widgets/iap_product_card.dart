@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../monetization/product_catalog.dart';
 import '../../core/constants.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 /// Premium IAP card used in the Shop's "Offers" section. Matches the
 /// pastel-gradient language of PackCard so the shop reads consistently.
@@ -112,7 +113,7 @@ class _OwnedBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.check_circle, color: Palette.toxicLime),
+        const BrandGlyphIcon(BrandGlyph.check, color: Palette.toxicLime),
         const SizedBox(width: AppSpacing.sm),
         Text(
           'Owned',

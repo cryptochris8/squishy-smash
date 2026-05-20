@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/content_pack.dart';
 import '../../core/constants.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 class PackCard extends StatelessWidget {
   const PackCard({
@@ -54,7 +55,7 @@ class PackCard extends StatelessWidget {
                 ),
               ),
               if (unlocked)
-                const Icon(Icons.check_circle, color: Palette.toxicLime)
+                const BrandGlyphIcon(BrandGlyph.check, color: Palette.toxicLime)
               else
                 Text(
                   '${pack.unlockCost} coins',

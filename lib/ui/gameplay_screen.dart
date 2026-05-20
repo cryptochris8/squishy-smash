@@ -14,6 +14,7 @@ import 'widgets/first_card_overlay.dart';
 import 'widgets/reward_toast_overlay.dart';
 import 'widgets/starter_bundle_popup.dart';
 import 'theme/app_theme.dart';
+import 'widgets/brand_glyph.dart';
 import '../core/constants.dart';
 
 class GameplayScreen extends StatefulWidget {
@@ -164,7 +165,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         closeIconColor: Colors.white70,
         content: const Row(
           children: <Widget>[
-            Icon(Icons.auto_awesome, color: Palette.cream),
+            BrandGlyphIcon(BrandGlyph.sparkle, color: Palette.cream),
             SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
@@ -274,7 +275,11 @@ class _GameplayScreenState extends State<GameplayScreen>
               child: Row(
                 children: <Widget>[
                   IconButton(
-                    icon: const Icon(Icons.ios_share),
+                    icon: const BrandGlyphIcon(
+                      BrandGlyph.share,
+                      size: 32,
+                      color: Colors.white,
+                    ),
                     iconSize: 32,
                     color: Colors.white,
                     tooltip: 'Share this moment',

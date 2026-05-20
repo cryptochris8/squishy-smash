@@ -12,6 +12,7 @@ import 'widgets/big_button.dart';
 import 'widgets/card_album_widgets.dart';
 import '../core/constants.dart';
 import 'theme/app_theme.dart';
+import 'widgets/brand_glyph.dart';
 
 /// Card-album collection screen. Shows all 48 cards from the manifest
 /// in a pack-grouped grid; locked cards render as silhouettes, unlocked
@@ -470,8 +471,8 @@ class _LockedSilhouette extends StatelessWidget {
     return Container(
       color: Colors.black.withValues(alpha: 0.3),
       child: Center(
-        child: Icon(
-          Icons.lock_outline,
+        child: BrandGlyphIcon(
+          BrandGlyph.lock,
           size: 32,
           color: Colors.white.withValues(alpha: 0.25),
         ),
@@ -735,7 +736,7 @@ class _UnlockedBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.check_circle, size: 18, color: color),
+          BrandGlyphIcon(BrandGlyph.check, size: 18, color: color),
           const SizedBox(width: AppSpacing.sm),
           Text(
             label,

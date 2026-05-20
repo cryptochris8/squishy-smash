@@ -5,6 +5,7 @@ import '../core/diagnostics.dart';
 import '../core/service_locator.dart';
 import '../core/constants.dart';
 import 'theme/app_theme.dart';
+import 'widgets/brand_glyph.dart';
 
 /// In-app log viewer for the global error buffer. Critical given the
 /// no-Mac-access constraint — without Xcode, this is the only way to
@@ -194,8 +195,8 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.check_circle_outline,
+            BrandGlyphIcon(
+              BrandGlyph.check,
               size: 56,
               color: Palette.toxicLime.withValues(alpha: 0.7),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../game/systems/reward_event.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 /// Brief floating "+N coins · reason!" callout. Drifts up ~40 px,
 /// fades to transparent, auto-removes itself after [lifetime].
@@ -106,7 +107,7 @@ class _RewardToastState extends State<RewardToast>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.monetization_on, color: tint, size: 18),
+                  BrandGlyphIcon(BrandGlyph.coin, color: tint, size: 18),
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     '+${widget.event.coinAmount}',

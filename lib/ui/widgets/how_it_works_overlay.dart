@@ -4,6 +4,7 @@ import '../../analytics/events.dart';
 import '../../core/constants.dart';
 import '../../core/service_locator.dart';
 import '../theme/app_theme.dart';
+import 'brand_glyph.dart';
 
 /// First-run "How it works" overlay — a single dismissible frame shown
 /// once on first launch, then never again on this device.
@@ -65,8 +66,8 @@ class HowItWorksOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.auto_awesome,
+              const BrandGlyphIcon(
+                BrandGlyph.sparkle,
                 color: Palette.cream,
                 size: 40,
               ),

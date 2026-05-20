@@ -5,6 +5,7 @@ import '../core/service_locator.dart';
 import '../game/systems/arena_registry.dart';
 import '../core/constants.dart';
 import 'theme/app_theme.dart';
+import 'widgets/brand_glyph.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -207,8 +208,8 @@ class _ArenaTile extends StatelessWidget {
                   : ColoredBox(
                       color: Colors.black.withValues(alpha: 0.55),
                       child: const Center(
-                        child: Icon(
-                          Icons.lock,
+                        child: BrandGlyphIcon(
+                          BrandGlyph.lock,
                           color: Colors.white70,
                           size: 28,
                         ),
