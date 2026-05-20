@@ -45,13 +45,20 @@ import 'world/arena_world.dart';
 /// actually changes, so the HUD rebuilds on real state changes rather
 /// than on a fixed polling interval. `fill` is quantized to 1% before
 /// publishing so the decay animation doesn't trigger 60-fps rebuilds.
-typedef HudSnapshot = ({int score, int mult, double fill, ComboTier tier});
+typedef HudSnapshot = ({
+  int score,
+  int mult,
+  double fill,
+  ComboTier tier,
+  int secondsLeft,
+});
 
 const HudSnapshot _initialHudSnapshot = (
   score: 0,
   mult: 1,
   fill: 0.0,
   tier: ComboTier.none,
+  secondsLeft: Tunables.roundSeconds,
 );
 
 /// Compose a [HudSnapshot] with `fill` quantized to 1% granularity.
@@ -62,12 +69,19 @@ HudSnapshot composeHudSnapshot({
   required int mult,
   required double fill,
   required ComboTier tier,
+  required int secondsLeft,
 }) {
   // Clamp + round to 1%. Smooth enough for the decay bar; ~100x cheaper
   // than raw double updates (and keeps record equality short-circuiting
   // sub-percent jitter that the user can't perceive anyway).
   final quantized = (fill.clamp(0.0, 1.0) * 100).round() / 100;
-  return (score: score, mult: mult, fill: quantized, tier: tier);
+  return (
+    score: score,
+    mult: mult,
+    fill: quantized,
+    tier: tier,
+    secondsLeft: secondsLeft,
+  );
 }
 
 class SquishyGame extends FlameGame {
@@ -166,7 +180,7 @@ class SquishyGame extends FlameGame {
   int _allocateRewardId() => _nextRewardId++;
 
   final Random _rng = Random();
-  double _roundTimer = 60;
+  double _roundTimer = Tunables.roundSeconds.toDouble();
   int _coinsEarned = 0;
   int _smashes = 0;
   String? _activePackId;
@@ -351,6 +365,7 @@ class SquishyGame extends FlameGame {
       mult: combo.multiplier,
       fill: combo.fill,
       tier: combo.currentTier,
+      secondsLeft: _roundTimer.ceil().clamp(0, Tunables.roundSeconds).toInt(),
     );
   }
 

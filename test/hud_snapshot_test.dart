@@ -11,6 +11,7 @@ void main() {
         mult: 1,
         fill: 0.123,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(snap.fill, 0.12);
     });
@@ -21,6 +22,7 @@ void main() {
         mult: 1,
         fill: 0.567,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(snap.fill, 0.57);
     });
@@ -31,6 +33,7 @@ void main() {
         mult: 1,
         fill: 1.4,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(snap.fill, 1.0);
     });
@@ -41,6 +44,7 @@ void main() {
         mult: 1,
         fill: -0.3,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(snap.fill, 0.0);
     });
@@ -51,10 +55,22 @@ void main() {
         mult: 7,
         fill: 0.5,
         tier: ComboTier.mega,
+        secondsLeft: 60,
       );
       expect(snap.score, 12345);
       expect(snap.mult, 7);
       expect(snap.tier, ComboTier.mega);
+    });
+
+    test('passes through secondsLeft untouched', () {
+      final snap = composeHudSnapshot(
+        score: 0,
+        mult: 1,
+        fill: 0.5,
+        tier: ComboTier.none,
+        secondsLeft: 42,
+      );
+      expect(snap.secondsLeft, 42);
     });
   });
 
@@ -65,12 +81,14 @@ void main() {
         mult: 2,
         fill: 0.5,
         tier: ComboTier.starter,
+        secondsLeft: 60,
       );
       final b = composeHudSnapshot(
         score: 100,
         mult: 2,
         fill: 0.5,
         tier: ComboTier.starter,
+        secondsLeft: 60,
       );
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
@@ -84,12 +102,14 @@ void main() {
         mult: 1,
         fill: 0.501,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       final b = composeHudSnapshot(
         score: 0,
         mult: 1,
         fill: 0.504,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(a, equals(b));
     });
@@ -100,12 +120,14 @@ void main() {
         mult: 2,
         fill: 0.5,
         tier: ComboTier.starter,
+        secondsLeft: 60,
       );
       final b = composeHudSnapshot(
         score: 100,
         mult: 2,
         fill: 0.5,
         tier: ComboTier.stronger,
+        secondsLeft: 60,
       );
       expect(a, isNot(equals(b)));
     });
@@ -116,12 +138,33 @@ void main() {
         mult: 1,
         fill: 0.0,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       final b = composeHudSnapshot(
         score: 101,
         mult: 1,
         fill: 0.0,
         tier: ComboTier.none,
+        secondsLeft: 60,
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('a secondsLeft change produces a non-equal snapshot', () {
+      // The HUD must rebuild each time the countdown ticks down.
+      final a = composeHudSnapshot(
+        score: 100,
+        mult: 1,
+        fill: 0.0,
+        tier: ComboTier.none,
+        secondsLeft: 30,
+      );
+      final b = composeHudSnapshot(
+        score: 100,
+        mult: 1,
+        fill: 0.0,
+        tier: ComboTier.none,
+        secondsLeft: 29,
       );
       expect(a, isNot(equals(b)));
     });
@@ -134,6 +177,7 @@ void main() {
         mult: 1,
         fill: 0.0,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       final notifier = ValueNotifier<HudSnapshot>(initial);
       var fires = 0;
@@ -145,6 +189,7 @@ void main() {
         mult: 1,
         fill: 0.0,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(fires, 0);
 
@@ -154,6 +199,7 @@ void main() {
         mult: 1,
         fill: 0.0049,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(fires, 0,
           reason: 'fill 0.0049 quantizes to 0.00 — equal to current');
@@ -166,6 +212,7 @@ void main() {
           mult: 1,
           fill: 0.0,
           tier: ComboTier.none,
+          secondsLeft: 60,
         ),
       );
       var fires = 0;
@@ -176,6 +223,7 @@ void main() {
         mult: 1,
         fill: 0.0,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(fires, 1);
 
@@ -184,6 +232,7 @@ void main() {
         mult: 2,
         fill: 0.0,
         tier: ComboTier.starter,
+        secondsLeft: 60,
       );
       expect(fires, 2);
     });
@@ -195,6 +244,7 @@ void main() {
           mult: 1,
           fill: 0.50,
           tier: ComboTier.none,
+          secondsLeft: 60,
         ),
       );
       var fires = 0;
@@ -205,8 +255,32 @@ void main() {
         mult: 1,
         fill: 0.51,
         tier: ComboTier.none,
+        secondsLeft: 60,
       );
       expect(fires, 1, reason: '1% fill change should fire');
+    });
+
+    test('a one-second countdown tick fires a notification', () {
+      final notifier = ValueNotifier<HudSnapshot>(
+        composeHudSnapshot(
+          score: 0,
+          mult: 1,
+          fill: 0.0,
+          tier: ComboTier.none,
+          secondsLeft: 60,
+        ),
+      );
+      var fires = 0;
+      notifier.addListener(() => fires++);
+
+      notifier.value = composeHudSnapshot(
+        score: 0,
+        mult: 1,
+        fill: 0.0,
+        tier: ComboTier.none,
+        secondsLeft: 59,
+      );
+      expect(fires, 1, reason: 'countdown tick should rebuild the HUD');
     });
   });
 }

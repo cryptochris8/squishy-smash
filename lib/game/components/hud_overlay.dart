@@ -102,6 +102,39 @@ class HudOverlay extends StatelessWidget {
     }
   }
 
+  /// Round countdown chip, anchored top-right opposite the score.
+  /// UX-10 — first-time players had no on-screen cue that a round is
+  /// time-boxed. Turns urgent (pink) for the final 10 seconds.
+  Widget _roundTimerChip(int secondsLeft) {
+    final low = secondsLeft <= 10;
+    final minutes = secondsLeft ~/ 60;
+    final seconds = (secondsLeft % 60).toString().padLeft(2, '0');
+    return Semantics(
+      label: 'Time left: $secondsLeft seconds',
+      liveRegion: true,
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.black38,
+          borderRadius: BorderRadius.circular(AppRadii.full),
+        ),
+        child: Text(
+          '$minutes:$seconds',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: low ? FontWeight.w900 : FontWeight.w800,
+            color: low ? Palette.pink : Colors.white,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<HudSnapshot>(
@@ -121,18 +154,35 @@ class HudOverlay extends StatelessWidget {
                 // live region. Pre-fix the score number was read as a
                 // bare digit with no context; with liveRegion set,
                 // assistive tech re-announces on each value change.
-                Semantics(
-                  label: 'Score: ${data.score}',
-                  liveRegion: true,
-                  excludeSemantics: true,
-                  child: Text(
-                    '${data.score}',
-                    style: const TextStyle(
-                      fontSize: 44,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                //
+                // UX-10 — the round timer sits center, between the
+                // score (left) and the gameplay screen's share/close
+                // controls (right), so the three read as one top bar.
+                // Equal-flex spacers either side keep it screen-centered
+                // regardless of how wide the score grows.
+                Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Semantics(
+                          label: 'Score: ${data.score}',
+                          liveRegion: true,
+                          excludeSemantics: true,
+                          child: Text(
+                            '${data.score}',
+                            style: const TextStyle(
+                              fontSize: 44,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    _roundTimerChip(data.secondsLeft),
+                    const Expanded(child: SizedBox.shrink()),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Row(

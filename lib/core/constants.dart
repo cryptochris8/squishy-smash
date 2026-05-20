@@ -5,6 +5,10 @@ import '../data/models/rarity.dart';
 class Tunables {
   Tunables._();
 
+  /// Length of one play round, in seconds. Drives both the gameplay
+  /// timer and the HUD countdown's initial value.
+  static const int roundSeconds = 60;
+
   static const Duration tapToHoldPromotion = Duration(milliseconds: 120);
   static const Duration squashRecover = Duration(milliseconds: 220);
   static const Duration crushRamp = Duration(milliseconds: 700);
