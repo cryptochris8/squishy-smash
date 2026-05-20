@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:squishy_smash/analytics/events.dart';
+import 'package:squishy_smash/core/analytics_stub.dart';
 import 'package:squishy_smash/data/models/content_pack.dart';
 import 'package:squishy_smash/data/models/liveops_schedule.dart';
 import 'package:squishy_smash/data/models/rarity.dart';
@@ -20,7 +22,7 @@ Future<(ProgressionRepository, PurchaseGrantController, StubIapService)>
   final packs = PackRepository(<ContentPack>[], _emptySchedule());
   final repo = ProgressionRepository(persistence, packs);
   final stub = StubIapService();
-  final grants = PurchaseGrantController(repo);
+  final grants = PurchaseGrantController(repo, GameEvents(const NoOpAnalytics()));
   return (repo, grants, stub);
 }
 

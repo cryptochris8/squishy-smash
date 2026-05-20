@@ -115,7 +115,7 @@ class ServiceLocator {
     iap = (FeatureFlags.iapsEnabled && _isMobile)
         ? RealIapService()
         : StubIapService();
-    purchaseGrants = PurchaseGrantController(progression);
+    purchaseGrants = PurchaseGrantController(progression, GameEvents(analytics));
     if (FeatureFlags.iapsEnabled) {
       // Fire-and-forget product load so the Shop screen has prices
       // the first time it's opened. Offline or store-unavailable

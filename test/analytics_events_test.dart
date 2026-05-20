@@ -264,22 +264,6 @@ void main() {
       expect(sink.calls.last.$1, 'starter_bundle_purchased');
     });
 
-    test('duplicate reward + reveal boost aliases fire with canonical names',
-        () {
-      final sink = RecordingAnalytics();
-      final e = GameEvents(sink);
-      e.duplicateRewardGranted(
-        objectId: 'soft_dumpling',
-        packId: 'launch_squishy_foods',
-        rarity: Rarity.common,
-        coinsAwarded: 2,
-      );
-      e.revealBoostUsed(packId: 'goo_fidgets_drop_01');
-      expect(sink.calls.map((c) => c.$1).toList(), [
-        'duplicate_reward_granted',
-        'reveal_boost_used',
-      ]);
-    });
   });
 
   group('GameEvents error', () {

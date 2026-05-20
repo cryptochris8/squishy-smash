@@ -1,3 +1,4 @@
+import '../analytics/events.dart';
 import '../data/repositories/progression_repo.dart';
 import '../game/systems/arena_registry.dart';
 import 'product_catalog.dart';
@@ -74,9 +75,10 @@ abstract class IapService {
 /// Applies the declarative ProductReward list to the game state. Lives
 /// separate from the service so both stub + real share grant logic.
 class PurchaseGrantController {
-  const PurchaseGrantController(this._progression);
+  const PurchaseGrantController(this._progression, this._events);
 
   final ProgressionRepository _progression;
+  final GameEvents _events;
 
   /// Apply every reward declared on [sku]. Idempotent — re-granting
   /// a non-consumable that's already marked purchased is a no-op.
@@ -101,6 +103,11 @@ class PurchaseGrantController {
           break;
         case RewardKind.coins:
           await _progression.awardCoins(reward.amount);
+          _events.earnVirtualCurrency(
+            currencyName: 'coins',
+            value: reward.amount,
+            source: 'iap',
+          );
           break;
         case RewardKind.boostToken:
           await _progression.grantBoostToken(count: reward.amount);

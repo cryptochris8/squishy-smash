@@ -447,7 +447,7 @@ class SquishyGame extends FlameGame {
     if (canForce) {
       ServiceLocator.progression.consumeGuaranteedReveal();
     }
-    return pitySelector.pick(
+    final picked = pitySelector.pick(
       pool: effectivePool,
       rareDryByPack: profile.rareDryByPack,
       epicDryByPack: profile.epicDryByPack,
@@ -456,6 +456,40 @@ class SquishyGame extends FlameGame {
       boostActive: boost,
       forcedRarity: canForce ? forcedRarity : null,
       rng: _rng,
+    );
+    _reportPityIfForced(picked);
+    return picked;
+  }
+
+  /// Fire `pity_triggered` telemetry when the just-picked object came
+  /// from a pack whose hard-pity floor is active for a tier — i.e. the
+  /// floor forced this pick up. Picked-pack-scoped: a floor active in a
+  /// pack we didn't pull from this spawn doesn't count.
+  void _reportPityIfForced(SmashableDef picked) {
+    final packId = _defIdToPackId[picked.id];
+    if (packId == null) return;
+    final pack = ServiceLocator.packs.byId(packId);
+    if (pack == null) return;
+    final pity = pack.progression.pity;
+    final profile = ServiceLocator.progression.profile;
+    final rareDry = profile.rareDryByPack[packId] ?? 0;
+    final epicDry = profile.epicDryByPack[packId] ?? 0;
+    final legendaryDry = profile.legendaryDryByPack[packId] ?? 0;
+    final Rarity? forced;
+    if (legendaryDry >= pity.legendaryHard) {
+      forced = Rarity.mythic;
+    } else if (epicDry >= pity.epicHard) {
+      forced = Rarity.epic;
+    } else if (rareDry >= pity.rareHard) {
+      forced = Rarity.rare;
+    } else {
+      forced = null;
+    }
+    if (forced == null) return;
+    events.pityTriggered(
+      packId: packId,
+      forcedTier: forced,
+      bursts: profile.totalBurstsByPack[packId] ?? 0,
     );
   }
 
@@ -654,6 +688,11 @@ class SquishyGame extends FlameGame {
             coinAmount: milestone.coinReward,
             percent: milestone.percent,
           ));
+          events.earnVirtualCurrency(
+            currencyName: 'coins',
+            value: milestone.coinReward,
+            source: 'pack_milestone',
+          );
         }
       }
     }
@@ -797,7 +836,22 @@ class SquishyGame extends FlameGame {
       profile: ServiceLocator.progression.profile,
     );
     for (final achievement in eligible) {
-      await ServiceLocator.progression.grantAchievement(achievement);
+      final reward =
+          await ServiceLocator.progression.grantAchievement(achievement);
+      if (reward is CoinReward) {
+        events.earnVirtualCurrency(
+          currencyName: 'coins',
+          value: reward.coins,
+          source: 'achievement',
+        );
+      }
+    }
+    if (_coinsEarned > 0) {
+      events.earnVirtualCurrency(
+        currencyName: 'coins',
+        value: _coinsEarned,
+        source: 'gameplay_round',
+      );
     }
     onRoundEnd?.call(score.total, combo.peak, _coinsEarned, previousBest);
   }

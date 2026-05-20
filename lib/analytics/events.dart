@@ -271,29 +271,6 @@ class GameEvents {
     });
   }
 
-  // -- duplicate + reveal boost semantic aliases ---------------------
-  // The monetization spec uses slightly different names than the
-  // core-loop analytics surface. Emit the spec names too so dashboards
-  // can key off either without duplication logic.
-
-  void duplicateRewardGranted({
-    required String objectId,
-    required String packId,
-    required Rarity rarity,
-    required int coinsAwarded,
-  }) {
-    _sink.event('duplicate_reward_granted', <String, Object?>{
-      'object_id': objectId,
-      'pack_id': packId,
-      'rarity': rarity.token,
-      'coins_awarded': coinsAwarded,
-    });
-  }
-
-  void revealBoostUsed({required String packId}) {
-    _sink.event('reveal_boost_used', <String, Object?>{'pack_id': packId});
-  }
-
   // -- live-ops -------------------------------------------------------
 
   void packViewed({required String packId, required String source}) {

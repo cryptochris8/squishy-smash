@@ -235,6 +235,13 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Future<void> _attemptUnlockPack(ContentPack pack) async {
     final ok = await ServiceLocator.progression.tryUnlock(pack.packId);
+    if (ok) {
+      _events.spendVirtualCurrency(
+        currencyName: 'coins',
+        value: pack.unlockCost,
+        itemName: pack.packId,
+      );
+    }
     if (!mounted) return;
     setState(() {});
     final msg = ok
@@ -256,6 +263,11 @@ class _ShopScreenState extends State<ShopScreen> {
     if (!mounted) return;
     if (ok) {
       await ServiceLocator.progression.setActiveArena(theme.key);
+      _events.spendVirtualCurrency(
+        currencyName: 'coins',
+        value: theme.cost,
+        itemName: theme.key,
+      );
     }
     if (!mounted) return;
     setState(() {});

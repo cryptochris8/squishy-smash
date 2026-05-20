@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../analytics/events.dart';
 import '../core/routes.dart';
 import '../core/service_locator.dart';
 import '../data/achievement_registry.dart';
@@ -624,6 +625,16 @@ class _CardDetailSheetState extends State<_CardDetailSheet> {
     final ok = await ServiceLocator.progression.tryPurchaseCardAtRarityPrice(
       widget.card,
     );
+    if (ok) {
+      GameEvents(ServiceLocator.analytics).spendVirtualCurrency(
+        currencyName: 'coins',
+        value: CardCoinPrice.coinsFor(
+          widget.card.rarity,
+          config: ServiceLocator.economy,
+        ),
+        itemName: widget.card.cardNumber,
+      );
+    }
     if (!mounted) return;
     setState(() {
       _purchaseInFlight = false;
