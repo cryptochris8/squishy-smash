@@ -13,6 +13,8 @@ import '../core/constants.dart';
 import '../core/service_locator.dart';
 import '../data/achievement_detector.dart';
 import '../data/achievement_registry.dart';
+import '../data/card_unlock.dart';
+import '../data/models/achievement.dart';
 import '../data/models/player_profile.dart';
 import '../data/models/rarity.dart';
 import '../data/models/smashable_def.dart';
@@ -125,17 +127,42 @@ class SquishyGame extends FlameGame {
   /// touching the widget tree.
   final void Function(SmashableDef def, Rarity rarity)? onFirstCardEver;
 
-  /// Smashable IDs the player discovered for the first time in this
-  /// round. Drives the results-screen "See your N new cards" link
-  /// (CV-2 from GAME_POLISH_AUDIT.md). Reset implicitly per round —
-  /// `SquishyGame` is reconstructed for each gameplay session.
-  final List<String> _discoveredThisRound = <String>[];
+  /// Card numbers already unlocked when the round started. Diffed
+  /// against the live unlock set at round end so the results-screen
+  /// "See your N new squishies" bridge (CV-2 from GAME_POLISH_AUDIT.md)
+  /// counts cards that genuinely *unlocked* this round — crossing the
+  /// burst-threshold / purchase / achievement gates — rather than every
+  /// object the player happened to smash. Snapshotted in `onLoad`.
+  Set<String> _cardsUnlockedAtRoundStart = <String>{};
 
-  /// Read-only view of cards discovered during the current round. The
-  /// results-screen bridge reads this at round end to know whether to
-  /// surface the "See your new card(s)" CTA.
-  List<String> get discoveredThisRound =>
-      List.unmodifiable(_discoveredThisRound);
+  /// Count of cards that crossed from locked to unlocked during this
+  /// round, across all three unlock paths. Drives the results-screen
+  /// Collection bridge. Read at round end, after burst counts and
+  /// achievement grants have been applied.
+  int get newlyUnlockedCardCount =>
+      _unlockedCardNumbers().difference(_cardsUnlockedAtRoundStart).length;
+
+  /// Every card number currently unlocked, across the burst-threshold,
+  /// purchase, and achievement paths. Pure read of the live profile.
+  Set<String> _unlockedCardNumbers() {
+    final profile = ServiceLocator.progression.profile;
+    final fromAchievements = unlockedCardNumbersFromAchievements(
+      achievements: starterAchievements,
+      claimedIds: profile.claimedAchievements,
+    );
+    return <String>{
+      for (final card in ServiceLocator.cards.cards)
+        if (isCardUnlocked(
+          card: card,
+          cardBurstCounts: profile.cardBurstCounts,
+          cardsPurchased: profile.cardsPurchased,
+          unlockedFromAchievements: fromAchievements,
+          grandfatheredCards: profile.grandfatheredCards,
+          config: ServiceLocator.economy,
+        ))
+          card.cardNumber,
+    };
+  }
 
   late final ArenaWorld arena;
   late final ScoreController score;
@@ -323,6 +350,10 @@ class SquishyGame extends FlameGame {
       onSpawn: _spawnNext,
     );
     await add(spawner);
+    // Baseline for the results-screen "new squishies" count — every
+    // card already unlocked before the first burst of this round.
+    _cardsUnlockedAtRoundStart = _unlockedCardNumbers();
+
     // P1-E: 0.5 s buffer before the first spawn so the skybox finishes
     // settling and the player gets a half-beat of "the world is loading"
     // before a squishy materialises. Pre-fix the very first squishy
@@ -526,7 +557,6 @@ class SquishyGame extends FlameGame {
         smashableId: outcome.def.id,
         rarity: outcome.rarity,
       );
-      _discoveredThisRound.add(outcome.def.id);
       // UX-3: fire the once-per-profile first-card celebration the
       // instant the player's discovered set crosses from 0 -> 1. The
       // markDiscovered call above mutates the in-memory set

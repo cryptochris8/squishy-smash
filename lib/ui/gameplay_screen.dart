@@ -116,7 +116,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         // place that knows the semantics: ties don't celebrate.
         bestScore: score > previousBest ? score : previousBest,
         isNewBest: score > previousBest,
-        cardsDiscoveredThisRound: _game.discoveredThisRound.length,
+        cardsUnlockedThisRound: _game.newlyUnlockedCardCount,
       ),
     );
   }
@@ -307,7 +307,7 @@ class ResultsArgs {
     required this.coinsEarned,
     required this.bestScore,
     required this.isNewBest,
-    this.cardsDiscoveredThisRound = 0,
+    this.cardsUnlockedThisRound = 0,
   });
   final int score;
   final int combo;
@@ -315,9 +315,10 @@ class ResultsArgs {
   final int bestScore;
   final bool isNewBest;
 
-  /// Count of smashables the player discovered for the first time
-  /// during this round. Drives the results-screen "See your N new
-  /// cards" bridge (CV-2 from GAME_POLISH_AUDIT.md). Default 0 keeps
-  /// existing test fixtures working without churn.
-  final int cardsDiscoveredThisRound;
+  /// Count of cards that crossed from locked to unlocked during this
+  /// round — via burst threshold, purchase, or achievement. Drives the
+  /// results-screen "See your N new squishies" bridge (CV-2 from
+  /// GAME_POLISH_AUDIT.md). Default 0 keeps existing test fixtures
+  /// working without churn.
+  final int cardsUnlockedThisRound;
 }

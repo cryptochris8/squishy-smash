@@ -38,7 +38,7 @@ ResultsArgs _args({
   int coinsEarned = 42,
   int bestScore = 1250,
   bool isNewBest = false,
-  int cardsDiscoveredThisRound = 0,
+  int cardsUnlockedThisRound = 0,
 }) {
   return ResultsArgs(
     score: score,
@@ -46,7 +46,7 @@ ResultsArgs _args({
     coinsEarned: coinsEarned,
     bestScore: bestScore,
     isNewBest: isNewBest,
-    cardsDiscoveredThisRound: cardsDiscoveredThisRound,
+    cardsUnlockedThisRound: cardsUnlockedThisRound,
   );
 }
 
@@ -163,25 +163,25 @@ void main() {
     // viewport (~552h). The both-bridges-stacked case is exercised
     // by the layout fix in results_screen.dart and visually verified
     // on device.
-    testWidgets('singular copy when exactly 1 card discovered',
+    testWidgets('singular copy when exactly 1 card unlocked',
         (tester) async {
       await _pumpResults(
         tester,
-        args: _args(cardsDiscoveredThisRound: 1, coinsEarned: 0),
+        args: _args(cardsUnlockedThisRound: 1, coinsEarned: 0),
         disableAnimations: true,
       );
       expect(
         find.text('See your new squishy →'),
         findsOneWidget,
-        reason: 'singular form for 1 discovery reads naturally to a kid',
+        reason: 'singular form for 1 unlock reads naturally to a kid',
       );
     });
 
-    testWidgets('plural copy with count when >1 card discovered',
+    testWidgets('plural copy with count when >1 card unlocked',
         (tester) async {
       await _pumpResults(
         tester,
-        args: _args(cardsDiscoveredThisRound: 3, coinsEarned: 0),
+        args: _args(cardsUnlockedThisRound: 3, coinsEarned: 0),
         disableAnimations: true,
       );
       expect(
@@ -191,16 +191,16 @@ void main() {
       );
     });
 
-    testWidgets('hidden when zero cards discovered', (tester) async {
+    testWidgets('hidden when zero cards unlocked', (tester) async {
       await _pumpResults(
         tester,
-        args: _args(cardsDiscoveredThisRound: 0),
+        args: _args(cardsUnlockedThisRound: 0),
         disableAnimations: true,
       );
       expect(
         find.textContaining('See your'),
         findsNothing,
-        reason: 'no bridge when there is no new discovery to inspect',
+        reason: 'no bridge when there is no new unlock to inspect',
       );
     });
   });

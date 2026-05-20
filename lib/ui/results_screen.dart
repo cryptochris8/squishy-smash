@@ -47,7 +47,7 @@ class ResultsScreen extends StatelessWidget {
     final coins = args?.coinsEarned ?? 0;
     final best = args?.bestScore ?? 0;
     final isNewBest = args?.isNewBest ?? false;
-    final newCards = args?.cardsDiscoveredThisRound ?? 0;
+    final newCards = args?.cardsUnlockedThisRound ?? 0;
     final reduceMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
@@ -342,7 +342,7 @@ class _SeeCollectionLink extends StatelessWidget {
         : 'See your $newCards new squishies →';
     return Semantics(
       button: true,
-      label: 'See your collection. You discovered $newCards this round.',
+      label: 'See your collection. You unlocked $newCards this round.',
       excludeSemantics: true,
       child: Center(
         child: TextButton(
