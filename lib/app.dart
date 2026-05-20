@@ -55,6 +55,7 @@ class SquishySmashApp extends StatelessWidget {
       ),
       initialRoute: AppRoutes.menu,
       routes: AppRoutes.table,
+      navigatorObservers: <NavigatorObserver>[appRouteObserver],
     );
   }
 }

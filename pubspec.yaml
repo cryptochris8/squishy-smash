@@ -65,6 +65,7 @@ flutter:
     - assets/images/arenas/
     - assets/images/ui/
     - assets/images/glyphs/
+    - assets/audio/ambient/
     - assets/audio/food/
     - assets/audio/goo/
     - assets/audio/creature/

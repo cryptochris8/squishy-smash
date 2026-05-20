@@ -24,7 +24,7 @@ class MenuScreen extends StatefulWidget {
   State<MenuScreen> createState() => _MenuScreenState();
 }
 
-class _MenuScreenState extends State<MenuScreen> {
+class _MenuScreenState extends State<MenuScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
@@ -39,6 +39,35 @@ class _MenuScreenState extends State<MenuScreen> {
         HowItWorksOverlay.show(context);
       });
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  // P2-D: the menu ambient bed plays whenever the menu is the visible
+  // route. didPush fires on first show (subscribe triggers it),
+  // didPopNext on return from a pushed screen, didPushNext when a
+  // screen covers the menu.
+  @override
+  void didPush() => ServiceLocator.sounds.startMenuMusic();
+
+  @override
+  void didPopNext() => ServiceLocator.sounds.startMenuMusic();
+
+  @override
+  void didPushNext() => ServiceLocator.sounds.stopMenuMusic();
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    ServiceLocator.sounds.stopMenuMusic();
+    super.dispose();
   }
 
   @override

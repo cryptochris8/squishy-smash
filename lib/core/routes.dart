@@ -9,6 +9,12 @@ import '../ui/results_screen.dart';
 import '../ui/settings_screen.dart';
 import '../ui/shop_screen.dart';
 
+/// Observes route pushes/pops so screens can react to becoming
+/// visible/hidden — currently drives the menu's ambient music (P2-D).
+/// Registered on the MaterialApp's `navigatorObservers`.
+final RouteObserver<PageRoute<dynamic>> appRouteObserver =
+    RouteObserver<PageRoute<dynamic>>();
+
 class AppRoutes {
   AppRoutes._();
 
