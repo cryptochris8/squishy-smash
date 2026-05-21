@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/constants.dart';
 import 'theme/app_theme.dart';
@@ -16,14 +17,13 @@ import 'theme/app_theme.dart';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  // GAME_POLISH_AUDIT.md UI-4: the hardcoded '0.1.1' string lagged
-  // the live App Store build (0.1.2) — and would have lagged again
-  // on every release. Now reads APP_VERSION from --dart-define so a
-  // release build can pass `--dart-define=APP_VERSION=$VERSION` and
-  // the value matches what shipped. Default tracks the in-flight
-  // pubspec version so local dev/test still sees a plausible string.
-  static const String _kAppVersion =
-      String.fromEnvironment('APP_VERSION', defaultValue: '0.1.3');
+  // The version row reads the real app bundle at runtime
+  // (package_info_plus → CFBundleShortVersionString), so it can never
+  // drift from what shipped. Resolved once here rather than per
+  // build(). Replaced an APP_VERSION --dart-define whose stale default
+  // silently shipped because CI never passed the define.
+  static final Future<PackageInfo> _packageInfo =
+      PackageInfo.fromPlatform();
   static const String _kSupportEmail = 'support@squishysmash.com';
   static const String _kWebsite = 'https://squishysmash.com';
   static const String _kPrivacyUrl = 'https://squishysmash.com/privacy';
@@ -54,7 +54,13 @@ class AboutScreen extends StatelessWidget {
           const _Brand(),
           const SizedBox(height: AppSpacing.xxl),
           const _Section('Version'),
-          const _PlainRow(label: 'App version', value: _kAppVersion),
+          FutureBuilder<PackageInfo>(
+            future: _packageInfo,
+            builder: (context, snapshot) => _PlainRow(
+              label: 'App version',
+              value: snapshot.data?.version ?? '…',
+            ),
+          ),
           const SizedBox(height: AppSpacing.xxl),
           const _Section('Support'),
           _LinkRow(

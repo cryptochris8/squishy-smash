@@ -27,6 +27,7 @@ dependencies:
   # AndroidManifest <meta-data> for AdMob APPLICATION_ID, and ship
   # with --dart-define=ADS_ENABLED=true.
   sentry_flutter: ^8.10.0
+  package_info_plus: ^9.0.1
 
 dev_dependencies:
   flutter_test:
