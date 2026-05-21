@@ -124,7 +124,7 @@ words in your title and subtitle, so don't repeat "squishy" / "smash"
 
 ---
 
-## What's New (version 0.1.1)
+## What's New (version 0.1.1 — historical; superseded by the 1.2.0 section below)
 
 ```
 First public release of the collection album!
@@ -149,6 +149,46 @@ QUALITY
 
 *(4,000 char limit — used room for both feature highlights and the
 "why we changed it" beat that humanizes the patch notes.)*
+
+---
+
+## 1.2.0 Update — Submission Copy (submitted 2026-05-20)
+
+The current App Store submission (live store version was 1.1). The
+promotional text and App Review notes here supersede the v0.1.1
+versions elsewhere in this doc; "What's New" is per-version.
+
+### Promotional text
+
+```
+Squish, pop, and collect! Discover 48 adorable squishies and chase the ultra-rare mythic — every pop is pure ASMR satisfaction. 🫧
+```
+
+*(170 char limit — ~128 used. Updatable without re-review.)*
+
+### What's New
+
+```
+🎵 Cozy new music on the main menu
+⏱️ A round timer on the play screen — see your time at a glance
+✨ Rare and mythic squishies now burst bigger and brighter
+🎨 A fresh new look — brand-new icons and tidier screens throughout
+🔧 Bug fixes and smoother performance
+
+Thanks for squishing! More squishy drops on the way 💕
+```
+
+### App Review notes
+
+```
+Squishy Smash is a single-player casual game for ages 4+. No account, login, or sign-up is required, and no internet connection is needed to play — just tap PLAY on the main menu to start immediately.
+
+This update (1.2.0) is UI polish and quality-of-life only: cozy menu music, a round timer on the play screen, more vivid effects for rare items, refreshed in-app icons, plus bug fixes and performance improvements. No new features require special review steps.
+
+This build has no active in-app purchases, no advertising, no third-party tracking, and no user-generated content.
+
+Thank you for reviewing!
+```
 
 ---
 
