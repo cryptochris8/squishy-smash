@@ -4,6 +4,9 @@
 *.pyc
 *.swp
 *.mp4
+*.mov
+*.MOV
+_tmp_*
 .DS_Store
 .atom/
 .build/
