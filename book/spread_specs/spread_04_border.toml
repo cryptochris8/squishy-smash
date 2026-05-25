@@ -1,0 +1,45 @@
+# Spread 4 — At the Border
+# Bespoke border plate (PH/GC meeting). Soft Dumpling forward on the PH side
+# (left, larger), Goo Ball mid-ground on the GC side (right, smaller).
+
+title = "Spread 4 — At the Border"
+plate = "book/spread_poc/plate_s04_border.png"
+output = "book/spreads_rendered/spread_04.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.32
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+# The s04_border plate v2 placed GREEN (GC) on the LEFT and PEACH (PH) on
+# the RIGHT, opposite of standard left-to-right convention. Characters swapped
+# so each stands on their own pack's side: Soft Dumpling on the right (PH),
+# Goo Ball on the left (GC).
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.28
+y_bottom = 0.65
+height = 0.24
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.72
+y_bottom = 0.68
+height = 0.30
+shadow = true
+
+[[text_blocks]]
+content = """
+Soft Dumpling reached the edge of the Pudding Hills and stopped. The grass was different here. Greener. Glossier. Just past where the syrup river thinned to a trickle, somebody glossy was waiting. "Sploink," said Goo Ball, by way of hello. Soft Dumpling tilted. "Pmf," she answered, which is dumpling for "hello back."
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 60
+color = "#120B17"
+x_center = 0.5
+y_center = 0.85
+max_width = 0.86
+align = "center"

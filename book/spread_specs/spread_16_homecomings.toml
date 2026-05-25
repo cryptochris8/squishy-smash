@@ -1,0 +1,27 @@
+# Spread 16 — Three Homecomings
+# Bespoke arrival plate — intimate warm sunset corner of Pudding Hills.
+# The "Each home..." cadence carries the three-pack feeling via prose.
+
+title = "Spread 16 — Three Homecomings"
+plate = "book/spread_poc/plate_s16_arrival.png"
+output = "book/spreads_rendered/spread_16.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.22
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[text_blocks]]
+content = """
+Each home was waiting. Each home had been quieter without them. Each home, when they returned, made a sound a pack only makes once.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 76
+color = "#120B17"
+x_center = 0.5
+y_center = 0.89
+max_width = 0.84
+align = "center"

@@ -1,0 +1,40 @@
+# Spread 18 — The Close
+# Bespoke bedtime quiet-sky plate (Pudding Hills at dusk with tiny distant
+# Sparkle). Two text blocks — second is italic for the Squishkeeper voice
+# surfacing at the close.
+
+title = "Spread 18 — The Close"
+plate = "book/spread_poc/plate_s18_bedtime.png"
+output = "book/spreads_rendered/spread_18.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.30
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[text_blocks]]
+content = """
+The Sparkle is the light that comes from being found.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 64
+color = "#120B17"
+x_center = 0.5
+y_center = 0.79
+max_width = 0.84
+align = "center"
+
+[[text_blocks]]
+content = """
+I have been there for every wobble. And tomorrow, another wobble. They always come back.
+"""
+font = "assets/google_fonts/EBGaramond-Italic.ttf"
+size = 64
+color = "#120B17"
+x_center = 0.5
+y_center = 0.90
+max_width = 0.84
+align = "center"

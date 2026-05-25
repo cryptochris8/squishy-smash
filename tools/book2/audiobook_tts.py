@@ -14,6 +14,10 @@ KEY = open(os.path.join(HOME, "elevenlabs.txt"), encoding="utf-8").read().strip(
 VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"  # George
 OUT_NAME = "squishy_book2_george.mp3"
 
+# Note: canonical "Pmf" (Soft Dumpling's signature squish per STORY_BIBLE.md)
+# is replaced with "Pfft" in this TTS input only — ElevenLabs reads "Pmf" as
+# the letters P-M-F instead of as a soft puff. The printed manuscript keeps
+# "Pmf". Apply the same substitution to any re-rendered cuts of Spread 4.
 manuscript = """Squishy Smash. The Lost Sparkle.
 
 <break time="1.5s" />
@@ -30,7 +34,7 @@ In Pudding Hills, Soft Dumpling looked up. In Goo Coast, Goo Ball looked up. In 
 
 <break time="1.2s" />
 
-Soft Dumpling reached the edge of the Pudding Hills and stopped. The grass was different here. Greener. Glossier. Just past where the syrup river thinned to a trickle, somebody glossy was waiting. Sploink, said Goo Ball, by way of hello. Soft Dumpling tilted. Pmf, she answered, which is dumpling for hello back.
+Soft Dumpling reached the edge of the Pudding Hills and stopped. The grass was different here. Greener. Glossier. Just past where the syrup river thinned to a trickle, somebody glossy was waiting. Sploink, said Goo Ball, by way of hello. Soft Dumpling tilted. Pfft, she answered, which is dumpling for hello back.
 
 <break time="1.2s" />
 

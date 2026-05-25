@@ -1,0 +1,53 @@
+# Spread 11 — The Deepest Grove
+# Trio HUDDLED tight at center (scared poses). Clustering implies the
+# protective instinct of the moment + the smallness of the trio against the
+# vastness of the grove.
+
+title = "Spread 11 — The Deepest Grove"
+# Using the bespoke grove plate (deep blue clearing, tall silhouetted trees,
+# moon overhead). FLUX added a small bear in the center despite explicit
+# negative prompts — the enlarged text band below masks the bottom of the bear,
+# and the character composites in front cover the rest.
+plate = "book/spread_poc/plate_s11_grove.png"
+output = "book/spreads_rendered/spread_11.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.40
+color = "#FFFFFF"
+opacity = 1.0
+soft_edge_px = 60
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_scared.png"
+x_center = 0.40
+y_bottom = 0.60
+height = 0.24
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.50
+y_bottom = 0.62
+height = 0.26
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_scared.png"
+x_center = 0.60
+y_bottom = 0.60
+height = 0.24
+shadow = true
+
+[[text_blocks]]
+content = """
+The deepest grove was darker than dark. The third shard waited there, almost flickered out, almost too quiet to find. A puff loomed over it, a feeling shaped like a friendly haunting, and said nothing at all. The trio stood very still. The shard was small. The Sparkle, what was left of it, trembled.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 58
+color = "#120B17"
+x_center = 0.5
+y_center = 0.83
+max_width = 0.86
+align = "center"

@@ -1,0 +1,27 @@
+# Spread 14 — The Sparkle, Brighter
+# Bespoke three-region overview plate with the restored Sparkle bright above.
+# Hero visual moment — text band shrunk so the overview dominates.
+
+title = "Spread 14 — The Sparkle, Brighter"
+plate = "book/spread_poc/plate_s14_overview.png"
+output = "book/spreads_rendered/spread_14.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.22
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[text_blocks]]
+content = """
+The Sparkle came back. Not the same Sparkle, exactly. A little bigger, a little warmer. Brighter than it had ever been, because three first feelings had remembered each other.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 72
+color = "#120B17"
+x_center = 0.5
+y_center = 0.89
+max_width = 0.84
+align = "center"

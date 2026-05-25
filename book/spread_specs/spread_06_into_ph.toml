@@ -1,0 +1,48 @@
+# Spread 6 — Into Pudding Hills
+# Soft Dumpling LEADS the trio (PH is her home). Forward and larger;
+# Goo Ball and Blushy Bun trail mid-ground smaller.
+
+title = "Spread 6 — Into Pudding Hills"
+plate = "book/spread_poc/plate_pudding_hills_v2.png"
+output = "book/spreads_rendered/spread_06.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.32
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.30
+y_bottom = 0.70
+height = 0.32
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.58
+y_bottom = 0.64
+height = 0.20
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_neutral.png"
+x_center = 0.78
+y_bottom = 0.66
+height = 0.20
+shadow = true
+
+[[text_blocks]]
+content = """
+They walked through Pudding Hills first. Soft Dumpling led the way, because Pudding Hills was the place she knew. Past the cream-bowl hills. Past the syrup river. Past a small mochi that waved one shimmery wave and pointed quietly toward the orchard. "The shard fell that way," said the shimmery mochi. "It is bigger than it looks."
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 58
+color = "#120B17"
+x_center = 0.5
+y_center = 0.85
+max_width = 0.86
+align = "center"

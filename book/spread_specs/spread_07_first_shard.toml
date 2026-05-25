@@ -1,0 +1,48 @@
+# Spread 7 — The First Shard
+# Bespoke orchard plate. Trio rendered SMALL and TIGHT at bottom center —
+# scale implies the looming sky-dumpling above is enormous.
+
+title = "Spread 7 — The First Shard"
+plate = "book/spread_poc/plate_s07_orchard.png"
+output = "book/spreads_rendered/spread_07.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.36
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.42
+y_bottom = 0.62
+height = 0.16
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.50
+y_bottom = 0.62
+height = 0.16
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_neutral.png"
+x_center = 0.58
+y_bottom = 0.62
+height = 0.16
+shadow = true
+
+[[text_blocks]]
+content = """
+And it was. The shard rested in a hush at the orchard's edge, half-glowing. Above it loomed a dumpling the size of a sky, gentle and enormous, full of small quiet stars. "I will move," said the sky-dumpling, in a voice like a sky, "when the three of you ask together." Soft Dumpling asked. Goo Ball asked. Blushy Bun Bunny asked. The sky-dumpling smiled and stepped aside.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 54
+color = "#120B17"
+x_center = 0.5
+y_center = 0.83
+max_width = 0.86
+align = "center"

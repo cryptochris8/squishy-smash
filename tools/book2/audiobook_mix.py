@@ -8,15 +8,18 @@ POP = os.path.join(HOME, "_tmp_book2_pop.mp3")
 SPARKLE = os.path.join(HOME, "_tmp_book2_sparkle.mp3")
 OUT = os.path.join(HOME, "squishy_book2_audiobook_v1.mp3")
 
-# George VO duration probed via ffprobe (5:34.6 = ~334.6s)
-VO_DURATION = 334.6
+# George VO duration probed via ffprobe (5:37.6 ≈ 337.62s in the Pfft re-render).
+# ElevenLabs picks slightly different cadence per render — if you re-render
+# george.mp3, re-derive these constants via silencedetect (`-32dB d=1.1`).
+VO_DURATION = 337.62
 
-# SFX placement (absolute seconds) — derived from silencedetect on the VO:
-#   S12 (EVERYBODY SQUISH!) starts at 237.92s, ends at 253.26s — the shout
-#   lands mid-spread, so the three pops sit just after.
-#   S14 (Sparkle came back) starts at 276.55s — chime on the opening word.
-POP_TIMES = [247.5, 248.2, 249.0]
-SPARKLE_TIME = 277.0
+# SFX placement (absolute seconds) — re-derived from silencedetect on the
+# Pfft re-render. Cadence shifted +5s vs the original take.
+#   S12 (EVERYBODY SQUISH!) starts at 243.21s — the shout lands mid-spread,
+#   so the three pops sit ~9.5-11s in.
+#   S14 (Sparkle came back) starts at 281.33s — chime on the opening word.
+POP_TIMES = [252.8, 253.5, 254.3]
+SPARKLE_TIME = 281.8
 
 # Mix levels — pulled-back so the VO stays unambiguously dominant.
 MUSIC_VOL = 0.08

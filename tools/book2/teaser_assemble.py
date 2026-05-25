@@ -1,16 +1,14 @@
-"""Assemble Book #2 TikTok teaser v7 — vertical 1080x1920, 37 seconds.
+"""Assemble Book #2 TikTok teaser v8 — vertical 1080x1920, 37 seconds.
 
-v7 attempt vs v6: re-add Ken Burns. Hypothesis on v3/v4 breakage:
-  -loop 1 -t {dur} -i image.png fed zoompan multiple input frames, each of
-  which triggered a separate zoompan cycle, and the concat downstream got
-  confused. Fix: drop -loop and -t from zoompan-treated inputs. ffmpeg's
-  image2 demuxer gives ONE input frame, and zoompan's d=frames + fps=30
-  generates the full scene duration of output frames. End card still uses
-  -loop 1 -t since it's a static scene.
+v8 changes vs v7:
+- Pact line re-rendered with TWO break pauses (was one): "Every pop is a
+  hello. [pause] Every hello, [pause] comes back." Pact file is now ~5.15s
+  (was ~4.37s).
+- Big hug pop SFX regenerated with a punchier prompt (less sparkle tail).
+- Big pop volume bumped from 0.60 to 0.85 so it actually lands.
+- Pact text overlay split to mirror the 2-pause rhythm.
 
-If frames verify all scenes appear, this ships. Otherwise v6 stands as final.
-
-(All v6 audio + text + SFX + scene timing preserved.)
+(v7 Ken Burns approach + all visual scene timing kept exactly.)
 """
 import os, subprocess, sys
 
@@ -26,11 +24,11 @@ ENDCARD = os.path.join(HOME, "_tmp_teaser_endcard.png")
 
 GEORGE = os.path.join(HOME, "squishy_book2_george.mp3")
 MUSIC = os.path.join(HOME, "_tmp_book2_teaser_music.mp3")
-PACT_V2 = os.path.join(HOME, "_tmp_book2_pact_v2.mp3")
+PACT_V3 = os.path.join(HOME, "_tmp_book2_pact_v3.mp3")  # v8: two-pause version
 PAGE_RUSTLE = os.path.join(HOME, "_tmp_book2_page_rustle.mp3")
-BIG_POP = os.path.join(HOME, "_tmp_book2_big_pop.mp3")
+BIG_POP_V2 = os.path.join(HOME, "_tmp_book2_big_pop_v2.mp3")  # v8: punchier
 
-OUT = os.path.join(HOME, "squishy_book2_teaser_v7.mp4")
+OUT = os.path.join(HOME, "squishy_book2_teaser_v8.mp4")
 FONT = "assets/google_fonts/Fredoka.ttf"
 
 DUR = [9.0, 3.0, 4.0, 7.5, 9.0, 4.5]
@@ -79,8 +77,11 @@ filter_parts = [
         drawtext("Three packs.", 80, 0.18, 1.5, 7.0),
         drawtext("One light.", 80, 0.18, 13.0, 16.0),
         drawtext("EVERYBODY SQUISH!", 110, 0.18, 23.5, 25.5),
-        drawtext("Every pop is a hello.", 64, 0.84, 27.5, 29.5),
-        drawtext("Every hello comes back.", 64, 0.84, 30.5, 32.5),
+        # Pact split into 3 phrases to mirror the 2-pause rhythm:
+        # "Every pop is a hello." [pause] "Every hello," [pause] "comes back."
+        drawtext("Every pop is a hello.", 64, 0.84, 28.0, 29.5),
+        drawtext("Every hello,", 64, 0.84, 30.7, 31.5),
+        drawtext("comes back.", 64, 0.84, 32.0, 33.0),
     ]) + "[vout]",
     "[6:a]asplit=3[a0][a1][a2]",
     "[a0]atrim=4.0:17.88,asetpts=PTS-STARTPTS,adelay=1500:all=1,volume=1.25[seg_a]",
@@ -92,7 +93,7 @@ filter_parts = [
     "[r0]adelay=8800:all=1,volume=0.45[rustle0]",
     "[r1]adelay=11800:all=1,volume=0.45[rustle1]",
     "[r2]adelay=15800:all=1,volume=0.45[rustle2]",
-    "[10:a]adelay=23500:all=1,volume=0.60[bigpop]",
+    "[10:a]adelay=23500:all=1,volume=0.85[bigpop]",
     "[seg_a][seg_b][seg_c][seg_d][mus][rustle0][rustle1][rustle2][bigpop]"
     "amix=inputs=9:duration=longest:normalize=0,alimiter=limit=0.95[aout]",
 ]
@@ -111,9 +112,9 @@ cmd = [
     "-loop", "1", "-t", str(DUR[5]), "-i", ENDCARD,
     "-i", GEORGE,
     "-stream_loop", "-1", "-i", MUSIC,
-    "-i", PACT_V2,
+    "-i", PACT_V3,
     "-i", PAGE_RUSTLE,
-    "-i", BIG_POP,
+    "-i", BIG_POP_V2,
     "-filter_complex", filter_complex,
     "-map", "[vout]", "-map", "[aout]",
     "-t", str(TOTAL),
@@ -124,7 +125,7 @@ cmd = [
     OUT,
 ]
 
-print(">>> ffmpeg teaser v7 assemble (Ken Burns retry — single-frame inputs)")
+print(">>> ffmpeg teaser v8 assemble (Pact 2-pause + punchier louder pop)")
 r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
                    errors="replace", cwd=SQ)
 if r.returncode != 0:

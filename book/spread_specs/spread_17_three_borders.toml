@@ -1,0 +1,51 @@
+# Spread 17 — Three Borders, Touching
+# Bespoke plate showing 3 regions meeting. Characters in CROSS-PACK positions:
+# - Blushy Bun on the PH side (left) — teaching PH to hop
+# - Soft Dumpling on the GC side (center) — visits GC on Sundays
+# - Goo Ball on the MH side (right) — has tried MH's quiet
+# Each on a non-home plate region — the prose's emerging new normal.
+
+title = "Spread 17 — Three Borders, Touching"
+plate = "book/spread_poc/plate_s17_three_borders.png"
+output = "book/spreads_rendered/spread_17.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.30
+color = "#FFFFFF"
+opacity = 0.88
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_neutral.png"
+x_center = 0.22
+y_bottom = 0.65
+height = 0.22
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.50
+y_bottom = 0.65
+height = 0.22
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.78
+y_bottom = 0.65
+height = 0.22
+shadow = true
+
+[[text_blocks]]
+content = """
+And for the first time, three places that had never visited each other began to. Soft Dumpling visits Goo Coast on Sundays. Goo Ball has tried Moonlit Hollow's quiet. Blushy Bun Bunny is teaching the Pudding Hills how to hop.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 56
+color = "#120B17"
+x_center = 0.5
+y_center = 0.85
+max_width = 0.88
+align = "center"

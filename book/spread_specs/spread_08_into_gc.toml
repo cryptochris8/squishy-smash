@@ -1,0 +1,48 @@
+# Spread 8 — Into Goo Coast
+# Goo Ball LEADS (GC is his home). Mirror of Spread 6 structurally but with
+# the lead character swapped.
+
+title = "Spread 8 — Into Goo Coast"
+plate = "book/spread_poc/plate_goo_coast.png"
+output = "book/spreads_rendered/spread_08.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.32
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.30
+y_bottom = 0.70
+height = 0.32
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.58
+y_bottom = 0.64
+height = 0.20
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_neutral.png"
+x_center = 0.78
+y_bottom = 0.66
+height = 0.20
+shadow = true
+
+[[text_blocks]]
+content = """
+Next they crossed into Goo Coast. Now it was Goo Ball who led, because Goo Coast was the place he knew. Past the bubble-tide. Past the glossy shore. Past a goo who shimmered like an opal and pointed seaward. "The shard fell out there," said the opal goo. "You will have to bounce for it."
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 58
+color = "#120B17"
+x_center = 0.5
+y_center = 0.85
+max_width = 0.86
+align = "center"

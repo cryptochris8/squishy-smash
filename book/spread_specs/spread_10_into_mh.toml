@@ -1,0 +1,48 @@
+# Spread 10 — Into Moonlit Hollow
+# Bespoke silver-mushrooms plate. Blushy Bun LEADS (MH is her home).
+# Mirror of Spreads 6 and 8 structurally.
+
+title = "Spread 10 — Into Moonlit Hollow"
+plate = "book/spread_poc/plate_s10_mushrooms.png"
+output = "book/spreads_rendered/spread_10.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.36
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_neutral.png"
+x_center = 0.30
+y_bottom = 0.62
+height = 0.22
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.55
+y_bottom = 0.60
+height = 0.22
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.78
+y_bottom = 0.61
+height = 0.22
+shadow = true
+
+[[text_blocks]]
+content = """
+Last, they crossed into Moonlit Hollow. Now Blushy Bun Bunny led, because Moonlit Hollow was the place she knew. The light was different here. Soft, slow, not afraid of itself. They went past the silver mushrooms. Past a bunny whose eyes were stars, who turned all her stars on them at once. "The shard is in the deepest grove," said the bunny with stars in her eyes. "It is dimming the fastest."
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 52
+color = "#120B17"
+x_center = 0.5
+y_center = 0.83
+max_width = 0.86
+align = "center"

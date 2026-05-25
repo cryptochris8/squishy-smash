@@ -1,0 +1,29 @@
+# Book #2 — Spread 1 — Three Places at Peace
+# Opens the book. No characters yet — establishing shot.
+# Visual ideal per manuscript notes: a wide three-region overview with the
+# Sparkle visible above. Until that custom plate exists, we use the Pudding
+# Hills plate (warmest of the three) and let the prose carry the rest.
+
+title = "Spread 1 — Three Places at Peace"
+plate = "book/spread_poc/plate_pudding_hills_v2.png"
+output = "book/spreads_rendered/spread_01.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.32
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[text_blocks]]
+content = """
+Three places had wobbled themselves into being, one for each first feeling. Pudding Hills, where comfort spilled warm. Goo Coast, where surprise spilled glossy. Moonlit Hollow, where the brave-cuddle spilled quiet. Above them all, the Sparkle held. Small and bright. The way being seen is always bright.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 72
+color = "#120B17"
+x_center = 0.5
+y_center = 0.86
+max_width = 0.84
+align = "center"

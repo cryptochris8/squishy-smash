@@ -1,0 +1,49 @@
+# Spread 9 — The Second Shard
+# Bespoke bouncing plate. Trio in TRIUMPHANT poses, ARCED arrangement:
+# Soft low, Goo Ball middle, Blushy Bun highest (per prose: "bounced last
+# and the highest").
+
+title = "Spread 9 — The Second Shard"
+plate = "book/spread_poc/plate_s09_bouncing.png"
+output = "book/spreads_rendered/spread_09.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.32
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_triumphant.png"
+x_center = 0.22
+y_bottom = 0.68
+height = 0.22
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.50
+y_bottom = 0.58
+height = 0.26
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_triumphant.png"
+x_center = 0.78
+y_bottom = 0.48
+height = 0.28
+shadow = true
+
+[[text_blocks]]
+content = """
+They bounced for it. Soft Dumpling bounced first, which was a surprise to everyone, including Soft Dumpling. Goo Ball bounced second, naturally. Blushy Bun Bunny bounced last and the highest. The shard rose to meet them, glossy and bright, and a cube the color of dawn, who had been watching from the deep, let it go with a slow nod.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 58
+color = "#120B17"
+x_center = 0.5
+y_center = 0.85
+max_width = 0.86
+align = "center"

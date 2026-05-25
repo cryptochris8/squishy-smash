@@ -1,0 +1,27 @@
+# Spread 2 — The Flicker
+# Bespoke plate showing the Sparkle cracked into 3 shards drifting.
+# Sky-focused, no characters.
+
+title = "Spread 2 — The Flicker"
+plate = "book/spread_poc/plate_s02_flicker.png"
+output = "book/spreads_rendered/spread_02.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.28
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[text_blocks]]
+content = """
+And then. The Sparkle did something it had never done. It flickered. It wobbled. It split, very gently, into three. One shard drifted toward Pudding Hills. One drifted toward Goo Coast. One drifted toward Moonlit Hollow. The three places, for the first time, felt a little quieter.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 68
+color = "#120B17"
+x_center = 0.5
+y_center = 0.86
+max_width = 0.84
+align = "center"

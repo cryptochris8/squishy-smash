@@ -1,0 +1,48 @@
+# Spread 5 — Three
+# Trio just formed. Walking-right asymmetric arrangement — Blushy slightly
+# forward (she just joined and they "very gently started walking").
+
+title = "Spread 5 — Three"
+plate = "book/spread_poc/plate_pudding_hills_v2.png"
+output = "book/spreads_rendered/spread_05.png"
+
+[text_band]
+enabled = true
+position = "bottom"
+height = 0.32
+color = "#FFFFFF"
+opacity = 0.82
+soft_edge_px = 50
+
+[[characters]]
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+x_center = 0.18
+y_bottom = 0.66
+height = 0.24
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+x_center = 0.40
+y_bottom = 0.68
+height = 0.26
+shadow = true
+
+[[characters]]
+sprite = "book/spread_poc/chars/blushy_bun_bunny_neutral.png"
+x_center = 0.66
+y_bottom = 0.70
+height = 0.28
+shadow = true
+
+[[text_blocks]]
+content = """
+A third sound came from behind them. Thup, thup. Blushy Bun Bunny hopped out from somewhere between the two worlds, cheeks rosier than usual. "Oh good," said the bunny. "I had a feeling you would find each other." And the three of them, three different feelings standing on a boundary nobody had ever crossed, very gently started walking.
+"""
+font = "assets/google_fonts/EBGaramond-Regular.ttf"
+size = 58
+color = "#120B17"
+x_center = 0.5
+y_center = 0.85
+max_width = 0.86
+align = "center"
