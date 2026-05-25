@@ -56,10 +56,10 @@
 
 ## Spread 6 — Into Pudding Hills
 
-> They walked through Pudding Hills first. Soft Dumpling led the way, because Pudding Hills was the place she knew. Past the cream-bowl hills. Past the syrup river. Past a small mochi that waved one shimmery wave and pointed quietly toward the orchard. "The shard fell that way," said the shimmery mochi. "It is bigger than it looks."
+> They walked through Pudding Hills first. Soft Dumpling led the way, because Pudding Hills was the place she knew. Past the cream-bowl hills. Past the syrup river. Past a small mochi that waved one shimmery wave and pointed quietly toward the orchard. "The shard fell that way," said the shimmery mochi. "It is bigger than it looks." So they walked deeper. *Pmf,* said the soft ground under Soft Dumpling. *Pmf,* said the syrup-warm air. The sound of Pudding Hills walked along with them.
 
-**Visual direction:** Pudding Hills plate. Trio walking right across the foreground in neutral poses. Rare guide cameo (use Sparkle Mochi from card `011_Sparkle_Mochi.webp`) on the side, hand raised. The orchard suggested in the mid-distance.
-**Word count:** 56
+**Visual direction:** Pudding Hills plate. Trio walking right across the foreground in neutral poses. Rare guide cameo (use Sparkle Mochi from card `011_Sparkle_Mochi.webp`) on the side, hand raised. The orchard suggested in the mid-distance. **Chant addition:** the *Pmf* sound-words land in italic in the text band — the first instance of the cumulative-chant device (Pmf in S6 → Sploink in S8 → Thup in S10 → all three in S12).
+**Word count:** 78 (was 56; +22 for chant)
 **Voice notes:** Traveling cadence ("Past X. Past Y. Past Z.") becomes the spine signature for this act and mirrors into Spreads 8 and 10. The Rare guide is described-by-feeling ("a small mochi that waved one shimmery wave"), not named — honors the §7 name-density rule (active-memory names stay at 3 protagonists + later 3 Cores).
 
 ---
@@ -76,10 +76,10 @@
 
 ## Spread 8 — Into Goo Coast
 
-> Next they crossed into Goo Coast. Now it was Goo Ball who led, because Goo Coast was the place he knew. Past the bubble-tide. Past the glossy shore. Past a goo who shimmered like an opal and pointed seaward. "The shard fell out there," said the opal goo. "You will have to bounce for it."
+> Next they crossed into Goo Coast. Now it was Goo Ball who led, because Goo Coast was the place he knew. Past the bubble-tide. Past the glossy shore. Past a goo who shimmered like an opal and pointed seaward. "The shard fell out there," said the opal goo. "You will have to bounce for it." *Pmf,* said the dumpling behind them. *Sploink,* said the goo-tide ahead. Now they carried two sounds.
 
-**Visual direction:** Goo Coast plate. Trio walking right (mirror of Spread 6). Rare guide cameo (use Glitter Goo Ball from card `025_Glitter_Goo_Ball.webp`) on a glossy rise, shimmering. Sea visible in mid-distance with a bouncy surface.
-**Word count:** 57
+**Visual direction:** Goo Coast plate. Trio walking right (mirror of Spread 6). Rare guide cameo (use Glitter Goo Ball from card `025_Glitter_Goo_Ball.webp`) on a glossy rise, shimmering. Sea visible in mid-distance with a bouncy surface. **Chant addition:** *Pmf* returns (now a carried sound, not just a place-sound), *Sploink* joins as the second of three. The chant becomes legible as a device.
+**Word count:** 66 (was 57; +9 for chant)
 **Voice notes:** Structural mirror of Spread 6 — same "past X, past Y, past Z" cadence. The reader's ear locks the act pattern in by repetition.
 
 ---
@@ -96,10 +96,10 @@
 
 ## Spread 10 — Into Moonlit Hollow
 
-> Last, they crossed into Moonlit Hollow. Now Blushy Bun Bunny led, because Moonlit Hollow was the place she knew. The light was different here. Soft, slow, not afraid of itself. They went past the silver mushrooms. Past a bunny whose eyes were stars, who turned all her stars on them at once. "The shard is in the deepest grove," said the bunny with stars in her eyes. "It is dimming the fastest."
+> Last, they crossed into Moonlit Hollow. Now Blushy Bun Bunny led, because Moonlit Hollow was the place she knew. The light was different here. Soft, slow, not afraid of itself. They went past the silver mushrooms. Past a bunny whose eyes were stars, who turned all her stars on them at once. "The shard is in the deepest grove," said the bunny with stars in her eyes. "It is dimming the fastest." *Pmf. Sploink. Thup.* They carried three sounds now, and one quiet shard between them.
 
-**Visual direction:** Moonlit Hollow plate. Trio walking right (third mirror of Spreads 6 & 8). Rare guide cameo (use Star-Eyed Bunny from card `041_Star_Eyed_Bunny.webp`) under the moon, with starlight beams across the spread. Atmosphere darker, slower than the previous two pack entries.
-**Word count:** 71
+**Visual direction:** Moonlit Hollow plate. Trio walking right (third mirror of Spreads 6 & 8). Rare guide cameo (use Star-Eyed Bunny from card `041_Star_Eyed_Bunny.webp`) under the moon, with starlight beams across the spread. Atmosphere darker, slower than the previous two pack entries. **Chant addition:** all three sound-words appear together for the first time — *Pmf. Sploink. Thup.* — the chant is complete. The reader chants along.
+**Word count:** 82 (was 71; +11 for chant)
 **Voice notes:** "Not afraid of itself" — a Squishkeeper-voice description of the night that does the bible's "soft dark, never scary" work in five words. The urgency line ("dimming the fastest") raises the stakes into the climax.
 
 ---
@@ -116,10 +116,10 @@
 
 ## Spread 12 — Everybody Squish
 
-> Then Blushy Bun Bunny did something brave. She squeezed Soft Dumpling. She squeezed Goo Ball. She squeezed herself. "EVERYBODY SQUISH!" she shouted, and they did. Three pops at once. *Every pop is a hello. Every hello comes back.*
+> Then Blushy Bun Bunny did something brave. She squeezed Soft Dumpling. *PMF!* She squeezed Goo Ball. *SPLOINK!* She squeezed herself. *THUP!* "EVERYBODY SQUISH!" she shouted, and they did. Three pops at once. The three sounds became one. *Every pop is a hello. Every hello comes back.*
 
-**Visual direction:** THE BIG POP. Trio mid-pop with a massive light burst filling the spread. All three in **triumphant** pose variants (or partially obscured by the burst). "EVERYBODY SQUISH!" rendered as bold display text overlaid on the burst — Fredoka (display) per Book 1 typography. This is the call-and-response moment the entire book is built around.
-**Word count:** 40
+**Visual direction:** THE BIG POP. Trio mid-pop with a massive light burst filling the spread. All three in **triumphant** pose variants (or partially obscured by the burst). "EVERYBODY SQUISH!" rendered as hand-lettered display type overlaid on the burst (per the picture-book craft research — hand-letter, do not typeset, for the climax). **Chant payoff:** the three sound-words the reader has been chanting now fire at full caps + italic emphasis (*PMF! SPLOINK! THUP!*) as a sound-effect chorus around the trio's squeeze beats — comic-grammar style. "*The three sounds became one*" makes the chant-unification explicit; form mirrors theme. Climax composition borrows Christopher Denise (Knight Owl) cinematic orange-against-blue chiaroscuro per [[book2-format-c-regen-in-flight]].
+**Word count:** 49 (was 40; +9 for chant payoff)
 **Voice notes:** The shout-line lives here per `BOOK2_CONCEPT_DRAFT.md`. The Pact line is **italic** (Squishkeeper-voice surfacing through canonical phrasing per `STORY_BIBLE.md` §2) and appears here once, only. "Did something brave" calls back to Moonlit Hollow's first feeling — the brave-cuddle.
 
 ---
@@ -186,7 +186,7 @@
 
 ## Running totals — manuscript complete
 
-- **Total words drafted:** 877 across 18 spreads (avg ~49/spread)
+- **Total words drafted:** 928 across 18 spreads (avg ~52/spread) — after cumulative-chant revision 2026-05-25 (+51 words: Pmf in S6, Sploink in S8, Thup in S10, all three firing in S12). Original draft was 877 words.
 - **Spine status:** All five beats complete. Beat 1 (peace) → Beat 2 (Sparkle flickers) → Beat 3 (trio summoned + meet) → Beat 4 (three-act middle, three packs traversed) → Beat 5 (climax + resolution + soft close).
 - **Voice invariants honored end-to-end:** periods (not em-dashes); italic only on Squishkeeper voice (Spread 12 Pact line + Spread 18 close); no villain; situation-driven tension; soft landing.
 - **Active-memory name roster:** 6 — Soft Dumpling, Goo Ball, Blushy Bun Bunny (recurring) + Celestial Dumpling Core, Singularity Goo Core, Mythic Plush Familiar (climax + resolution only). Rares/Epics described-by-feeling, never named in prose.
