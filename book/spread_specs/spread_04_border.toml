@@ -14,22 +14,21 @@ color = "#FFFFFF"
 opacity = 0.82
 soft_edge_px = 50
 
-# The s04_border plate v2 placed GREEN (GC) on the LEFT and PEACH (PH) on
-# the RIGHT, opposite of standard left-to-right convention. Characters swapped
-# so each stands on their own pack's side: Soft Dumpling on the right (PH),
-# Goo Ball on the left (GC).
+# Plate v3 (the warm-amber-syrup version): PEACH on LEFT (PH side),
+# BLUE on RIGHT (GC side), warm honey-amber river down the middle.
+# Soft Dumpling on left (her home), Goo Ball on right (his home).
 [[characters]]
-sprite = "book/spread_poc/chars/goo_ball_neutral.png"
+sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
 x_center = 0.28
-y_bottom = 0.65
-height = 0.24
+y_bottom = 0.68
+height = 0.30
 shadow = true
 
 [[characters]]
-sprite = "book/spread_poc/chars/soft_dumpling_neutral.png"
+sprite = "book/spread_poc/chars/goo_ball_neutral.png"
 x_center = 0.72
-y_bottom = 0.68
-height = 0.30
+y_bottom = 0.65
+height = 0.24
 shadow = true
 
 [[text_blocks]]

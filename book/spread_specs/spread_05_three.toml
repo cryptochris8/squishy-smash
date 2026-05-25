@@ -3,7 +3,7 @@
 # forward (she just joined and they "very gently started walking").
 
 title = "Spread 5 — Three"
-plate = "book/spread_poc/plate_pudding_hills_v2.png"
+plate = "book/spread_poc/plate_s05_bridge.png"
 output = "book/spreads_rendered/spread_05.png"
 
 [text_band]
