@@ -29,6 +29,7 @@ export function Nav() {
         </a>
         <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-white/90">
           <a href="#core-loop" className="hover:text-cream-300 transition-colors">How it plays</a>
+          <a href="#books" className="hover:text-cream-300 transition-colors">Books</a>
           <a href="#collection" className="hover:text-cream-300 transition-colors">Collection</a>
           <a href="#packs" className="hover:text-cream-300 transition-colors">Packs</a>
           <a href="#parents" className="hover:text-cream-300 transition-colors">For parents</a>

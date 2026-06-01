@@ -9,3 +9,7 @@ export const APP_STORE_URL =
 // KDP 2026-05-16. Canonical ASIN-based URL (B0H219KX2X) so the
 // product page is reachable even if the a.co short link is recycled.
 export const AMAZON_BOOK_URL = 'https://www.amazon.com/dp/B0H219KX2X'
+
+// YouTube read-along for Book 2 "The Lost Sparkle" — shipped 2026-05-31.
+// George VO + music + SFX. 5:37 horizontal.
+export const BOOK2_READALONG_YOUTUBE_ID = '_0_s3P6uN-o'

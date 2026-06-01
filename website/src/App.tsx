@@ -1,3 +1,4 @@
+import { Books } from './components/Books'
 import { Bubbles } from './components/Bubbles'
 import { Collection } from './components/Collection'
 import { CoreLoop } from './components/CoreLoop'
@@ -28,6 +29,7 @@ function App() {
         <Hero />
         <CoreLoop />
         <WhatsNew />
+        <Books />
         <Collection />
         <Packs />
         <ForParents />
