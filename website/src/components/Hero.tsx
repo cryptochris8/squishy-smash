@@ -1,22 +1,27 @@
 import { APP_STORE_URL, AMAZON_BOOK_URL } from '../constants/links'
-import { squishies } from '../data/squishies'
 
-/* Six hero-companion sprites — hand-picked to show off tier variety:
- * two commons, two rares, the three legendaries feel too "loud" for
- * every visit so we pick one plus a pack-accent epic. */
-const HERO_COMPANIONS = [
-  'blushy_bun_bunny',        // common creepy-cute bunny
-  'peach_mochi',             // common food
-  'rainbow_jelly_bun',       // rare food
-  'glitter_goo_ball',        // rare goo
-  'crystal_mochi',           // epic food
-  'celestial_dumpling_core', // legendary hero
+/* Six hero-section companions using NBP-generated hero shots from
+ * assets/website_hero/. Balanced 2-2-2 across the three packs, with a
+ * mix of Rare / Epic / Legendary tiers. The Legendary (Celestial
+ * Dumpling Core) sits in the load-bearing slot (index 3) per the
+ * FloatingSquishy positioning. */
+const HERO_COMPANIONS: Array<{ name: string; image: string }> = [
+  { name: 'Sparkle Mochi',
+    image: '/website_hero/hero_011_sparkle_mochi.png' },         // Foods Rare
+  { name: 'Moon Bat Blob',
+    image: '/website_hero/hero_042_moon_bat_blob.png' },         // Creepy-Cute Rare
+  { name: 'Glitter Goo Ball',
+    image: '/website_hero/hero_025_glitter_goo_ball.png' },      // Goo Rare
+  { name: 'Celestial Dumpling Core',
+    image: '/website_hero/hero_celestial_dumpling.png' },        // Foods Legendary (hero slot)
+  { name: 'Mythic Plush Familiar',
+    image: '/website_hero/hero_mythic_plush.png' },              // Creepy-Cute Legendary
+  { name: 'Aurora Stretch Cube',
+    image: '/website_hero/hero_030_aurora_stretch_cube.png' },   // Goo Epic
 ]
 
 export function Hero() {
   const companions = HERO_COMPANIONS
-    .map((id) => squishies.find((s) => s.id === id))
-    .filter((s): s is NonNullable<typeof s> => s !== undefined)
 
   return (
     <header id="top" className="relative z-10 pt-32 pb-20 px-6">
@@ -86,7 +91,7 @@ export function Hero() {
         {/* Floating squishy companions */}
         <div className="relative h-[420px] lg:h-[520px]">
           {companions.map((s, i) => (
-            <FloatingSquishy key={s.id} squishy={s} index={i} />
+            <FloatingSquishy key={s.name} squishy={s} index={i} />
           ))}
         </div>
       </div>
@@ -140,7 +145,7 @@ function FloatingSquishy({
   squishy,
   index,
 }: {
-  squishy: (typeof squishies)[number]
+  squishy: { name: string; image: string }
   index: number
 }) {
   // Hand-placed positions + scales so the cluster feels intentional
@@ -177,7 +182,7 @@ function FloatingSquishy({
       }}
     >
       <img
-        src={squishy.sprite}
+        src={squishy.image}
         alt={squishy.name}
         className="w-full h-full object-contain"
         loading="eager"
