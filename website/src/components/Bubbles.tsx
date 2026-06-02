@@ -1,6 +1,39 @@
-/* Floating bubble particle layer — sits behind everything.
- * 16 bubbles with staggered timing so the parallax never sync-loops
- * in a way the eye can pick up. */
+/* Floating bubble particle layer + ambient character decorations.
+ *
+ * 16 bubbles rise from bottom, with staggered timing so the parallax never
+ * sync-loops in a way the eye can pick up. Layered ON TOP of bubbles: a
+ * handful of low-opacity character silhouettes drifting gently at the page
+ * edges to give the brand background a sense of living world. Characters
+ * never sit in the central content column.
+ */
+
+const AMBIENT_CHARACTERS = [
+  // Top-left corner, small + faded
+  { img: '/website_hero/hero_011_sparkle_mochi.png',
+    size: 120, top: '6%',  left: '2%',
+    opacity: 0.32, anim: 'animate-float-slower' },
+  // Top-right corner, mid-size
+  { img: '/website_hero/hero_026_shockwave_blob.png',
+    size: 140, top: '12%', right: '3%',
+    opacity: 0.28, anim: 'animate-float-slow' },
+  // Middle-right
+  { img: '/website_hero/hero_042_moon_bat_blob.png',
+    size: 110, top: '46%', right: '1.5%',
+    opacity: 0.30, anim: 'animate-float-delayed' },
+  // Middle-left, lower
+  { img: '/website_hero/hero_014_crystal_mochi.png',
+    size: 130, top: '58%', left: '2%',
+    opacity: 0.30, anim: 'animate-float' },
+  // Bottom-left
+  { img: '/website_hero/hero_045_dream_eater_squish.png',
+    size: 100, top: '78%', left: '4%',
+    opacity: 0.28, anim: 'animate-float-slow' },
+  // Bottom-right
+  { img: '/website_hero/hero_029_plasma_goo_ball.png',
+    size: 120, top: '82%', right: '3%',
+    opacity: 0.30, anim: 'animate-float-slower' },
+]
+
 export function Bubbles() {
   const bubbles = [
     { size: 42, left: '4%',  delay: '0s',   duration: '8s' },
@@ -38,6 +71,29 @@ export function Bubbles() {
           }}
         />
       ))}
+      {/* Ambient character decorations — hidden on small screens to avoid
+          competing with content; kept off the central reading column on
+          large screens. */}
+      <div className="hidden lg:block absolute inset-0">
+        {AMBIENT_CHARACTERS.map((c, i) => (
+          <img
+            key={i}
+            src={c.img}
+            alt=""
+            aria-hidden="true"
+            className={`absolute ${c.anim}`}
+            style={{
+              top: c.top,
+              left: c.left,
+              right: c.right,
+              width: c.size,
+              height: c.size,
+              opacity: c.opacity,
+              filter: 'drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35))',
+            }}
+          />
+        ))}
+      </div>
     </div>
   )
 }
