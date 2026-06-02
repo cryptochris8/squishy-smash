@@ -16,7 +16,26 @@ export function Books() {
           body="Book Two in the Squishy Smash series. A read-aloud bedtime picture book for ages 4–8 — about three friends who leave home for the first time and find each other."
         />
 
-        <div className="mt-12 grid lg:grid-cols-[1.4fr_1fr] gap-8 items-center">
+        {/* Trio cross-promo hero banner — the three Book 2 protagonists,
+            same 3D card style, in the dusk-warm palette echoing the book
+            cover. */}
+        <div
+          className="mt-10 relative w-full rounded-3xl overflow-hidden"
+          style={{
+            aspectRatio: '16 / 9',
+            boxShadow: '0 32px 64px -24px rgba(228, 165, 108, 0.4)',
+            border: '1px solid rgba(245, 233, 208, 0.2)',
+          }}
+        >
+          <img
+            src="/website_hero/trio_book2_protagonists.png"
+            alt="Soft Dumpling, Goo Ball, and Blushy Bun Bunny meet at a dusk-warm horizon under the lost Sparkle"
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+
+        <div className="mt-10 grid lg:grid-cols-[1.4fr_1fr] gap-8 items-center">
           {/* Responsive 16:9 YouTube embed */}
           <div className="glass-card overflow-hidden p-0">
             <div className="relative w-full" style={{ aspectRatio: '16 / 9' }}>

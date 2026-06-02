@@ -1,6 +1,12 @@
-import { packs, squishies } from '../data/squishies'
+import { packs } from '../data/squishies'
 import { useReveal } from '../hooks/useReveal'
 import { SectionHeading } from './CoreLoop'
+
+const PACK_BANNERS: Record<string, string> = {
+  'squishy-foods': '/website_hero/pack_squishy_foods.png',
+  'goo-and-fidgets': '/website_hero/pack_goo_fidgets.png',
+  'creepy-cute-creatures': '/website_hero/pack_creepy_cute.png',
+}
 
 export function Packs() {
   const { ref, isVisible } = useReveal<HTMLDivElement>()
@@ -32,50 +38,25 @@ function PackPanel({
   pack: (typeof packs)[number]
   flipped: boolean
 }) {
-  // Pick three hero sprites from this pack to showcase — one rare,
-  // one epic, and the legendary. Fall back gracefully if a tier is
-  // missing.
-  const packItems = squishies.filter((s) => s.packId === pack.id)
-  const legendary = packItems.find((s) => s.rarity === 'legendary')
-  const epic = packItems.find((s) => s.rarity === 'epic')
-  const rare = packItems.find((s) => s.rarity === 'rare')
-  const showcase = [rare, epic, legendary].filter(
-    (s): s is NonNullable<typeof s> => Boolean(s),
-  )
+  const bannerSrc = PACK_BANNERS[pack.slug]
 
   const imageCluster = (
-    <div className="relative w-full h-[320px] md:h-[380px]">
-      {showcase.map((s, i) => {
-        const size = 160 + i * 30
-        const slots = [
-          { top: '8%',  left: '4%',  delay: '0s',   rotate: '-6deg' },
-          { top: '22%', left: '36%', delay: '1.2s', rotate: '4deg'  },
-          { top: '10%', left: '68%', delay: '0.6s', rotate: '-3deg' },
-        ]
-        const slot = slots[i % slots.length]
-        return (
-          <div
-            key={s.id}
-            className="absolute animate-float"
-            style={{
-              top: slot.top,
-              left: slot.left,
-              width: size,
-              height: size,
-              animationDelay: slot.delay,
-              transform: `rotate(${slot.rotate})`,
-              filter: 'drop-shadow(0 18px 32px rgba(0, 0, 0, 0.35))',
-            }}
-          >
-            <img
-              src={s.sprite}
-              alt={s.name}
-              className="w-full h-full object-contain"
-              loading="lazy"
-            />
-          </div>
-        )
-      })}
+    <div
+      className="relative w-full rounded-2xl overflow-hidden"
+      style={{
+        aspectRatio: '16 / 9',
+        boxShadow: `0 24px 48px -16px ${pack.accent}55`,
+        border: `1px solid ${pack.accent}40`,
+      }}
+    >
+      {bannerSrc && (
+        <img
+          src={bannerSrc}
+          alt={`${pack.displayName} pack hero shot`}
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
     </div>
   )
 

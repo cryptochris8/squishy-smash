@@ -2,6 +2,7 @@ import { Books } from './components/Books'
 import { Bubbles } from './components/Bubbles'
 import { Collection } from './components/Collection'
 import { CoreLoop } from './components/CoreLoop'
+import { FeaturedLegendaries } from './components/FeaturedLegendaries'
 import { Footer } from './components/Footer'
 import { ForParents } from './components/ForParents'
 import { Hero } from './components/Hero'
@@ -29,6 +30,7 @@ function App() {
         <Hero />
         <CoreLoop />
         <WhatsNew />
+        <FeaturedLegendaries />
         <Books />
         <Collection />
         <Packs />
