@@ -5,10 +5,14 @@
 export const APP_STORE_URL =
   'https://apps.apple.com/us/app/squishy-smash/id6762549537'
 
-// Amazon "Squishy Smash: Meet the Squishies" paperback — live on
-// KDP 2026-05-16. Canonical ASIN-based URL (B0H219KX2X) so the
-// product page is reachable even if the a.co short link is recycled.
+// Amazon "Squishy Smash: Meet the Squishies" paperback (Book 1) — live on
+// KDP 2026-05-16. Canonical ASIN-based URL (B0H219KX2X) so the product
+// page is reachable even if the a.co short link is recycled.
 export const AMAZON_BOOK_URL = 'https://www.amazon.com/dp/B0H219KX2X'
+
+// Amazon "Squishy Smash: The Lost Sparkle" paperback (Book 2) — live on
+// KDP 2026-06-02. Canonical ASIN-based URL (B0H3QP7ZPH).
+export const AMAZON_BOOK2_URL = 'https://www.amazon.com/dp/B0H3QP7ZPH'
 
 // YouTube read-along for Book 2 "The Lost Sparkle" — shipped 2026-05-31.
 // George VO + music + SFX. 5:37 horizontal.

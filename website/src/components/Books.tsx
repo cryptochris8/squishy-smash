@@ -1,6 +1,10 @@
 import { useReveal } from '../hooks/useReveal'
 import { SectionHeading } from './CoreLoop'
-import { AMAZON_BOOK_URL, BOOK2_READALONG_YOUTUBE_ID } from '../constants/links'
+import {
+  AMAZON_BOOK_URL,
+  AMAZON_BOOK2_URL,
+  BOOK2_READALONG_YOUTUBE_ID,
+} from '../constants/links'
 
 export function Books() {
   const { ref, isVisible } = useReveal<HTMLDivElement>()
@@ -59,25 +63,31 @@ export function Books() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mt-2">
               <a
-                href={`https://youtu.be/${BOOK2_READALONG_YOUTUBE_ID}`}
+                href={AMAZON_BOOK2_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glow-btn text-sm inline-flex items-center justify-center gap-2"
               >
-                Watch on YouTube
+                Get Book Two on Amazon
               </a>
               <a
-                href={AMAZON_BOOK_URL}
+                href={`https://youtu.be/${BOOK2_READALONG_YOUTUBE_ID}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-white/25 bg-white/5 hover:bg-white/10 text-sm font-display font-semibold transition-colors"
               >
-                Get Book One on Amazon
+                Watch on YouTube
               </a>
             </div>
-            <p className="text-xs text-white/50">
-              Book Two coming soon to Amazon.
-            </p>
+            <a
+              href={AMAZON_BOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-white/55 hover:text-cream-300 transition-colors inline-flex items-center gap-1"
+            >
+              <span>Also available: Book One — <em>Meet the Squishies</em></span>
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
         </div>
       </div>
