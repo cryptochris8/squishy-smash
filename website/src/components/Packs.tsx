@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { packs } from '../data/squishies'
 import { useReveal } from '../hooks/useReveal'
 import { SectionHeading } from './CoreLoop'
@@ -83,7 +84,7 @@ function PackPanel({
 
       {pack.legendaryName && (
         <div
-          className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold"
+          className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold mb-5"
           style={{
             backgroundColor: 'rgba(255, 211, 110, 0.14)',
             color: '#FFD36E',
@@ -94,6 +95,17 @@ function PackPanel({
           Legendary chase: {pack.legendaryName}
         </div>
       )}
+
+      <div className="block">
+        <Link
+          to={`/packs/${pack.slug}`}
+          className="inline-flex items-center gap-1.5 text-sm font-display font-semibold transition-colors"
+          style={{ color: pack.accent }}
+        >
+          <span>Explore this pack</span>
+          <span aria-hidden="true">→</span>
+        </Link>
+      </div>
     </div>
   )
 

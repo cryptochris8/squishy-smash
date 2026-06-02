@@ -17,7 +17,7 @@ export function Nav() {
       }`}
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-2 group">
+        <a href="/" className="flex items-center gap-2 group">
           <img
             src="/branding/squishy_smash_icon_bunny_v1.png"
             alt="Squishy Smash"
@@ -28,12 +28,12 @@ export function Nav() {
           </span>
         </a>
         <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-white/90">
-          <a href="#core-loop" className="hover:text-cream-300 transition-colors">How it plays</a>
-          <a href="#legendaries" className="hover:text-cream-300 transition-colors">Legendaries</a>
-          <a href="#books" className="hover:text-cream-300 transition-colors">Books</a>
-          <a href="#collection" className="hover:text-cream-300 transition-colors">Collection</a>
-          <a href="#packs" className="hover:text-cream-300 transition-colors">Packs</a>
-          <a href="#parents" className="hover:text-cream-300 transition-colors">For parents</a>
+          <a href="/#core-loop" className="hover:text-cream-300 transition-colors">How it plays</a>
+          <a href="/#legendaries" className="hover:text-cream-300 transition-colors">Legendaries</a>
+          <a href="/#books" className="hover:text-cream-300 transition-colors">Books</a>
+          <a href="/#collection" className="hover:text-cream-300 transition-colors">Collection</a>
+          <a href="/#packs" className="hover:text-cream-300 transition-colors">Packs</a>
+          <a href="/#parents" className="hover:text-cream-300 transition-colors">For parents</a>
         </div>
         <a
           href={APP_STORE_URL}
