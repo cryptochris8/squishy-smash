@@ -71,6 +71,12 @@ coverage/
 # Codemagic local cache
 .cm-cache/
 
+# Sprite-restyle scratch space — best-of-N candidates, raw/cutout/final
+# staging, smoke-render evidence (~150 MB of regeneratable PNGs). The
+# promoted sprites live in assets/images/objects/; this is just the
+# pipeline's working directory. Regen via tools/restyle_sprites_*.py.
+_sprite_restyle_proto/
+
 # Card-pack source archives + scratch space. The 48-card collection
 # is shipped via the compressed WebPs under `assets/cards/`; the source
 # zips and extracted PNGs are preserved locally as backups but kept
