@@ -16,7 +16,6 @@ import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/sprite.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -109,7 +108,7 @@ void main() {
               '_sprite_restyle_proto/smoke/${id}_normal.png');
           await _writePng(await _frame(sp, squash: true),
               '_sprite_restyle_proto/smoke/${id}_squash.png');
-          stdout.writeln('  RENDER ${id}: normal + squash captured');
+          stdout.writeln('  RENDER $id: normal + squash captured');
         }
       } catch (e) {
         stdout.writeln('  (render capture skipped: $e)');
