@@ -1,0 +1,8 @@
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/01_cover_in.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/02_spread18_wide.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/03_spread18_hold.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/04_dumpling_3d.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/05_gameplay.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/06_spread18_out.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/07_cover_tagline.mp4'
+file 'C:/Users/chris/Squishy-smash/squishy_smash/docs/marketing/_video_tmp/08_endcard.mp4'

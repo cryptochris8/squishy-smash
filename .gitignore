@@ -126,3 +126,15 @@ branding/ScreenRecording*.MP4
 # (regen from source, don't bloat the repo). Run the script after a
 # fresh clone if you need the files locally.
 commerce/print_ready/
+
+# Book 2 production — uncompressed masters (regen from source, ship the
+# compressed_* variants only). interior.pdf at 598 MB would exceed
+# GitHub's 100 MB hard limit. Same policy as book/build/out/.
+book/build_book2/out/interior.pdf
+book/build_book2/out/interior_spreads.pdf
+book/build_book2/out/review_spreads.pdf
+book/build_book2/out/cover_wrap.pdf
+
+# CryptoChris8 neon b-roll — large iPhone .MOV, not pipeline-source.
+# Re-record if needed.
+IMG_*.MOV
