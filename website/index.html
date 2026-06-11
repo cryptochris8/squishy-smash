@@ -85,6 +85,9 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Self-hosted <model-viewer> custom element (no npm/CDN at runtime);
+         powers the "Spin a Squishy" 3D section. -->
+    <script type="module" src="/vendor/model-viewer.min.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

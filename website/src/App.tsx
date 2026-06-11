@@ -12,6 +12,7 @@ import { JoinCTA } from './components/JoinCTA'
 import { Nav } from './components/Nav'
 import { PackPage } from './components/PackPage'
 import { Packs } from './components/Packs'
+import { SpinSquishy } from './components/SpinSquishy'
 import { WhatsNew } from './components/WhatsNew'
 
 function HomePage() {
@@ -22,6 +23,7 @@ function HomePage() {
       <WhatsNew />
       <FeaturedLegendaries />
       <FeaturedEpics />
+      <SpinSquishy />
       <Books />
       <Collection />
       <Packs />
