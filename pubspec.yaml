@@ -61,6 +61,7 @@ flutter:
     - assets/cards/final_48/
     - assets/cards/custom_family/
     - assets/images/objects/
+    - assets/images/anim/
     - assets/images/thumbnails/
     - assets/images/decals/
     - assets/images/arenas/

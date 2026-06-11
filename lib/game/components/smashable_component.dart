@@ -4,11 +4,13 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/sprite.dart' show SpriteAnimationTicker;
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/painting.dart';
 
 import '../../core/constants.dart';
+import '../../data/models/rarity.dart';
 import '../../data/models/smashable_def.dart';
 import '../render/object_painters.dart';
 
@@ -36,6 +38,17 @@ class SmashableComponent extends PositionComponent
 
   Sprite? _sprite;
 
+  /// Pre-rendered 3D squash cycle (Meshy model -> Blender squash rig).
+  /// Mythic-tier only: 3 sheets ship today, ~220 KB each. Lower tiers
+  /// keep the procedural ScaleEffect squash.
+  SpriteAnimation? _squishAnim;
+  SpriteAnimationTicker? _squishTicker;
+  double _squishCellAspect = 1;
+
+  /// Cell count baked into every sheet by tools/render3d/pack_squish_sheet.py.
+  static const int _squishFrameCount = 13;
+  static const double _squishFps = 30;
+
   @override
   Future<void> onLoad() async {
     anchor = Anchor.center;
@@ -53,6 +66,39 @@ class SmashableComponent extends PositionComponent
       EffectController(duration: 0.22, curve: Curves.elasticOut),
     ));
     _sprite = await _tryLoadSprite(def.sprite);
+    if (def.rarity == Rarity.mythic) {
+      _squishAnim = await _tryLoadSquishAnimation(def.cardNumber);
+    }
+  }
+
+  /// Loads the pre-rendered squash cycle for this smashable's card, keyed
+  /// by card number (`"016/048"` -> `anim/card_016_squish.webp`). Returns
+  /// null when the smashable has no card or the sheet isn't bundled —
+  /// callers fall back to the ScaleEffect squash, so a missing sheet can
+  /// never break gameplay.
+  Future<SpriteAnimation?> _tryLoadSquishAnimation(String? cardNumber) async {
+    if (cardNumber == null) return null;
+    final n = int.tryParse(cardNumber.split('/').first);
+    if (n == null) return null;
+    final path = 'anim/card_${n.toString().padLeft(3, '0')}_squish.webp';
+    try {
+      final image = await Flame.images.load(path);
+      final cellWidth = image.width / _squishFrameCount;
+      _squishCellAspect = cellWidth / image.height;
+      return SpriteAnimation.fromFrameData(
+        image,
+        SpriteAnimationData.sequenced(
+          amount: _squishFrameCount,
+          stepTime: 1 / _squishFps,
+          textureSize: Vector2(cellWidth, image.height.toDouble()),
+          loop: false,
+        ),
+      );
+    } catch (e) {
+      debugPrint('SmashableComponent: squish sheet load failed for '
+          '$path — ScaleEffect squash will be used ($e)');
+      return null;
+    }
   }
 
   /// Flame.images caches by path relative to `assets/images/`. Pack JSONs
@@ -75,7 +121,32 @@ class SmashableComponent extends PositionComponent
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+    final ticker = _squishTicker;
+    if (ticker != null) {
+      ticker.update(dt);
+      if (ticker.done()) _squishTicker = null;
+    }
+  }
+
+  @override
   void render(Canvas canvas) {
+    final ticker = _squishTicker;
+    if (ticker != null) {
+      // Cells are bottom-registered and wider than the resting sprite
+      // (the squash bulges sideways), so keep the height at the normal
+      // footprint, let the width overflow symmetrically, and pin the
+      // bottom edge to the resting sprite's ground line.
+      final h = _baseRadius * 2;
+      final w = h * _squishCellAspect;
+      ticker.getSprite().render(
+            canvas,
+            position: Vector2((size.x - w) / 2, size.y - h),
+            size: Vector2(w, h),
+          );
+      return;
+    }
     final sprite = _sprite;
     if (sprite != null) {
       sprite.render(
@@ -141,6 +212,18 @@ class SmashableComponent extends PositionComponent
 
   void _applyHit(double force) {
     _pressure = (_pressure + force * 0.5 * def.deformability).clamp(0.0, 1.0);
+    final anim = _squishAnim;
+    if (anim != null) {
+      // Mythic tier: play the pre-rendered 3D squash cycle instead of the
+      // procedural ScaleEffect. Clear any in-flight scale effects first so
+      // the cycle isn't double-deformed by a previous tap's recovery.
+      children.whereType<Effect>().toList().forEach((e) => e.removeFromParent());
+      scale.setFrom(_baseScale);
+      _squishTicker = anim.createTicker();
+      onImpact(this, force);
+      if (_pressure >= def.burstThreshold) _burst();
+      return;
+    }
     // Punchier squash/stretch — tap (force ≈ 0.4) lands at (1.22, 0.83);
     // full force lands at (1.55, 0.58). Was (1.18, 0.86) / (1.45, 0.65).
     final squash = 1.0 - (force * 0.42);
