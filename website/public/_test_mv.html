@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script type="module" src="/vendor/model-viewer.min.js"></script>
+  <style>
+    body { margin: 0; background: #7c5bb0; }
+    model-viewer { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <model-viewer
+    id="mv"
+    src="/models/singularity_goo_core.glb"
+    alt="test"
+    exposure="1.1"
+    shadow-intensity="1"
+  ></model-viewer>
+  <script>
+    const mv = document.getElementById('mv');
+    mv.addEventListener('load', () => console.log('MV_LOAD_OK'));
+    mv.addEventListener('error', (e) => console.log('MV_ERROR', JSON.stringify(e.detail)));
+  </script>
+</body>
+</html>

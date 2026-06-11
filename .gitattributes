@@ -1,0 +1,6 @@
+# Vendored runtime bundles and binary 3D assets must be stored byte-exact —
+# no line-ending normalization (autocrlf stripped 1,093 CR bytes from the
+# first model-viewer bundle; harmless that time, but never again).
+website/public/vendor/** -text
+*.glb -text diff
+*.webp -text diff
