@@ -12,6 +12,7 @@ import { JoinCTA } from './components/JoinCTA'
 import { Nav } from './components/Nav'
 import { PackPage } from './components/PackPage'
 import { Packs } from './components/Packs'
+import { RobloxSection } from './components/RobloxSection'
 import { SpinSquishy } from './components/SpinSquishy'
 import { WhatsNew } from './components/WhatsNew'
 
@@ -21,6 +22,7 @@ function HomePage() {
       <Hero />
       <CoreLoop />
       <WhatsNew />
+      <RobloxSection />
       <FeaturedLegendaries />
       <FeaturedEpics />
       <SpinSquishy />
