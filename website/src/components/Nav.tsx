@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { APP_STORE_URL } from '../constants/links'
+import { APP_STORE_URL, ROBLOX_GAME_URL } from '../constants/links'
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -34,6 +34,14 @@ export function Nav() {
           <a href="/#collection" className="hover:text-cream-300 transition-colors">Collection</a>
           <a href="/#packs" className="hover:text-cream-300 transition-colors">Packs</a>
           <a href="/#parents" className="hover:text-cream-300 transition-colors">For parents</a>
+          <a
+            href={ROBLOX_GAME_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cream-300 hover:text-white transition-colors"
+          >
+            Play on Roblox
+          </a>
         </div>
         <a
           href={APP_STORE_URL}

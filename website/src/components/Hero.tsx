@@ -1,4 +1,4 @@
-import { APP_STORE_URL, AMAZON_BOOK_URL } from '../constants/links'
+import { APP_STORE_URL, ROBLOX_GAME_URL, AMAZON_BOOK_URL } from '../constants/links'
 
 /* Six hero-section companions using NBP-generated hero shots from
  * assets/website_hero/. Balanced 2-2-2 across the three packs, with a
@@ -30,7 +30,7 @@ export function Hero() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 glass-card px-4 py-2 mb-6 text-xs font-bold tracking-wider uppercase text-cream-300 animate-pop">
             <span aria-hidden="true">✨</span>
-            <span>Live on the App Store</span>
+            <span>Now on the App Store + Roblox</span>
           </div>
 
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] mb-6 animate-fade-in-up">
@@ -56,6 +56,15 @@ export function Hero() {
             >
               <AppleLogo />
               <span>Download on the App Store</span>
+            </a>
+            <a
+              href={ROBLOX_GAME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glow-btn inline-flex items-center gap-2"
+            >
+              <RobloxIcon />
+              <span>Play on Roblox</span>
             </a>
             <a href="#collection" className="glow-btn ghost">
               See the collection
@@ -108,6 +117,19 @@ function AppleLogo() {
       aria-hidden="true"
     >
       <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
+  )
+}
+
+function RobloxIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="w-5 h-5"
+      aria-hidden="true"
+    >
+      <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM11 13H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm4-3a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
     </svg>
   )
 }

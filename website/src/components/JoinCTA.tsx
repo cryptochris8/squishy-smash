@@ -1,5 +1,5 @@
 import { useReveal } from '../hooks/useReveal'
-import { APP_STORE_URL, AMAZON_BOOK_URL } from '../constants/links'
+import { APP_STORE_URL, ROBLOX_GAME_URL, AMAZON_BOOK_URL } from '../constants/links'
 
 export function JoinCTA() {
   const { ref, isVisible } = useReveal<HTMLDivElement>()
@@ -24,7 +24,7 @@ export function JoinCTA() {
 
           <div className="relative">
             <div className="inline-block font-display text-xs font-bold uppercase tracking-[0.25em] text-cream-300 bg-white/10 px-3 py-1.5 rounded-full mb-6">
-              Live on the App Store
+              Now on the App Store + Roblox
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
               Tap. Squish. Pop.
@@ -45,6 +45,15 @@ export function JoinCTA() {
                 <span>Download on the App Store</span>
               </a>
               <a
+                href={ROBLOX_GAME_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glow-btn inline-flex items-center gap-2"
+              >
+                <RobloxIcon />
+                <span>Play on Roblox</span>
+              </a>
+              <a
                 href={AMAZON_BOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -58,6 +67,19 @@ export function JoinCTA() {
         </div>
       </div>
     </section>
+  )
+}
+
+function RobloxIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="w-5 h-5"
+      aria-hidden="true"
+    >
+      <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM11 13H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm4-3a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+    </svg>
   )
 }
 
