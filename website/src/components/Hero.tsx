@@ -30,7 +30,7 @@ export function Hero() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 glass-card px-4 py-2 mb-6 text-xs font-bold tracking-wider uppercase text-cream-300 animate-pop">
             <span aria-hidden="true">✨</span>
-            <span>Now on the App Store + Roblox</span>
+            <span>Now on Roblox, iOS + books</span>
           </div>
 
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] mb-6 animate-fade-in-up">
@@ -41,22 +41,13 @@ export function Hero() {
             Tap. Squish. Pop. Collect.
           </p>
           <p className="text-base lg:text-lg text-white/75 max-w-xl mb-8 animate-fade-in-up-delayed">
-            A cozy kawaii tap game. <strong>48 collectible cards</strong> across
-            three pastel packs. <strong>Three ways to unlock</strong> every
-            card — earn, save, or achieve. Satisfying combos, dreamy reveals,
-            zero scary stuff.
+            One cozy, kawaii squishy world. Play it <strong>free on Roblox</strong>,
+            collect on the <strong>App Store</strong>, and read the{' '}
+            <strong>storybooks</strong> — adorable friends to squish, discover, and
+            collect across every platform. Zero scary stuff, ever.
           </p>
 
           <div className="flex flex-wrap gap-3 items-center animate-fade-in-up-delayed">
-            <a
-              href={APP_STORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glow-btn inline-flex items-center gap-2"
-            >
-              <AppleLogo />
-              <span>Download on the App Store</span>
-            </a>
             <a
               href={ROBLOX_GAME_URL}
               target="_blank"
@@ -64,7 +55,16 @@ export function Hero() {
               className="glow-btn inline-flex items-center gap-2"
             >
               <RobloxIcon />
-              <span>Play on Roblox</span>
+              <span>Play free on Roblox</span>
+            </a>
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glow-btn inline-flex items-center gap-2"
+            >
+              <AppleLogo />
+              <span>Get the iOS app</span>
             </a>
             <a href="#collection" className="glow-btn ghost">
               See the collection
