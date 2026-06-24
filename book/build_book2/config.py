@@ -91,8 +91,12 @@ VISIBLE_X_RIGHT_WORK = SPREAD_WORK_W - VISIBLE_X_LEFT_WORK                      
 # Inner gutter safety for 40pp perfect-bound = ~0.5 in = 150 px from gutter edge.
 GUTTER_SAFETY_PX = 150  # for perfect-bound 40pp picture book interior
 
-VERSO_SAFE_X_PAGE = (BLEED_PX + SAFE_INSET_PX, PAGE_W_PX - GUTTER_SAFETY_PX)  # (149, 2475)
-RECTO_SAFE_X_PAGE = (GUTTER_SAFETY_PX, PAGE_W_PX - BLEED_PX - SAFE_INSET_PX)  # (150, 2476)
+# Extra inset on the OUTER trim edges. The printed book clipped the outer edge of
+# wash panels: the feathered panel + trim variance reached past the 0.375 in safety.
+# Pull outer-edge text/wash in a bit more (verso-left edge + recto-right edge).
+OUTER_TEXT_MARGIN = 60  # px (~0.20 in)
+VERSO_SAFE_X_PAGE = (BLEED_PX + SAFE_INSET_PX + OUTER_TEXT_MARGIN, PAGE_W_PX - GUTTER_SAFETY_PX)  # (209, 2475)
+RECTO_SAFE_X_PAGE = (GUTTER_SAFETY_PX, PAGE_W_PX - BLEED_PX - SAFE_INSET_PX - OUTER_TEXT_MARGIN)  # (150, 2416)
 PAGE_SAFE_Y = (BLEED_PX + SAFE_INSET_PX, PAGE_H_PX - BLEED_PX - SAFE_INSET_PX)  # (149, 2476)
 
 # ---------------------------------------------------------------------------
@@ -167,66 +171,83 @@ DEDICATION_LEADING_PT = 22
 
 _GUTTER_WORK = SPREAD_WORK_W // 2  # 792
 
+# --- Fold-aware page mapping (perfect-bound spread, gutter overlap) ----------
+# Each printed page is PAGE_W_PX wide incl. BLEED on all four sides. For a
+# two-page spread the inner BLEED of the two pages OVERLAP at the spine, so the
+# two trims MEET at the fold (nothing lost) and the ~0.25 in that the old
+# center-split dropped into the binding is recovered.
+WORK_TO_SCALED_X = SPREAD_WORK_TO_PRINT * SPREAD_FIT_SCALE   # 3.90625 px / work-unit
+NEW_SCALED_W = int(SPREAD_PRINT_W * SPREAD_FIT_SCALE)        # 6187 (height-fit width)
+INNER_PX = PAGE_W_PX - BLEED_PX                              # 2588 (trim + gutter bleed)
 
-def _work_to_facing_x(work_x: float) -> float:
-    """Map a working-coord x to facing-pair coord x (0 to 2*PAGE_W_PX)."""
-    return work_x * SPREAD_WORK_TO_PRINT * SPREAD_FIT_SCALE - OUTSIDE_CROP
+# Per-spread fold shift, in SCALED print px (300 px = 1 in). Positive slides the
+# fold RIGHT in the painting (a centered subject lands on the verso/left page).
+# Clamped to +/- (NEW_SCALED_W//2 - INNER_PX) ~= +/-505 px (+/-1.68 in).
+# Regenerated spreads (S07/S11/S12) are composed quiet-centered -> shift 0.
+SPREAD_SHIFT_PX = {n: 0 for n in range(1, 19)}
+SPREAD_SHIFT_PX.update({
+    # First-pass per-spread fold shifts (scaled px; + = fold right / subject->verso).
+    # Confirmed/tuned on the full open-book proof.
+    # 3, 15 -> nudge-edited (subject moved off the fold in the art); shift 0
+    4: -300,   # Goo Ball right-of-center -> fold left into the water gap
+    # 5 -> nudge-edited (trio grouped left); shift 0
+    # 6 -> nudge-edited (trio clustered left, Goo eyes fixed); shift 0
+    # 8 -> nudge-edited (trio clustered left in the surf, Goo eyes fixed); shift 0
+    # 9 -> nudge-edited (Aurora Cube left, trio bouncing right, Goo eyes+mouth fixed); shift 0
+    10: 300,   # Dumpling center -> fold right into Dumpling/Bunny gap
+    14: 200,   # small Goo over sunburst -> nudge off the fold
+    16: -350,  # big Goo Coast Goo -> fold left into the water
+    17: 200,   # beach cross-pack
+    18: -250,  # sleeping Soft Dumpling
+    # 1,2,3,6,13,15 -> 0 (landscape / quiet center / triptych panels)
+    # 7,11,12       -> 0 (regenerated off-center, gutter already quiet)
+})
 
 
-def visible_work_box_to_page(work_box, page_side):
-    """Map an audit box (x, y, w, h) in 1584x672 working coords to a page rect.
+def get_shift(spread_num: int) -> int:
+    return SPREAD_SHIFT_PX.get(spread_num, 0)
 
-    Clamps to:
-      - the visible spread region after outside-edge crop
-      - the page-side band (verso = left half of facing pair, recto = right half)
-      - the page-safe text band (outer SAFE_INSET, inner GUTTER_SAFETY)
 
-    Returns (x, y, w, h) in print page pixels (0..PAGE_W_PX-1), or None if the
-    box would entirely disappear after clamping.
+def fold_sx(shift_px: int = 0) -> int:
+    """Fold position in scaled-x for a given shift, clamped so both page crops
+    stay in-bounds."""
+    return max(INNER_PX, min(NEW_SCALED_W - INNER_PX, NEW_SCALED_W // 2 + shift_px))
+
+
+def visible_work_box_to_page(work_box, page_side, shift_px=0):
+    """Map an audit box (x, y, w, h) in 1584x672 working coords to a page rect,
+    following the per-spread fold shift so text tracks the painting.
+
+    Returns (x, y, w, h) in print page pixels, or None if the box is not on this
+    page / disappears after safety clamping.
     """
     x, y, w, h = work_box
-    x_end = x + w
+    sx = fold_sx(shift_px)
 
-    # 1. Clamp to visible spread (after outside-edge crop)
-    x_vis = max(x, VISIBLE_X_LEFT_WORK)
-    x_vis_end = min(x_end, VISIBLE_X_RIGHT_WORK)
-    if x_vis_end <= x_vis:
-        return None
-
-    # 2. Clamp to the requested page side (verso = left of gutter, recto = right)
     if page_side == "verso":
-        x_side = max(x_vis, VISIBLE_X_LEFT_WORK)
-        x_side_end = min(x_vis_end, _GUTTER_WORK)
+        lo_scaled, hi_scaled = sx - INNER_PX, sx + BLEED_PX
+        off = sx - INNER_PX                       # page_x = scaled_x - off
         safe_lo, safe_hi = VERSO_SAFE_X_PAGE
     elif page_side == "recto":
-        x_side = max(x_vis, _GUTTER_WORK)
-        x_side_end = min(x_vis_end, VISIBLE_X_RIGHT_WORK)
+        lo_scaled, hi_scaled = sx - BLEED_PX, sx + INNER_PX
+        off = sx - BLEED_PX
         safe_lo, safe_hi = RECTO_SAFE_X_PAGE
     else:
         raise ValueError(f"page_side must be 'verso' or 'recto', got {page_side!r}")
 
-    if x_side_end <= x_side:
+    # working box -> scaled-x, clamped to the part that lands on this page
+    a = max(x * WORK_TO_SCALED_X, lo_scaled)
+    b = min((x + w) * WORK_TO_SCALED_X, hi_scaled)
+    if b <= a:
         return None
 
-    # 3. Convert to page-pixel x range
-    f_start = _work_to_facing_x(x_side)
-    f_end = _work_to_facing_x(x_side_end)
-    if page_side == "verso":
-        page_x_start = max(0, int(f_start))
-        page_x_end = min(PAGE_W_PX, int(f_end))
-    else:
-        page_x_start = max(0, int(f_start - PAGE_W_PX))
-        page_x_end = min(PAGE_W_PX, int(f_end - PAGE_W_PX))
-
-    # 4. Apply safety insets (text must stay inside)
-    page_x_start = max(page_x_start, safe_lo)
-    page_x_end = min(page_x_end, safe_hi)
+    page_x_start = max(int(a - off), safe_lo)
+    page_x_end = min(int(b - off), safe_hi)
     if page_x_end <= page_x_start:
         return None
 
-    # 5. Y conversion + safety
-    page_y_start = max(int(y * SPREAD_WORK_TO_PRINT * SPREAD_FIT_SCALE), PAGE_SAFE_Y[0])
-    page_y_end = min(int((y + h) * SPREAD_WORK_TO_PRINT * SPREAD_FIT_SCALE), PAGE_SAFE_Y[1])
+    page_y_start = max(int(y * WORK_TO_SCALED_X), PAGE_SAFE_Y[0])
+    page_y_end = min(int((y + h) * WORK_TO_SCALED_X), PAGE_SAFE_Y[1])
     if page_y_end <= page_y_start:
         return None
 

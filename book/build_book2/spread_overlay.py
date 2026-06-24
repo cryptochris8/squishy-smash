@@ -19,9 +19,10 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 sys.path.insert(0, str(Path(__file__).parent))
 from config import (
-    PAGE_W_PX, PAGE_H_PX, FONTS, PALETTE, BODY_PT, BODY_LEADING_PT, PT,
-    SPREADS_PRINT_DIR, SPREAD_FIT_SCALE, OUTSIDE_CROP,
-    visible_work_box_to_page,
+    PAGE_W_PX, PAGE_H_PX, BLEED_PX, INNER_PX, FONTS, PALETTE,
+    BODY_PT, BODY_LEADING_PT, PT,
+    SPREADS_PRINT_DIR, SPREAD_FIT_SCALE,
+    visible_work_box_to_page, get_shift,
 )
 import layout_brief as LB
 import manuscript as MS
@@ -32,27 +33,30 @@ def hex_to_rgba(hexstr: str, alpha: int = 255) -> tuple[int, int, int, int]:
     return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), alpha)
 
 
-def make_full_bleed_page(spread_img: Image.Image, page_side: str) -> Image.Image:
-    """Scale + crop spread to fit one page, full-bleed."""
+def make_full_bleed_page(spread_img: Image.Image, page_side: str,
+                         shift_px: int = 0) -> Image.Image:
+    """Scale + crop the spread into one full-bleed page.
+
+    Perfect-bound spread mapping: the two pages OVERLAP by 2*BLEED at the spine,
+    so the trims MEET at the fold and the ~0.25 in the old center-split lost into
+    the binding is recovered. `shift_px` slides the fold (scaled px, + = right).
+    """
     # 1. Fit-height scale
     sw, sh = spread_img.size
     new_w = int(sw * SPREAD_FIT_SCALE)
-    new_h = PAGE_H_PX
-    scaled = spread_img.resize((new_w, new_h), Image.LANCZOS)
+    scaled = spread_img.resize((new_w, PAGE_H_PX), Image.LANCZOS)
 
-    # 2. Crop to facing-pair width (2 * PAGE_W_PX), centered
-    crop_left = OUTSIDE_CROP
-    crop_right = crop_left + 2 * PAGE_W_PX
-    facing = scaled.crop((crop_left, 0, crop_right, PAGE_H_PX))
+    # 2. Fold position, clamped so both page crops stay in-bounds
+    sx = max(INNER_PX, min(new_w - INNER_PX, new_w // 2 + shift_px))
 
-    # 3. Slice verso or recto half
+    # 3. Crop this page; verso = [sx-INNER, sx+BLEED], recto = [sx-BLEED, sx+INNER]
     if page_side == "verso":
-        page = facing.crop((0, 0, PAGE_W_PX, PAGE_H_PX))
+        box = (sx - INNER_PX, 0, sx + BLEED_PX, PAGE_H_PX)
     elif page_side == "recto":
-        page = facing.crop((PAGE_W_PX, 0, 2 * PAGE_W_PX, PAGE_H_PX))
+        box = (sx - BLEED_PX, 0, sx + INNER_PX, PAGE_H_PX)
     else:
         raise ValueError(f"page_side must be 'verso' or 'recto', got {page_side!r}")
-    return page.convert("RGBA")
+    return scaled.crop(box).convert("RGBA")
 
 
 def draw_wash_panel(canvas: Image.Image, box, color_hex, opacity, feather_px=27):
@@ -194,18 +198,19 @@ def render_spread_page(spread_num: int, page_side: str) -> Image.Image:
     """Main entry: render a single spread page as a 2625x2625 PIL RGBA image."""
     src = SPREADS_PRINT_DIR / f"spread_{spread_num:02d}.png"
     spread = Image.open(src)
-    page = make_full_bleed_page(spread, page_side)
+    shift_px = get_shift(spread_num)
+    page = make_full_bleed_page(spread, page_side, shift_px)
 
     layout = LB.get(spread_num)
     technique = layout["technique"]
 
     # TRIPTYCH gets its own handler (S15)
     if technique == LB.TRIPTYCH:
-        return _render_triptych_page(page, spread_num, page_side, layout)
+        return _render_triptych_page(page, spread_num, page_side, layout, shift_px)
 
     # DUAL_WASH gets its own handler (S3) — one wash box + content per page
     if technique == LB.DUAL_WASH:
-        return _render_dual_wash_page(page, spread_num, page_side, layout)
+        return _render_dual_wash_page(page, spread_num, page_side, layout, shift_px)
 
     # All non-triptych spreads have a single text box.
     # The box has a zone (L, R, L_BOTTOM). Only render text on the matching page.
@@ -218,7 +223,7 @@ def render_spread_page(spread_num: int, page_side: str) -> Image.Image:
         return page
 
     # Map audit box to page coords
-    page_box = visible_work_box_to_page(layout["box"], page_side)
+    page_box = visible_work_box_to_page(layout["box"], page_side, shift_px)
     if page_box is None:
         # The box landed entirely in the cropped region — return page bare
         return page
@@ -232,7 +237,14 @@ def render_spread_page(spread_num: int, page_side: str) -> Image.Image:
         text_box = (page_box[0] + TEXT_PAD, page_box[1] + TEXT_PAD,
                      page_box[2] - 2 * TEXT_PAD, page_box[3] - 2 * TEXT_PAD)
     else:
-        text_box = page_box
+        # NEG / REVERSE: no wash panel, so inset the text from the OUTER trim edge
+        # too (verso = left, recto = right) so sharp type doesn't sit near the cut,
+        # matching the WASH text clearance.
+        EDGE_PAD = 30
+        if page_side == "verso":
+            text_box = (page_box[0] + EDGE_PAD, page_box[1], page_box[2] - EDGE_PAD, page_box[3])
+        else:
+            text_box = (page_box[0], page_box[1], page_box[2] - EDGE_PAD, page_box[3])
 
     # For WASH: render text to a transparent overlay first so we can measure
     # last_y across all blocks, then size the wash panel to fit text + bottom
@@ -306,7 +318,7 @@ def render_spread_page(spread_num: int, page_side: str) -> Image.Image:
     return page
 
 
-def _render_dual_wash_page(page, spread_num, page_side, layout):
+def _render_dual_wash_page(page, spread_num, page_side, layout, shift_px=0):
     """DUAL_WASH (S3) — one wash panel + own content per page.
 
     Verso uses `verso_box` + `verso_paras` + `verso_text_color`.
@@ -326,7 +338,7 @@ def _render_dual_wash_page(page, spread_num, page_side, layout):
     if not paras:
         return page
 
-    page_box = visible_work_box_to_page(box_work, page_side)
+    page_box = visible_work_box_to_page(box_work, page_side, shift_px)
     if page_box is None:
         return page
 
@@ -354,7 +366,7 @@ def _render_dual_wash_page(page, spread_num, page_side, layout):
     return page
 
 
-def _render_triptych_page(page, spread_num, page_side, layout):
+def _render_triptych_page(page, spread_num, page_side, layout, shift_px=0):
     """Triptych (S3, S15) — three parallel panels at the spread bottom.
 
     Panel A (working x=40-500) lives entirely on verso.
@@ -371,7 +383,7 @@ def _render_triptych_page(page, spread_num, page_side, layout):
 
     if page_side == "verso":
         # Panel A
-        a_box = visible_work_box_to_page(panels[0]["box"], "verso")
+        a_box = visible_work_box_to_page(panels[0]["box"], "verso", shift_px)
         if a_box:
             feather_px = int(LB.WASH_FEATHER_WORK * 3.906)
             draw_wash_panel(page, a_box, layout["wash_color"],
@@ -382,7 +394,7 @@ def _render_triptych_page(page, spread_num, page_side, layout):
         b_orig = panels[1]["box"]
         b_verso_box = (b_orig[0], b_orig[1],
                         min(b_orig[2], 792 - b_orig[0]), b_orig[3])
-        b_box = visible_work_box_to_page(b_verso_box, "verso")
+        b_box = visible_work_box_to_page(b_verso_box, "verso", shift_px)
         if b_box:
             feather_px = int(LB.WASH_FEATHER_WORK * 3.906)
             draw_wash_panel(page, b_box, layout["wash_color"],
@@ -395,7 +407,7 @@ def _render_triptych_page(page, spread_num, page_side, layout):
                                panels[1]["text_color"])
     elif page_side == "recto":
         # Panel C
-        c_box = visible_work_box_to_page(panels[2]["box"], "recto")
+        c_box = visible_work_box_to_page(panels[2]["box"], "recto", shift_px)
         if c_box:
             feather_px = int(LB.WASH_FEATHER_WORK * 3.906)
             draw_wash_panel(page, c_box, layout["wash_color"],
@@ -406,7 +418,7 @@ def _render_triptych_page(page, spread_num, page_side, layout):
     # S3 closing line — for now, place on verso under the panels
     if spread_num == 3 and page_side == "verso" and "closing_paras" in ms:
         closing_box_work = (40, layout["closing_y"], 750, 50)
-        closing_box = visible_work_box_to_page(closing_box_work, "verso")
+        closing_box = visible_work_box_to_page(closing_box_work, "verso", shift_px)
         if closing_box:
             close_fonts = load_fonts(body_pt=14, italic_pt=14)
             draw_runs_in_box(page, ms["closing_paras"][0], close_fonts,

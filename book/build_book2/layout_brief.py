@@ -85,8 +85,8 @@ SPREADS = {
         "title": "The First Shard",
         "zone": "BOTH",
         "technique": DUAL_WASH,
-        "verso_box": (60, 440, 470, 220),   # bottom-left, below trio + over apple-tree ground
-        "recto_box": (1064, 440, 460, 220), # bottom-right, below trio + over apple-tree ground
+        "verso_box": (60, 440, 470, 220),   # bottom-left, below the Galaxy Dumpling, over horizon
+        "recto_box": (1075, 75, 455, 200),  # REGEN: trio now lower-right; text -> top-right clear sky, above their faces
         "wash_color": "#F8E8CC",
         "wash_opacity": 0.86,               # higher opacity to mask busy apple/grass detail
         "verso_text_color": "#4A2A1A",      # deep warm brown
@@ -133,27 +133,26 @@ SPREADS = {
     11: {
         "title": "The Deepest Grove",
         "zone": "L",
-        "box": (60, 60, 440, 280),
+        "box": (70, 372, 430, 250),  # REGEN: ghost now occupies upper-left; text -> dark lower-left forest floor
         "technique": REVERSE,
         "text_color": "#F4E6C6",
         "almost_leading_pt": 27,  # +1pt for the repeated 'almost' lines
-        "notes": "Confirmed deep-value across L third. Cream type IS the warmth in the dark grove.",
+        "notes": "REGEN comp: ghost upper-left, trio lower-right. Cream type on the deep-value lower-left forest floor, clear of the ghost.",
     },
     12: {
         "title": "Everybody Squish",
-        "zone": "L_BOTTOM",
-        "box": (60, 349, 460, 180),
+        "zone": "R",
+        "box": (1015, 360, 505, 240),  # REGEN: hug now fills the left; text -> open sunburst on the right
         "technique": WASH,
         "text_color": "#2A1A38",
         "wash_color": "#F6E9CB",
-        "wash_opacity": 0.80,
-        "shout_overlay": True,  # hand-painted EVERYBODY SQUISH! composited from NBP
+        "wash_opacity": 0.84,  # slightly higher to read over the bright burst
         "chant": "PMF! SPLOINK! THUP!",
         "chant_size_pt": 28,
         "chant_uses_black_italic": True,  # Bookmania Black Italic ALL CAPS
         "pact_line": True,  # 'Every pop is a hello. Every hello comes back.' closes the block
         "pact_extra_above_pt": 8,
-        "notes": "Small body lead-in only; the hand-painted shout sits on the burst above.",
+        "notes": "REGEN comp: 3-way hug on the left, radiant burst on the right. Text on the open right side, clear of the hug.",
     },
     13: {
         "title": "The Three Cores",
