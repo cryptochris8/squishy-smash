@@ -73,8 +73,8 @@ SPREADS = {
         "title": "Into Pudding Hills",
         "zone": "BOTH",
         "technique": DUAL_WASH,
-        "verso_box": (60, 440, 470, 220),   # bottom-left, below trio's feet
-        "recto_box": (1064, 380, 460, 280), # lower-right, below Sparkle Mochi; needs room for chant
+        "verso_box": (60, 70, 470, 200),    # REPRINT: trio now clustered low-left -> narrative to upper-left sky
+        "recto_box": (1064, 380, 460, 280), # lower-right dunes, below Sparkle Mochi; room for chant
         "wash_color": "#FAE9CD",
         "wash_opacity": 0.82,
         "verso_text_color": "#5C2E18",
@@ -85,8 +85,8 @@ SPREADS = {
         "title": "The First Shard",
         "zone": "BOTH",
         "technique": DUAL_WASH,
-        "verso_box": (60, 440, 470, 220),   # bottom-left, below the Galaxy Dumpling, over horizon
-        "recto_box": (1075, 75, 455, 200),  # REGEN: trio now lower-right; text -> top-right clear sky, above their faces
+        "verso_box": (60, 70, 470, 200),    # REPRINT: trio low-left -> narrative to upper-left sky
+        "recto_box": (1075, 410, 455, 200), # REPRINT: Galaxy Dumpling now upper-right -> dialogue to open lower-right valley
         "wash_color": "#F8E8CC",
         "wash_opacity": 0.86,               # higher opacity to mask busy apple/grass detail
         "verso_text_color": "#4A2A1A",      # deep warm brown
@@ -96,7 +96,7 @@ SPREADS = {
     8: {
         "title": "Into Goo Coast",
         "zone": "L",
-        "box": (60, 325, 460, 280),  # bottom-left of verso, below Glitter Goo cameo, over goo water/foam (raised so chant lands inside safety)
+        "box": (60, 70, 470, 210),  # REPRINT: trio low-left -> narrative to upper-left sky; chant follows below
         "technique": WASH,
         "text_color": "#1F4655",
         "wash_color": "#F2EBDA",
@@ -122,7 +122,7 @@ SPREADS = {
         "title": "Into Moonlit Hollow",
         "zone": "BOTH",
         "technique": DUAL_WASH,
-        "verso_box": (60, 494, 470, 220),    # bottom-left; y picked so verso bottom aligns with recto bottom
+        "verso_box": (60, 70, 470, 200),     # REPRINT: trio low-left -> narrative to upper-left sky
         "recto_box": (1064, 380, 460, 280),  # bottom-right, taller to fit cameo dialogue + chant
         "wash_color": "#F4E8D2",
         "wash_opacity": 0.86,                # masks busy mushroom/moss foreground
@@ -156,8 +156,8 @@ SPREADS = {
     },
     13: {
         "title": "The Three Cores",
-        "zone": "L",
-        "box": (60, 369, 460, 220),  # mirrored to verso side; raised so closing line lands inside safety
+        "zone": "R",
+        "box": (1040, 360, 480, 250),  # REPRINT: trio low-center-left + Cores across top -> text to open lower-right grove
         "technique": WASH,
         "text_color": "#3A2A18",
         "wash_color": "#F7EAD0",
@@ -168,10 +168,12 @@ SPREADS = {
     14: {
         "title": "The Sparkle, Brighter",
         "zone": "L",
-        "box": (80, 225, 440, 200),
-        "technique": NEG,
+        "box": (80, 300, 440, 190),
+        "technique": WASH,
         "text_color": "#6A3A1A",
-        "notes": "SD silhouette at x=180-280; type above her. Keep Sparkle rays visually heroic.",
+        "wash_color": "#F6EBD8",
+        "wash_opacity": 0.82,
+        "notes": "REPRINT: Sparkle now upper-left, trio lower-right -> wash mid-left below the star for legibility.",
     },
     15: {
         "title": "Going Home",
@@ -209,10 +211,10 @@ SPREADS = {
     },
     18: {
         "title": "The Close",
-        "zone": "R",
-        "box": (1090, 180, 440, 220),
-        "technique": NEG,
-        "text_color": "#7A3A18",
+        "zone": "L",
+        "box": (90, 120, 470, 210),  # REPRINT: SD sleeps low-left, Sparkle upper-right -> cream close to open upper-left dark sky
+        "technique": REVERSE,
+        "text_color": "#F4E6C6",
         "squishkeeper_leading_pt": 28,  # +2pt for italic close
         "notes": "First sentence Bookmania Regular; italic Squishkeeper close in Bookmania Italic with 28pt leading. Text-block top y=280 BELOW Sparkle star at y=165.",
     },

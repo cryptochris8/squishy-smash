@@ -184,24 +184,11 @@ INNER_PX = PAGE_W_PX - BLEED_PX                              # 2588 (trim + gutt
 # fold RIGHT in the painting (a centered subject lands on the verso/left page).
 # Clamped to +/- (NEW_SCALED_W//2 - INNER_PX) ~= +/-505 px (+/-1.68 in).
 # Regenerated spreads (S07/S11/S12) are composed quiet-centered -> shift 0.
+# All character spreads (S3-S18) RE-RENDERED 2026-06-24 as quiet-centered: the
+# fold falls in open space BY DESIGN, so no per-spread shift hack is needed.
+# Verified clean at print res via _tmp_spine_regen/verify_seams.py. S1/S2 are
+# kept landscapes (already shift 0).
 SPREAD_SHIFT_PX = {n: 0 for n in range(1, 19)}
-SPREAD_SHIFT_PX.update({
-    # First-pass per-spread fold shifts (scaled px; + = fold right / subject->verso).
-    # Confirmed/tuned on the full open-book proof.
-    # 3, 15 -> nudge-edited (subject moved off the fold in the art); shift 0
-    4: -300,   # Goo Ball right-of-center -> fold left into the water gap
-    # 5 -> nudge-edited (trio grouped left); shift 0
-    # 6 -> nudge-edited (trio clustered left, Goo eyes fixed); shift 0
-    # 8 -> nudge-edited (trio clustered left in the surf, Goo eyes fixed); shift 0
-    # 9 -> nudge-edited (Aurora Cube left, trio bouncing right, Goo eyes+mouth fixed); shift 0
-    10: 300,   # Dumpling center -> fold right into Dumpling/Bunny gap
-    14: 200,   # small Goo over sunburst -> nudge off the fold
-    16: -350,  # big Goo Coast Goo -> fold left into the water
-    17: 200,   # beach cross-pack
-    18: -250,  # sleeping Soft Dumpling
-    # 1,2,3,6,13,15 -> 0 (landscape / quiet center / triptych panels)
-    # 7,11,12       -> 0 (regenerated off-center, gutter already quiet)
-})
 
 
 def get_shift(spread_num: int) -> int:
