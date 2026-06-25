@@ -49,20 +49,20 @@ SPREADS = {
     },
     4: {
         "title": "At the Border",
-        "zone": "L",
-        "box": (60, 80, 440, 280),
+        "zone": "R",
+        "box": (1000, 110, 470, 300),  # REPRINT: SD+Goo cluster on the LEFT -> caption to the open right page (upper sky)
         "technique": WASH,
         "text_color": "#5B2F1C",
         "wash_color": "#F9EAD2",
         "wash_opacity": 0.82,
-        "notes": "Italic Sploink / Pmf land at end above syrup-river seam.",
+        "notes": "REPRINT: text moved verso->recto; left page holds SD+Goo, right page is open sky/water.",
     },
     5: {
         "title": "Three",
         "zone": "BOTH",
         "technique": DUAL_WASH,
         "verso_box": (60, 470, 470, 180),   # bottom-left, below Soft Dumpling's feet
-        "recto_box": (1064, 470, 460, 180), # bottom-right, below Bun's feet
+        "recto_box": (1010, 80, 500, 230),  # REPRINT: trio on the right -> dialogue ABOVE their heads in the open upper-right sky
         "wash_color": "#F7ECD8",
         "wash_opacity": 0.84,
         "verso_text_color": "#5A2E1A",      # Pudding-warm brown (verso = Bun arrival)
@@ -95,35 +95,32 @@ SPREADS = {
     },
     8: {
         "title": "Into Goo Coast",
-        "zone": "L",
-        "box": (60, 70, 470, 210),  # REPRINT: trio low-left -> narrative to upper-left sky; chant follows below
-        "technique": WASH,
-        "text_color": "#1F4655",
+        "zone": "BOTH",
+        "technique": DUAL_WASH,
+        "verso_box": (60, 70, 470, 200),    # narrative, upper-left sky above the trio
+        "recto_box": (1010, 410, 500, 210),  # REPRINT: opal-goo dialogue + chant BELOW the opal cameo, in the lower-right water
         "wash_color": "#F2EBDA",
-        "wash_opacity": 0.86,        # higher to mask foam/bubble detail
-        "chant": "Pmf, Sploink",
-        "chant_size_pt": 18,
-        "chant_extra_above_pt": 6,
-        "notes": "Moved verso bottom-left so trio on recto is unblocked. Chant rendered after narrative.",
+        "wash_opacity": 0.86,               # higher to mask foam/bubble detail
+        "verso_text_color": "#1F4655",
+        "recto_text_color": "#1F4655",
+        "notes": "REPRINT: split into two boxes - narrative verso-left, opal-goo dialogue + chant recto-right near the cameo. Chant folded into recto_paras (DUAL_WASH handler has no separate chant path).",
     },
     9: {
         "title": "The Second Shard",
-        "zone": "BOTH",
-        "technique": DUAL_WASH,
-        "verso_box": (60, 470, 470, 180),   # bottom-left, below bouncing trio, over water/bubbles
-        "recto_box": (1064, 470, 460, 180), # bottom-right, below Bun, over water (Aurora Cube edge masked)
+        "zone": "L",
+        "technique": WASH,
+        "box": (60, 70, 640, 300),  # REPRINT: all text in one widened verso box, UPPER-left aurora sky (clears the Aurora Cube at the lower-left waterline); right page open for the bouncing trio
         "wash_color": "#F8EAD0",
         "wash_opacity": 0.86,               # higher to mask cube/water detail
-        "verso_text_color": "#2A4060",
-        "recto_text_color": "#2A4060",
-        "notes": "Split at the cube reveal. Verso = trio bouncing (action). Recto = shard rises + Aurora Cube reveal.",
+        "text_color": "#2A4060",
+        "notes": "REPRINT: consolidated both paragraphs onto one widened left box per author; trio bounces on the open right page.",
     },
     10: {
         "title": "Into Moonlit Hollow",
         "zone": "BOTH",
         "technique": DUAL_WASH,
         "verso_box": (60, 70, 470, 200),     # REPRINT: trio low-left -> narrative to upper-left sky
-        "recto_box": (1064, 380, 460, 280),  # bottom-right, taller to fit cameo dialogue + chant
+        "recto_box": (900, 75, 580, 290),  # REPRINT: stretched wide across the upper-right sky, ABOVE the relocated star-eyed bunny's head
         "wash_color": "#F4E8D2",
         "wash_opacity": 0.86,                # masks busy mushroom/moss foreground
         "verso_text_color": "#3A2F58",       # Moonlit violet
@@ -133,7 +130,7 @@ SPREADS = {
     11: {
         "title": "The Deepest Grove",
         "zone": "L",
-        "box": (70, 372, 430, 250),  # REGEN: ghost now occupies upper-left; text -> dark lower-left forest floor
+        "box": (230, 360, 450, 250),  # REPRINT: shifted right -> centered on the dark left-page forest floor, clear of the ghost (upper-left) + trio (right)
         "technique": REVERSE,
         "text_color": "#F4E6C6",
         "almost_leading_pt": 27,  # +1pt for the repeated 'almost' lines
@@ -180,34 +177,33 @@ SPREADS = {
         "zone": "TRIPTYCH",
         "technique": TRIPTYCH,
         "panels": [
-            {"box": (40, 550, 460, 100), "text_color": "#5A3322"},
-            {"box": (562, 550, 460, 100), "text_color": "#1F4A55"},
-            {"box": (1084, 550, 460, 100), "text_color": "#3A2F58"},
+            {"box": (40, 170, 460, 110), "text_color": "#5A3322"},
+            {"box": (562, 170, 460, 110), "text_color": "#1F4A55"},
+            {"box": (1084, 170, 460, 110), "text_color": "#3A2F58"},
         ],
         "wash_color": "#F6EBD8",
         "wash_opacity": 0.86,
-        "notes": "Mirror of S3 layout for parallel closure. Panels y >= 550 clears glow each character carries.",
+        "notes": "REPRINT: panels raised ABOVE each character's head into the open sky (each over its own land; below the upper-right moon). Characters walk home below their caption.",
     },
     16: {
         "title": "Three Homecomings",
         "zone": "R",
-        "box": (1084, 480, 460, 160),
+        "box": (950, 90, 400, 240),  # REPRINT: above the relocated bunny's head, pulled toward center, clear of the right-edge tree
         "technique": WASH,
         "text_color": "#3A2F58",
         "wash_color": "#F4ECD8",
         "wash_opacity": 0.86,
-        "notes": "Three 'Each home...' sentences set as three parallel lines.",
+        "notes": "REPRINT: characters moved inward; caption raised above the bunny, toward center, off the tree.",
     },
     17: {
         "title": "Three Borders, Touching",
         "zone": "L",
-        "box": (90, 452, 420, 200),
+        "box": (90, 90, 500, 220),  # REPRINT: re-rendered art (on-model Goo); caption to the open upper-left sky above the dumpling + goo
         "technique": WASH,
         "text_color": "#6A2D1A",
         "wash_color": "#F9EBCD",
-        "wash_opacity": 0.80,
-        "max_y": 620,  # clears cherry-pudding at (40, 540-650)
-        "notes": "Three sentences with clear paragraph breaks for rhythm.",
+        "wash_opacity": 0.84,
+        "notes": "REPRINT: S17 re-rendered to fix off-model Goo/Dumpling; caption raised to upper-left open sky.",
     },
     18: {
         "title": "The Close",

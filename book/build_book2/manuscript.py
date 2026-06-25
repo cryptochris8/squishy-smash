@@ -77,23 +77,24 @@ SPREADS = {
         ]],
     },
     8: {
-        "paras": [[
+        # REPRINT: split into facing boxes — narrative on verso, the opal-goo
+        # dialogue + chant on recto (near the cameo out in the water).
+        "verso_paras": [[
             ("Next they crossed into Goo Coast. Now it was Goo Ball who led, because Goo Coast was the place he knew. ", False),
-            ("Past the bubble-tide. Past the glossy shore. Past a goo who shimmered like an opal and pointed seaward. ", False),
-            ("\"The shard fell out there,\" said the opal goo. \"You will have to bounce for it.\" ", False),
+            ("Past the bubble-tide. Past the glossy shore. Past a goo who shimmered like an opal and pointed seaward.", False),
         ]],
-        "chant_runs": [
-            ("Pmf", True), (", said the dumpling behind them. ", False),
-            ("Sploink", True), (", said the goo-tide ahead. Now they carried two sounds.", False),
+        "recto_paras": [
+            [("\"The shard fell out there,\" said the opal goo. \"You will have to bounce for it.\"", False)],
+            [("Pmf", True), (", said the dumpling behind them. ", False),
+             ("Sploink", True), (", said the goo-tide ahead. Now they carried two sounds.", False)],
         ],
     },
     9: {
-        "verso_paras": [[
-            ("They bounced for it. Soft Dumpling bounced first, which was a surprise to everyone, including Soft Dumpling. Goo Ball bounced second, naturally. Blushy Bun Bunny bounced last and the highest.", False),
-        ]],
-        "recto_paras": [[
-            ("The shard rose to meet them, glossy and bright, and a cube the color of dawn, who had been watching from the deep, let it go with a slow nod.", False),
-        ]],
+        # REPRINT: consolidated onto a single widened verso (left) box.
+        "paras": [
+            [("They bounced for it. Soft Dumpling bounced first, which was a surprise to everyone, including Soft Dumpling. Goo Ball bounced second, naturally. Blushy Bun Bunny bounced last and the highest.", False)],
+            [("The shard rose to meet them, glossy and bright, and a cube the color of dawn, who had been watching from the deep, let it go with a slow nod.", False)],
+        ],
     },
     10: {
         "verso_paras": [[
