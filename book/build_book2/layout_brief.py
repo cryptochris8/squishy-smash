@@ -207,8 +207,8 @@ SPREADS = {
     },
     18: {
         "title": "The Close",
-        "zone": "L",
-        "box": (90, 120, 470, 210),  # REPRINT: SD sleeps low-left, Sparkle upper-right -> cream close to open upper-left dark sky
+        "zone": "R",
+        "box": (960, 190, 460, 190),  # REPRINT: author wants the close on the RIGHT, just below the Sparkle; cream on the dark night sky
         "technique": REVERSE,
         "text_color": "#F4E6C6",
         "squishkeeper_leading_pt": 28,  # +2pt for italic close
