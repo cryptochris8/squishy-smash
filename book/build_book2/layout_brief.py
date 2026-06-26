@@ -208,11 +208,11 @@ SPREADS = {
     18: {
         "title": "The Close",
         "zone": "R",
-        "box": (960, 190, 460, 190),  # REPRINT: author wants the close on the RIGHT, just below the Sparkle; cream on the dark night sky
+        "box": (960, 250, 460, 190),  # REPRINT: author wants the close on the RIGHT, just below the Sparkle; cream on the dark night sky. y lowered 190->250 so the first line clears the Sparkle star's glow (was overlapping it).
         "technique": REVERSE,
         "text_color": "#F4E6C6",
         "squishkeeper_leading_pt": 28,  # +2pt for italic close
-        "notes": "First sentence Bookmania Regular; italic Squishkeeper close in Bookmania Italic with 28pt leading. Text-block top y=280 BELOW Sparkle star at y=165.",
+        "notes": "First sentence Bookmania Regular; italic Squishkeeper close in Bookmania Italic with 28pt leading. Text-block top y=250 sits BELOW the Sparkle star (center ~y=165, glow bottom ~215) and above the dune line (~y=410).",
     },
 }
 

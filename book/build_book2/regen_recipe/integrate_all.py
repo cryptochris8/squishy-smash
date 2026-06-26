@@ -28,11 +28,12 @@ os.environ["FAL_KEY"] = (HOME / "fal.key.txt").read_text(encoding="utf-8").strip
 # spread -> chosen candidate file in REG. S10 reuses the validated pilot target.
 # S9 / S13 default to their fallbacks; updated to the re-roll picks after review.
 PICKS = {
-    3: "full_s03_1.png", 4: "s04_arms.png", 5: "s05_arms.png", 6: "full_s06_2.png",
-    7: "s07_arms.png", 8: "s08_arms.png", 9: "full_s09_1.png", 10: "s10_arms.png",
+    3: "full_s03_1.png", 4: "s04_arms.png", 5: "s05_arms.png", 6: "s06_age2_1.png",
+    7: "s07_arms.png", 8: "s08_age2_3.png", 9: "full_s09_1.png", 10: "s10_arms.png",
     11: "full_s11_1.png", 12: "s12_arms.png", 13: "s13_arms.png", 14: "s14_arms.png",
     15: "s15fix_2.png", 16: "s16_arms.png", 17: "s17_arms.png", 18: "full_s18_1.png",
-    # arm-raise edits (s10/s16/s17 also carry the earlier cameo/inward/model fixes)
+    # arm-raise edits (s10/s16/s17 also carry the earlier cameo/inward/model fixes);
+    # S6/S8 carry the 2026-06-25 age-fix v2 (friends were rendering too young there)
 }
 
 PROMPT = ("hand-painted watercolor and gouache picture book illustration, soft brush strokes, "

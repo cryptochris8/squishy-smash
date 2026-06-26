@@ -38,7 +38,7 @@ BIO_PARAS = [
      "soft-shaped universe of plush characters, magical packs, and gentle "
      "adventures. He builds the world across iOS, picture books, and short "
      "illustrated tales for readers who like their adventures soft."),
-    ("He lives in Spartanburg, South Carolina, with his partner and three "
+    ("He lives in Spartanburg, South Carolina, with his fiancée and three "
      "daughters."),
     ("He is also the author of The Red Brick Road, a fantasy reimagining of "
      "the Land of Oz for older readers."),

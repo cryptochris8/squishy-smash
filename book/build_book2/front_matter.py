@@ -202,7 +202,7 @@ def render_copyright_page() -> Image.Image:
 # ---------------------------------------------------------------------------
 
 DEDICATION_TEXT_LINES = [
-    "For my partner and our three daughters —",
+    "For my fiancée and our three daughters —",
     "the comfort, the brave-cuddle,",
     "and all the sparkle.",
     "You are why I went looking.",
