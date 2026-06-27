@@ -73,7 +73,7 @@ SPREADS = {
         "title": "Into Pudding Hills",
         "zone": "BOTH",
         "technique": DUAL_WASH,
-        "verso_box": (60, 70, 470, 200),    # REPRINT: trio now clustered low-left -> narrative to upper-left sky
+        "verso_box": (60, 52, 610, 200),    # REPRINT: trio low-left -> narrative to upper-left sky; widened + raised so the shorter panel clears Bun's head (2026-06-27)
         "recto_box": (1064, 380, 460, 280), # lower-right dunes, below Sparkle Mochi; room for chant
         "wash_color": "#FAE9CD",
         "wash_opacity": 0.82,
