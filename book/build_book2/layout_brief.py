@@ -130,7 +130,7 @@ SPREADS = {
     11: {
         "title": "The Deepest Grove",
         "zone": "L",
-        "box": (230, 360, 450, 250),  # REPRINT: shifted right -> centered on the dark left-page forest floor, clear of the ghost (upper-left) + trio (right)
+        "box": (230, 422, 450, 240),  # REPRINT: shifted right -> centered on the dark left-page forest floor; y 360->422 to drop the text below the lower-hanging ghost's wispy tail (2026-07-01)
         "technique": REVERSE,
         "text_color": "#F4E6C6",
         "almost_leading_pt": 27,  # +1pt for the repeated 'almost' lines
