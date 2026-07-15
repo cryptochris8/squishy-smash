@@ -140,7 +140,7 @@ COPYRIGHT_BLOCKS = [
      "This is a work of fiction. All characters, places, and events are "
      "products of the author's imagination."),
     ("space", None),
-    ("body", "ISBN: [assigned by KDP at submission]"),
+    ("body", "ISBN: 979-8199640374"),
     ("space", None),
     ("body", "First Edition: 2026"),
     ("space", None),
