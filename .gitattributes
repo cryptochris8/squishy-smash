@@ -4,3 +4,9 @@
 website/public/vendor/** -text
 *.glb -text diff
 *.webp -text diff
+# Print deliverables + raster art (KDP book pipeline): keep byte-exact so
+# autocrlf can never mangle a PDF/image on checkout.
+*.pdf -text diff
+*.png -text diff
+*.jpg -text diff
+*.jpeg -text diff
