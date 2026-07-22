@@ -32,7 +32,7 @@ function HomePage() {
       <Collection />
       <Packs />
       <ForParents />
-      <section className="relative z-10 py-16 px-6">
+      <section id="sparkle-letter" className="relative z-10 py-16 px-6">
         <div className="max-w-2xl mx-auto">
           <SparkleLetter />
         </div>
