@@ -17,6 +17,40 @@
   to = "/support.html"
   status = 200
 
+# Vanity redirects — short, memorable links for the picture books' printed
+# QR/Magic-Word pages, video end-cards, and social bios. They MUST come before
+# the SPA fallback (Netlify stops at the first match). 302 (temporary) keeps
+# each destination changeable later without browsers caching it forever.
+[[redirects]]
+  from = "/play"
+  to = "https://www.roblox.com/games/105594294243426/Squishy-Smash-The-Lost-Sparkle"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/app"
+  to = "https://apps.apple.com/us/app/squishy-smash/id6762549537"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/book"
+  to = "https://www.amazon.com/dp/B0H3QP7ZPH"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/book1"
+  to = "https://www.amazon.com/dp/B0H219KX2X"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/listen"
+  to = "https://www.youtube.com/watch?v=_0_s3P6uN-o"
+  status = 302
+  force = true
+
 # SPA fallback — every other path renders the React app's index.html
 # so client-side anchors (#collection, #join, etc.) work even on a
 # direct deep-link.

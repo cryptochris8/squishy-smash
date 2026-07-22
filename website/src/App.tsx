@@ -8,11 +8,13 @@ import { FeaturedLegendaries } from './components/FeaturedLegendaries'
 import { Footer } from './components/Footer'
 import { ForParents } from './components/ForParents'
 import { Hero } from './components/Hero'
+import { Hub } from './components/Hub'
 import { JoinCTA } from './components/JoinCTA'
 import { Nav } from './components/Nav'
 import { PackPage } from './components/PackPage'
 import { Packs } from './components/Packs'
 import { RobloxSection } from './components/RobloxSection'
+import { SparkleLetter } from './components/SparkleLetter'
 import { SpinSquishy } from './components/SpinSquishy'
 import { WhatsNew } from './components/WhatsNew'
 
@@ -30,6 +32,11 @@ function HomePage() {
       <Collection />
       <Packs />
       <ForParents />
+      <section className="relative z-10 py-16 px-6">
+        <div className="max-w-2xl mx-auto">
+          <SparkleLetter />
+        </div>
+      </section>
       <JoinCTA />
     </>
   )
@@ -54,6 +61,7 @@ function App() {
         <main id="main-content">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/hub" element={<Hub />} />
             <Route path="/packs/:slug" element={<PackPage />} />
           </Routes>
         </main>

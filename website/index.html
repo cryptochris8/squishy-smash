@@ -85,6 +85,14 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Netlify Forms build-time detection: this static, hidden form lets
+         Netlify register the "sparkle-letter" form so the React SparkleLetter
+         component (which posts to it over AJAX) is accepted. Parent-facing
+         only — the site never collects data from children (COPPA). -->
+    <form name="sparkle-letter" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="email" name="email" />
+      <input type="text" name="bot-field" />
+    </form>
     <!-- Self-hosted <model-viewer> custom element (no npm/CDN at runtime);
          powers the "Spin a Squishy" 3D section. -->
     <script type="module" src="/vendor/model-viewer.min.js"></script>
