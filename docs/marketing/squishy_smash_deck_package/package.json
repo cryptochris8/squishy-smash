@@ -1,0 +1,23 @@
+{
+  "name": "squishy_smash_deck_package",
+  "version": "1.0.0",
+  "description": "This folder is a complete Claude Code handoff package for creating a professional licensing and manufacturing presentation for the Squishy Smash brand.",
+  "main": "src/deck.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "stage": "py src/stage_assets.py",
+    "pptx": "node src/deck.js",
+    "html": "node src/build_html.js --font=pdf",
+    "check": "node src/build_html.js --font=pdf --split --check",
+    "build": "npm run stage && npm run pptx && npm run html"
+  },
+  "keywords": [],
+  "author": "Christopher Ryan Campbell",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}
