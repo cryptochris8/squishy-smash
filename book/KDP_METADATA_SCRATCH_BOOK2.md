@@ -28,6 +28,8 @@
 
 ## 2. Description (paste into the Description field)
 
+> **REVISED 2026-07-31 (ads prerequisite — the live listing still has the OLD copy; re-paste both versions below into KDP):** removed the "hand-illustrated" claim (no production-method claims anywhere — compliance + venue-safety), added trim size + explicit "(ages 4-8)", softened two overclaims ("by month three", "every single time"). See `docs/marketing/amazon_ads_launch_plan.md` §2.
+
 **Strategy:** Different from Book 1's. Book 1 was a character catalog, so its description was a feature list (48 cards, map, tracker, checklist). Book 2 is a *narrative storybook* — the description has to read like a story tease, not a spec sheet. Lead with the story hook, deliver the read-aloud promise (EVERYBODY SQUISH! is the central kid moment), reassure the parent (gentle, no villain, soft landing, repeatable), close with the universe context for buyers who own Book 1.
 
 ### Plain-text reading version (~290 words / ~1,850 chars)
@@ -43,16 +45,16 @@ Blushy Bun Bunny from Moonlit Hollow.
 
 None of them have ever left home. None of them have ever met. And the only way to save the Sparkle is to find each other first.
 
-Inside this 40-page full-color paperback:
+Inside this 40-page, 8.5 x 8.5 paperback (ages 4-8):
 
-• A complete read-aloud story across 18 hand-illustrated picture-book spreads
-• A shout-along moment ("EVERYBODY SQUISH!") your child will perform every read
-• A soft, predictable bedtime ending you'll say from memory by month three
+• A complete read-aloud story across 18 full-color picture-book spreads
+• A built-in shout-along moment — "EVERYBODY SQUISH!" — for kids who like to join in
+• A soft, predictable bedtime ending, the kind you'll soon know by heart
 • Cameo appearances from over a dozen Squishy Smash characters
 
-Why kids love it: it's a real adventure with a Big Pop in the middle. The pages get bigger, then quieter, then bigger again — the rhythm picture books are supposed to have.
+Why kids ask for it again: it's a real adventure with a Big Pop in the middle. The pages get bigger, then quieter, then bigger again — the rhythm a good read-aloud is supposed to have.
 
-Why parents pick it up: no villain, no scary beats, no rage-bait. Just three small friends being brave together, and a closing line that lands gently every single time.
+Why parents pick it up: no villain, no scary beats, no rage-bait. Just three small friends being brave together, and a closing line that lands gently.
 
 This is Book 2 in the Squishy Smash series. Book 1 — Meet the Squishies — is the character field guide; Book 2 is their first story.
 
@@ -76,16 +78,16 @@ When the Sparkle that holds the world together flickers and splits into three gl
 <br><br>
 None of them have ever left home. None of them have ever met. And the only way to save the Sparkle is to find each other first.
 <br><br>
-Inside this 40-page full-color paperback:
+<b>Inside this 40-page, 8.5 x 8.5 paperback (ages 4-8):</b>
 <ul>
-<li>A complete read-aloud story across 18 hand-illustrated picture-book spreads</li>
-<li>A shout-along moment (<b>"EVERYBODY SQUISH!"</b>) your child will perform every read</li>
-<li>A soft, predictable bedtime ending you'll say from memory by month three</li>
+<li>A complete read-aloud story across 18 full-color picture-book spreads</li>
+<li>A built-in shout-along moment — <b>"EVERYBODY SQUISH!"</b> — for kids who like to join in</li>
+<li>A soft, predictable bedtime ending, the kind you'll soon know by heart</li>
 <li>Cameo appearances from over a dozen Squishy Smash characters</li>
 </ul>
-<b>Why kids love it:</b> it's a real adventure with a Big Pop in the middle. The pages get bigger, then quieter, then bigger again — the rhythm picture books are supposed to have.
+<b>Why kids ask for it again:</b> it's a real adventure with a Big Pop in the middle. The pages get bigger, then quieter, then bigger again — the rhythm a good read-aloud is supposed to have.
 <br><br>
-<b>Why parents pick it up:</b> no villain, no scary beats, no rage-bait. Just three small friends being brave together, and a closing line that lands gently every single time.
+<b>Why parents pick it up:</b> no villain, no scary beats, no rage-bait. Just three small friends being brave together, and a closing line that lands gently.
 <br><br>
 This is <b>Book 2</b> in the Squishy Smash series. Book 1 — <i>Meet the Squishies</i> — is the character field guide; Book 2 is their first story.
 <br><br>
