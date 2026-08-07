@@ -51,6 +51,14 @@
   status = 302
   force = true
 
+# The canonical codes page (doc 15 §7.2: codes are a press channel — this is
+# the URL editors cite and aggregators scrape; codes never expire, so the
+# page only ever grows).
+[[redirects]]
+  from = "/codes"
+  to = "/codes.html"
+  status = 200
+
 # SPA fallback — every other path renders the React app's index.html
 # so client-side anchors (#collection, #join, etc.) work even on a
 # direct deep-link.
